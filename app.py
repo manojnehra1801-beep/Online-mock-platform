@@ -1,100 +1,78 @@
-from flask import Flask, render_template_string, request, redirect, session, url_for
+from flask import Flask, request, session, redirect, url_for
 import time
 
 app = Flask(__name__)
-app.secret_key = "secret123"
+app.secret_key = "manoj2025"
+
+PER_MARK = 1
+NEG_MARK = 0.25
+Q_TIME = 30
 
 QUESTIONS = [
-    {
-        "q": "1. Capital of India? / भारत की राजधानी क्या है?",
-        "options": ["Delhi", "Mumbai", "Kolkata", "Chennai"],
-        "ans": 0
-    },
-    {
-        "q": "2. Largest planet? / सबसे बड़ा ग्रह?",
-        "options": ["Earth", "Mars", "Jupiter", "Venus"],
-        "ans": 2
-    },
-    {
-        "q": "3. Father of Computer? / कंप्यूटर के जनक?",
-        "options": ["Newton", "Einstein", "Charles Babbage", "Tesla"],
-        "ans": 2
-    }
+    ("भारत की राजधानी क्या है?\nWhat is the capital of India?",
+     ["Delhi", "Mumbai", "Chennai", "Kolkata"], 0),
+
+    ("सबसे लंबी नदी कौन सी है?\nWhich is the longest river?",
+     ["Ganga", "Yamuna", "Nile", "Amazon"], 2),
+
+    ("ताजमहल कहाँ स्थित है?\nWhere is Taj Mahal located?",
+     ["Delhi", "Agra", "Jaipur", "Lucknow"], 1),
 ]
 
-TOTAL_TIME = len(QUESTIONS) * 30   # 30 sec per question
-
-@app.route("/", methods=["GET","POST"])
+@app.route("/", methods=["GET", "POST"])
 def login():
-    if request.method=="POST":
-        session["name"]=request.form["name"]
-        session["start"]=time.time()
-        session["answers"]={}
-        return redirect("/instructions")
-    return render_template_string("""
+    if request.method == "POST":
+        session.clear()
+        session["name"] = request.form["name"]
+        session["i"] = 0
+        session["answers"] = {}
+        session["start"] = time.time()
+        return redirect("/exam")
+    return """
+    <html><body style='text-align:center;font-family:sans-serif'>
     <h2>MOCK TEST BY MANOJ NEHRA</h2>
-    <form method="post">
-        <input name="name" placeholder="Enter Name" required>
-        <button>Start</button>
-    </form>
-    """)
-
-@app.route("/instructions")
-def instructions():
-    return f"""
-    <h3>All the Best {session['name']}</h3>
-    <p>Total Questions: 3<br>
-    Time: {TOTAL_TIME//60} Minutes<br>
-    +1 for correct, -0.25 negative</p>
-    <a href='/question/0'>Start Test</a>
+    <form method='post'>
+    <input name='name' placeholder='Enter Name' required><br><br>
+    <button>Start Test</button>
+    </form></body></html>
     """
 
-@app.route("/question/<int:qno>", methods=["GET","POST"])
-def question(qno):
-    if qno>=len(QUESTIONS):
+@app.route("/exam", methods=["GET", "POST"])
+def exam():
+    i = session["i"]
+    if i >= len(QUESTIONS):
         return redirect("/result")
 
-    if request.method=="POST":
-        session["answers"][str(qno)] = request.form.get("opt")
-        return redirect(f"/question/{qno+1}")
+    if request.method == "POST":
+        session["answers"][str(i)] = request.form.get("ans")
+        session["i"] += 1
+        return redirect("/exam")
 
-    left = int(TOTAL_TIME - (time.time()-session["start"]))
-    if left<=0:
-        return redirect("/result")
-
-    q = QUESTIONS[qno]
-    nav = ""
-    for i in range(len(QUESTIONS)):
-        nav += f"<a href='/question/{i}'> {i+1} </a> | "
-
-    return render_template_string(f"""
-    <div style="float:right">{nav}</div>
-    <h4>Time Left: {left} sec</h4>
-    <form method="post">
-        <p>{q["q"]}</p>
-        {"".join([f"<input type='radio' name='opt' value='{i}' required>{o}<br>" for i,o in enumerate(q["options"])])}
-        <button>Next</button>
-    </form>
-    """)
+    q, opts, _ = QUESTIONS[i]
+    return f"""
+    <html><body style='font-family:sans-serif'>
+    <h3>Question {i+1}/{len(QUESTIONS)}</h3>
+    <p>{q}</p>
+    <form method='post'>
+    {''.join([f"<input type='radio' name='ans' value='{j}' required> {opts[j]}<br>" for j in range(4)])}
+    <br><button>Next</button>
+    </form></body></html>
+    """
 
 @app.route("/result")
 def result():
-    score=0
-    for i,q in enumerate(QUESTIONS):
-        ans = session["answers"].get(str(i))
-        if ans:
-            if int(ans)==q["ans"]:
-                score+=1
+    score = 0
+    html = "<h2>Result</h2>"
+    for i,(q,opts,ans) in enumerate(QUESTIONS):
+        user = session["answers"].get(str(i))
+        if user is not None:
+            if int(user)==ans:
+                score+=PER_MARK
             else:
-                score-=0.25
-    percent = (score/len(QUESTIONS))*100
-    return f"""
-    <h2>Result</h2>
-    Marks: {score}/{len(QUESTIONS)}<br>
-    Accuracy: {round(percent,2)}%<br>
-    <hr>
-    {"".join([f"<p>{q['q']}<br>Correct: {q['options'][q['ans']]}</p>" for q in QUESTIONS])}
-    """
+                score-=NEG_MARK
+        html += f"<p>{q}<br>Your: {opts[int(user)] if user else 'None'} | Correct: {opts[ans]}</p>"
+    html += f"<h3>Score: {score}/{len(QUESTIONS)}</h3>"
+    return html
 
 if __name__ == "__main__":
     app.run()
