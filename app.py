@@ -197,24 +197,40 @@ def exam():
 # RESULT PAGE
 @app.route("/result")
 def result():
-    correct=0
-    for i,q in enumerate(QUESTIONS):
-        if str(i) in session["answers"]:
-            if int(session["answers"][str(i)])==q[2]:
-                correct+=1
-    wrong=len(session["answers"])-correct
-    marks=correct*PER_MARK - wrong*NEG_MARK
-    acc=(correct/len(session["answers"]))*100 if session["answers"] else 0
-    percentile=(marks/len(QUESTIONS))*100
-    return f"""
-    <meta name=viewport content="width=device-width,initial-scale=1">
-    <body style="background:#0f172a;color:white;text-align:center;font-size:24px">
-    <h2 style="color:#22c55e">RESULT</h2>
-    <p>Name: {session['name']}</p>
-    <p>Marks: {round(marks,2)} / {len(QUESTIONS)}</p>
-    <p>Accuracy: {round(acc,2)} %</p>
-    <p>Percentile: {round(percentile,2)} %</p>
-    </body>
-    """
+    answers = session.get("answers", {})
+    score = 0
+    correct = 0
 
-app.run(host="0.0.0.0",port=5000)
+    for q, a in answers.items():
+        if int(a) == CORRECT[int(q)]:
+            score += PER_MARK
+            correct += 1
+        elif a != "skip":
+            score -= NEG_MARK
+
+    total = len(QUESTIONS)
+    accuracy = round((correct/total)*100,2)
+    percentile = min(100, accuracy + 10)
+
+    review_html = ""
+    for i,(q,opts,ans) in enumerate(QUESTIONS):
+        user = answers.get(str(i),"Not Attempted")
+        review_html += f"""
+        <div style='padding:12px;border-bottom:1px solid #ddd'>
+        <b>Q{i+1}. {q}</b><br>
+        Your Answer: {opts[int(user)] if user!='Not Attempted' else 'Not Attempted'}<br>
+        Correct Answer: {opts[ans]}
+        </div>
+        """
+
+    return f"""
+    <html><body style='font-family:sans-serif'>
+    <h2>MOCK TEST BY MANOJ NEHRA</h2>
+    <h3>Score: {score}/{total}</h3>
+    <h3>Accuracy: {accuracy}%</h3>
+    <h3>Percentile: {percentile}</h3>
+    <hr>
+    <h3>Answer Sheet</h3>
+    {review_html}
+    </body></html>
+    """
