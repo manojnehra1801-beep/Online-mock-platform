@@ -1,96 +1,100 @@
-from flask import Flask, render_template_string, request, redirect, session
-import random, time
+from flask import Flask, render_template_string, request, redirect, session, url_for
+import time
 
 app = Flask(__name__)
-app.secret_key = "mock2025"
+app.secret_key = "secret123"
 
 QUESTIONS = [
-    ("Which gas is used by plants in photosynthesis?",
-     ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"], 1),
-
-    ("Who is known as the Father of Indian Constitution?",
-     ["Nehru", "Gandhi", "Dr. B.R. Ambedkar", "Rajendra Prasad"], 2),
-
-    ("What is the capital of Rajasthan?",
-     ["Jodhpur", "Jaipur", "Udaipur", "Ajmer"], 1)
+    {
+        "q": "1. Capital of India? / भारत की राजधानी क्या है?",
+        "options": ["Delhi", "Mumbai", "Kolkata", "Chennai"],
+        "ans": 0
+    },
+    {
+        "q": "2. Largest planet? / सबसे बड़ा ग्रह?",
+        "options": ["Earth", "Mars", "Jupiter", "Venus"],
+        "ans": 2
+    },
+    {
+        "q": "3. Father of Computer? / कंप्यूटर के जनक?",
+        "options": ["Newton", "Einstein", "Charles Babbage", "Tesla"],
+        "ans": 2
+    }
 ]
 
-PER_MARK = 1
-NEG_MARK = 0.25
+TOTAL_TIME = len(QUESTIONS) * 30   # 30 sec per question
 
 @app.route("/", methods=["GET","POST"])
-def start():
+def login():
     if request.method=="POST":
-        session["name"] = request.form["name"]
-        session["qs"] = random.sample(QUESTIONS, 3)
-        session["ans"] = {}
-        return redirect("/exam")
-    return '''
-    <center>
-    <h1>ONLINE MOCK TEST</h1>
-    <form method=post>
-    <input name=name placeholder="Enter your name" required><br><br>
-    <button>Start Exam</button>
-    </form>
-    </center>
-    '''
-
-@app.route("/exam", methods=["GET","POST"])
-def exam():
-    qs = session["qs"]
-    if request.method=="POST":
-        session["ans"][request.form["qid"]] = int(request.form["opt"])
-    qid = int(request.args.get("q",0))
-    q = qs[qid]
-    done = len(session["ans"])
-    left = 3-done
+        session["name"]=request.form["name"]
+        session["start"]=time.time()
+        session["answers"]={}
+        return redirect("/instructions")
     return render_template_string("""
-    <style>
-    body{font-family:arial;background:#f0f8ff}
-    .nav{position:fixed;right:10px;top:10px}
-    button{padding:10px;margin:5px}
-    </style>
-    <div class=nav>
-    Attempted: {{done}} | Left: {{left}}<br>
-    {% for i in range(3) %}
-    <a href="/exam?q={{i}}">•</a>
-    {% endfor %}
-    </div>
-    <h2>Q{{qid+1}}. {{q[0]}}</h2>
-    <form method=post>
-    <input type=hidden name=qid value="{{qid}}">
-    {% for o in q[1] %}
-    <input type=radio name=opt value="{{loop.index0}}" required>{{o}}<br>
-    {% endfor %}
-    <button>Save</button>
+    <h2>MOCK TEST BY MANOJ NEHRA</h2>
+    <form method="post">
+        <input name="name" placeholder="Enter Name" required>
+        <button>Start</button>
     </form>
-    <br>
-    {% if qid<2 %}<a href="/exam?q={{qid+1}}">Next</a>{% endif %}
-    {% if done==3 %}<a href="/result">Submit Exam</a>{% endif %}
-    """,q=q,qid=qid,done=done,left=left)
+    """)
+
+@app.route("/instructions")
+def instructions():
+    return f"""
+    <h3>All the Best {session['name']}</h3>
+    <p>Total Questions: 3<br>
+    Time: {TOTAL_TIME//60} Minutes<br>
+    +1 for correct, -0.25 negative</p>
+    <a href='/question/0'>Start Test</a>
+    """
+
+@app.route("/question/<int:qno>", methods=["GET","POST"])
+def question(qno):
+    if qno>=len(QUESTIONS):
+        return redirect("/result")
+
+    if request.method=="POST":
+        session["answers"][str(qno)] = request.form.get("opt")
+        return redirect(f"/question/{qno+1}")
+
+    left = int(TOTAL_TIME - (time.time()-session["start"]))
+    if left<=0:
+        return redirect("/result")
+
+    q = QUESTIONS[qno]
+    nav = ""
+    for i in range(len(QUESTIONS)):
+        nav += f"<a href='/question/{i}'> {i+1} </a> | "
+
+    return render_template_string(f"""
+    <div style="float:right">{nav}</div>
+    <h4>Time Left: {left} sec</h4>
+    <form method="post">
+        <p>{q["q"]}</p>
+        {"".join([f"<input type='radio' name='opt' value='{i}' required>{o}<br>" for i,o in enumerate(q["options"])])}
+        <button>Next</button>
+    </form>
+    """)
 
 @app.route("/result")
 def result():
     score=0
-    review=[]
-    for i,q in enumerate(session["qs"]):
-        if str(i) in session["ans"]:
-            if session["ans"][str(i)]==q[2]:
-                score+=PER_MARK
+    for i,q in enumerate(QUESTIONS):
+        ans = session["answers"].get(str(i))
+        if ans:
+            if int(ans)==q["ans"]:
+                score+=1
             else:
-                score-=NEG_MARK
-        review.append((q[0],q[1],q[2],session["ans"].get(str(i),None)))
-    return render_template_string("""
-    <h1>RESULT</h1>
-    Name: {{session['name']}}<br>
-    Score: {{score}} / 3<br><hr>
-    {% for r in review %}
-    <b>{{r[0]}}</b><br>
-    Correct: {{r[1][r[2]]}}<br>
-    Your: {{r[1][r[3]] if r[3]!=None else "Not Attempted"}}<br><hr>
-    {% endfor %}
-    """,score=score,review=review)
+                score-=0.25
+    percent = (score/len(QUESTIONS))*100
+    return f"""
+    <h2>Result</h2>
+    Marks: {score}/{len(QUESTIONS)}<br>
+    Accuracy: {round(percent,2)}%<br>
+    <hr>
+    {"".join([f"<p>{q['q']}<br>Correct: {q['options'][q['ans']]}</p>" for q in QUESTIONS])}
+    """
 
-app.run()
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    app.run()
