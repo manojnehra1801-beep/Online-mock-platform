@@ -2,107 +2,91 @@ from flask import Flask, request, session, redirect
 import time
 
 app = Flask(__name__)
-app.secret_key = "ntpc2025"
+app.secret_key="cbt_demo"
 
-PER_MARK = 1
-NEG_MARK = 1/3
-TOTAL_TIME = 15 * 30   # 15 questions × 30 sec
-
-QUESTIONS = [
-("कौन सा स्मृति प्रकार गैर-अस्थिर है और एम्बेडेड नियंत्रकों में फर्मवेयर भंडारण के लिए उपयोग होता है?",
-["Flash ROM","DRAM","L3 Cache","SRAM"],0),
-
-("एक वर्गाकार मैदान का क्षेत्रफल 1369 m² है। इसका परिमाप कितना है?",
-["146","152","148","139"],2),
-
-("मुहम्मद क़ासिम नानोत्वी और रशीद अहमद गंगोही ने किस आंदोलन की स्थापना की?",
-["पागल पंथी आंदोलन","देवबंद आंदोलन","वहाबी आंदोलन","शरिया आंदोलन"],1),
-
-("A और B मिलकर कार्य को 14 दिनों में करते हैं। A अकेले 42 दिनों में करता है। B अकेले एक-तिहाई कार्य कितने दिनों में करेगा?",
-["14","7","21","28"],2),
-
-("दिल्ली में 1857 के विद्रोह का नेता कौन था?",
-["मंगल पांडे","बहादुर शाह द्वितीय","बेगम हजरत महल","नाना साहब"],1),
-
-("₹9900 को A,B,C में बाँटा गया। A:C = 4:18 और B = A+C का 50%। B का हिस्सा कितना है?",
-["3300","3302","3301","3298"],0),
-
-("भारतीय संविधान का कौन-सा अनुच्छेद DPSP से संबंधित है?",
-["46–51","56–51","66–51","36–51"],0),
-
-("चुनाव परिणाम की आधिकारिक घोषणा कौन करता है?",
-["Presiding Officer","Returning Officer","Chief Observer","Polling Officer"],1),
-
-("घर की ऊँचाई 25m, घर के शीर्ष का उन्नयन कोण 45°, खंभे के शीर्ष का 60°। खंभे की ऊँचाई?",
-["8.66","15","25","43.3"],1),
-
-("ASCII का पूर्ण रूप क्या है?",
-["American Standard Code for International Interchange","Advanced Standard Code for Information Interchange",
-"American Standard Code for Information Interchange","American Scientific Code for Information Interchange"],2),
-
-("भारत में न्यायाधिकरणों हेतु संवैधानिक प्रावधान किस संशोधन से आए?",
-["42वां, 1976","41वां, 1975","44वां, 1978","40वां, 1974"],0),
-
-("यदि A+B 10 दिन में और B अकेले 15 दिन में, तो A अकेले कितने दिन?",
-["20","25","30","15"],0),
-
-("श्रृंखला: 57 58 62 71 87 112 ?",
-["137","148","144","76"],0),
-
-("दंतिदुर्ग ने किस राजवंश की स्थापना की?",
-["गुर्जर प्रतिहार","राष्ट्रकूट","पाल","चोल"],1),
-
-("विजय हजारे ट्रॉफी 2024–25 विजेता?",
-["विदर्भ","हरियाणा","गुजरात","कर्नाटक"],0),
+QUESTIONS=[
+("भारत की राजधानी क्या है?",
+["Delhi","Mumbai","Chennai","Kolkata"],0),
+("सबसे बड़ा ग्रह कौन सा है?",
+["Earth","Mars","Jupiter","Venus"],2),
+("ताजमहल कहाँ स्थित है?",
+["Delhi","Agra","Jaipur","Lucknow"],1)
 ]
 
-@app.route("/", methods=["GET","POST"])
+TOTAL=len(QUESTIONS)
+PER_MARK=1
+NEG_MARK=0.25
+TOTAL_TIME=90
+
+@app.route("/",methods=["GET","POST"])
 def login():
     if request.method=="POST":
         session.clear()
         session["name"]=request.form["name"]
-        session["i"]=0
         session["ans"]={}
+        session["q"]=0
         session["start"]=time.time()
         return redirect("/exam")
-    return """
-    <center><h2>NTPC CBT-2 MOCK</h2>
+    return """<html><head><style>
+    body{font-family:sans-serif;text-align:center;background:#0f172a;color:white}
+    input,button{padding:12px;font-size:20px;width:80%}
+    </style></head><body>
+    <h2>NTPC CBT MOCK</h2>
     <form method=post>
     <input name=name placeholder="Enter Name" required><br><br>
-    <button>Start Test</button></form></center>"""
+    <button>START EXAM</button></form></body></html>"""
 
-@app.route("/exam", methods=["GET","POST"])
+@app.route("/exam",methods=["GET","POST"])
 def exam():
     if time.time()-session["start"]>TOTAL_TIME:
         return redirect("/result")
 
-    i=session["i"]
+    q=session["q"]
     if request.method=="POST":
-        session["ans"][str(i)] = request.form.get("ans")
-        session["i"]+=1
+        if "ans" in request.form:
+            session["ans"][str(q)]=request.form["ans"]
+        session["q"]+=1
         return redirect("/exam")
 
-    if i>=len(QUESTIONS):
-        return redirect("/result")
+    if q>=TOTAL: return redirect("/result")
 
-    q,opts,_=QUESTIONS[i]
-    return f"""
-    <h3>Q{i+1}/15</h3>
+    qtext,opts,_=QUESTIONS[q]
+
+    palette=""
+    for i in range(TOTAL):
+        color="#facc15" if i==q else ("#22c55e" if str(i) in session["ans"] else "#ef4444")
+        palette+=f"<a href='/jump/{i}' style='padding:8px;margin:3px;border-radius:50%;background:{color};color:black;text-decoration:none'>{i+1}</a>"
+
+    return f"""<html><head><style>
+    body{{font-family:sans-serif;background:#020617;color:white}}
+    .opt{{padding:12px;border:1px solid #64748b;border-radius:10px;margin:8px 0}}
+    button{{width:100%;padding:14px;font-size:20px;background:#22c55e;color:black;border-radius:12px;border:0}}
+    </style></head><body>
+    <div style='float:right'>{palette}</div>
+    <h3>Q{q+1}/{TOTAL}</h3>
     <form method=post>
-    <p>{q}</p>
-    {''.join([f"<input type='radio' name='ans' value='{j}' required> {opts[j]}<br>" for j in range(4)])}
-    <br><button>Next</button></form>
-    """
+    <p>{qtext}</p>
+    {''.join([f"<div class='opt'><input type='radio' name='ans' value='{i}'> {opts[i]}</div>" for i in range(4)])}
+    <button>NEXT</button></form>
+    <div>Time Left: {int(TOTAL_TIME-(time.time()-session["start"]))} sec</div>
+    </body></html>"""
+
+@app.route("/jump/<int:i>")
+def jump(i):
+    session["q"]=i
+    return redirect("/exam")
 
 @app.route("/result")
 def result():
     score=0
-    for i,(q,opts,ans) in enumerate(QUESTIONS):
+    for i,(q,o,a) in enumerate(QUESTIONS):
         u=session["ans"].get(str(i))
         if u:
-            if int(u)==ans: score+=PER_MARK
+            if int(u)==a: score+=PER_MARK
             else: score-=NEG_MARK
-    return f"<h2>Result</h2>Score: {round(score,2)}/15"
+    acc=round((score/TOTAL)*100,2)
+    per=min(99,acc+10)
+    return f"<h2>RESULT</h2>Score:{score}/{TOTAL}<br>Accuracy:{acc}%<br>Percentile:{per}%"
 
 if __name__=="__main__":
     app.run()
