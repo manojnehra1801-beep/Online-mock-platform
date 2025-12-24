@@ -9,7 +9,7 @@ NEG_MARK = 0.25
 Q_TIME = 30
 
 QUESTIONS = [
-("Which of the following is NOT a cropping season in India?\nभारत में फसल bharat Mata ki jaiमौसम नहीं है?",
+("Which of the following is NOT a cropping season in India?\nभारत में फसल bhahrat Mata ki jaiमौसम नहीं है?",
 ["Kharif","Rabi","Zaid","Barani"],3),
 ("Kadbanwadi grassland is in –\nकदबनवाड़ी घास का मैदान कहाँ है?",
 ["Tamil Nadu","Andhra Pradesh","Odisha","Maharashtra"],3),
