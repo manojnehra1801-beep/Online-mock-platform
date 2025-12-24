@@ -1,222 +1,146 @@
-from flask import Flask, request, session, redirect
+from flask import Flask, request, session, redirect, render_template_string
 import time
 
 app = Flask(__name__)
-app.secret_key = "manojnehra2025"
+app.secret_key="manoj2025"
 
-PER_MARK = 1
-NEG_MARK = 0.25
-Q_TIME = 30
+PER_MARK=1
+NEG_MARK=0.25
+Q_TIME=30
 
-QUESTIONS = [
-("Which of the following is NOT a cropping season in India?\nभारत में फसल bhahrat Mata ki jaiमौसम नहीं है?",
-["Kharif","Rabi","Zaid","Barani"],3),
-("Kadbanwadi grassland is in –\nकदबनवाड़ी घास का मैदान कहाँ है?",
-["Tamil Nadu","Andhra Pradesh","Odisha","Maharashtra"],3),
-("Which port faces silt problem in Hugli river?\nहुगली नदी में गाद की समस्या किस पोर्ट को है?",
-["Kolkata","Kochchi","Tuticorin","Chennai"],0),
-("Decline in mortality (1921-51) was due to –\n1921-51 में मृत्यु दर घटने का कारण?",
-["War","Improved health & sanitation","Birth rate","AI"],1),
-("Approx % of plateau region in India?\nभारत में पठारी क्षेत्र का प्रतिशत?",
-["5%","12%","27%","59%"],2),
-("Birth rate > Death rate means population will –\nजन्म दर अधिक होने पर जनसंख्या?",
-["Increase","Decrease","Same","None"],0),
-("Sudasari GIB breeding centre is in –\nसुदासरी बस्टर्ड केंद्र कहाँ है?",
-["Rajasthan","TN","Kerala","Karnataka"],0),
-("Origin of universe theory –\nब्रह्मांड की उत्पत्ति का सिद्धांत?",
-["Big Bang","Plate","Quantum","String"],0),
-("ST population % in India (2025) –\nभारत में ST जनसंख्या प्रतिशत?",
-["8.6","5.5","9.8","12.2"],3),
-("NOT hinterland of Marmagao port –\nमार्मगाओ पोर्ट का पृष्ठप्रदेश नहीं?",
-["Karnataka","Goa","South Maharashtra","Himachal Pradesh"],3),
-("Main processes of population change –\nजनसंख्या परिवर्तन की मुख्य प्रक्रियाएँ?",
-["3","5","6","7"],0),
-("NOT a dryland crop –\nशुष्क फसल नहीं है?",
-["Guar","Bajra","Jute","Ragi"],2),
-("Navratna CPSE (2025) –\nनवरत्न कंपनी?",
-["RCFL","SAIL","REC","HPCL"],0),
-("Badampahar mines are famous for –\nबादामपहाड़ खदानें प्रसिद्ध हैं?",
-["Iron ore","Dolomite","Limestone","Bauxite"],0),
-("Incorrect about Deendayal Port –\nदीनदयाल पोर्ट पर गलत कथन?",
-["Kandla name","Major port","Eastern India","Petroleum"],2),
-("East–West corridor length –\nपूर्व-पश्चिम कॉरिडोर की लंबाई?",
-["2900 km","3640 km","4700 km","5860 km"],2),
-("Amrabad Tiger Reserve is in –\nअमराबाद टाइगर रिज़र्व कहाँ है?",
-["Kerala","MP","Telangana","TN"],2),
-("97% coal lies in valleys –\n97% कोयला किन घाटियों में है?",
-["Damodar–Sone–Mahanadi–Godavari","Ganga","Narmada","Indus"],0),
-("Dryland crop –\nशुष्क फसल?",
-["Rice","Sugarcane","Jute","Ragi"],3),
-("State with 100 million+ population –\n100 मिलियन से अधिक जनसंख्या वाला राज्य?",
-["WB","MP","Bihar","Rajasthan"],2),
-("Kaladan project connects India with –\nकलादान परियोजना किस देश से जुड़ी है?",
-["Nepal","Pakistan","Bangladesh","Myanmar"],3),
-("Petrapole rail link is between –\nपेट्रापोल रेल लिंक किनके बीच है?",
-["India–Bhutan","India–Nepal","India–Bangladesh","India–Myanmar"],2),
-("Urbanisation in India (2011) –\nभारत में शहरीकरण 2011 में?",
-["31.16%","41.16%","21.16%","45.16%"],0),
-("2nd largest rhino habitat –\nदूसरा सबसे बड़ा गैंडा आवास?",
-["Kaziranga","Jaldapara","Gir","Kanha"],1),
-("Ramgarh Vishdhari Tiger Reserve –\nरामगढ़ विषधारी टाइगर रिज़र्व?",
-["Rajasthan","Karnataka","Odisha","Jharkhand"],0),
-("Iron ore hill ranges in –\nलौह अयस्क पहाड़ियाँ कहाँ हैं?",
-["AP","TN","Odisha","Meghalaya"],2),
-("Indira Gandhi Canal originates from –\nइंदिरा गांधी नहर कहाँ से निकलती है?",
-["Punjab","Rajasthan","UK","Haryana"],0),
-("Umred–Pauni–Karhandla Sanctuary –\nउमरेड-पौनी-करहंडला अभयारण्य?",
-["Maharashtra","Gujarat","UK","Punjab"],0),
-("107th National Park of India –\nभारत का 107वाँ राष्ट्रीय उद्यान?",
-["Simlipal","Bhitarkanika","Satkosia","Nandankanan"],0),
-("SECC 2011 conducted by –\nSECC 2011 किसने कराया?",
-["Ministry of Rural Dev","Housing Ministry","Both","None"],0),
-("First complete census in India –\nभारत की पहली पूर्ण जनगणना?",
-["1830","1810","1840","1820"],1),
-("Second largest religion in India –\nभारत का दूसरा सबसे बड़ा धर्म?",
-["Christian","Sikh","Muslim","Buddhist"],2),
-("Hirakud dam is on river –\nहीराकुंड बाँध किस नदी पर है?",
-["Periyar","Krishna","Mahanadi","Indus"],2),
-("Universe became transparent after –\nब्रह्मांड कब पारदर्शी हुआ?",
-["300000 yrs","3000 yrs","30000 yrs","300 yrs"],0),
-("Caste census till –\nजाति जनगणना कब तक हुई?",
-["1921","1911","1931","1901"],2),
-("Literacy in 1951 –\n1951 में साक्षरता?",
-["18.33%","28.33%","10.33%","9.33%"],0),
-("State rich in marble & sandstone –\nसंगमरमर व बलुआ पत्थर से समृद्ध राज्य?",
-["Kerala","AP","Odisha","Rajasthan"],3),
-(">85% irrigated state –\n85% से अधिक सिंचित राज्य?",
-["Bihar","Odisha","MP","Haryana"],3),
-("Migration factors –\nप्रवासन के कारक?",
-["2","3","4","5"],0),
-("Rural roads % –\nग्रामीण सड़कों का प्रतिशत?",
-["80%","60%","40%","20%"],0),
-("SECC 2011 districts –\nSECC 2011 में जिले?",
-["640","680","750","730"],3),
-("SECC households (crore) –\nSECC परिवार (करोड़)?",
-["24.49","27.97","11.97","31.28"],1),
-("Navigable waterways length –\nनौगम्य जलमार्गों की लंबाई?",
-["6500 km","8000 km","11200 km","14500 km"],2),
-("Negative population growth state –\nनकारात्मक जनसंख्या वृद्धि वाला राज्य?",
-["Nagaland","Mizoram","Daman","Lakshadweep"],0),
-("Temperate & subtropical crop –\nसमशीतोष्ण व उपोष्णकटिबंधीय फसल?",
-["Wheat","Jute","Cotton","Cucumber"],0),
-("Sunlight reaches Earth in –\nसूर्य का प्रकाश पृथ्वी तक पहुँचता है?",
-["3 min","5 min","8 min","15 min"],2),
-("India’s coastline length –\nभारत की तटरेखा की लंबाई?",
-["7516 km","11098.8 km","13065.6 km","15035.5 km"],2)
+QUESTIONS=[
+("Which cropping season is NOT in India?\nभारत में कौन सी फसल ऋतु नहीं है?",["Kharif","Rabi","Zaid","Barani"],3),
+("Kadbanwadi grassland is in?\nकदबनवाड़ी घासभूमि कहाँ है?",["Tamil Nadu","Andhra Pradesh","Odisha","Maharashtra"],3),
+("Which port faces silt problem in Hugli river?\nहुगली नदी में गाद समस्या वाला बंदरगाह?",["Kolkata","Kochi","Tuticorin","Chennai"],0),
+("Decline in mortality (1921–51) was due to?\n1921–51 में मृत्यु दर घटने का कारण?",["War","Improved health & sanitation","Birth control","Migration"],1),
+("Approx % of plateau region in India?\nभारत में पठारी क्षेत्र का प्रतिशत?",["5%","12%","27%","59%"],2),
+("Birth rate > death rate means?\nजन्म दर अधिक होने पर?",["Increase","Decrease","Same","None"],0),
+("Sudasari GIB centre is in?\nसुदासरी बस्टर्ड केन्द्र?",["Rajasthan","TN","Kerala","Karnataka"],0),
+("Indian Standard Time based on?\nIST आधारित है?",["82.5E","75E","90E","85E"],0),
+("Largest coalfield of India?\nसबसे बड़ा कोयला क्षेत्र?",["Jharia","Raniganj","Bokaro","Talcher"],0),
+("Black soil is called?\nकाली मिट्टी?",["Regur","Laterite","Red","Alluvial"],0),
+("Largest river basin?\nसबसे बड़ा नदी बेसिन?",["Ganga","Brahmaputra","Godavari","Krishna"],0),
+("Dakshin Ganga?\nदक्षिण गंगा?",["Krishna","Godavari","Cauvery","Narmada"],1),
+("Highest peak of India?\nभारत की सबसे ऊँची चोटी?",["K2","Kanchenjunga","Nanda Devi","Everest"],1),
+("Tropic of Cancer passes through how many states?",["8","7","6","9"],0),
+("Longest river of India?",["Ganga","Brahmaputra","Godavari","Yamuna"],0),
+("Largest desert in India?",["Thar","Sahara","Gobi","Kalahari"],0),
+("Pink city?",["Jaipur","Jodhpur","Udaipur","Bikaner"],0),
+("Silicon Valley of India?",["Mumbai","Chennai","Bangalore","Pune"],2),
+("Highest tea producer?",["Assam","WB","Kerala","TN"],0),
+("Highest coffee producer?",["TN","Karnataka","Kerala","Goa"],1),
+("Land of Rising Sun?",["Japan","China","Korea","Thailand"],0),
+("Blue Planet?",["Earth","Mars","Venus","Jupiter"],0),
+("Father of Green Revolution?",["MS Swaminathan","Norman Borlaug","APJ","Gandhi"],0),
+("Highest dam?",["Tehri","Bhakra","Hirakud","Sardar"],0),
+("Longest dam?",["Hirakud","Bhakra","Tehri","Sardar"],0),
+("Largest delta?",["Sundarban","Nile","Amazon","Mississippi"],0),
+("River of Sorrow?",["Kosi","Ganga","Yamuna","Brahmaputra"],0),
+("Pink lake?",["Lonar","Chilika","Sambhar","Pulicat"],2),
+("Largest salt lake?",["Sambhar","Chilika","Pulicat","Wular"],0),
+("Golden Temple city?",["Amritsar","Patna","Agra","Delhi"],0),
+("City of Seven Hills?",["Rome","Jerusalem","Athens","Istanbul"],0),
+("Highest waterfall?",["Jog","Dudhsagar","Nohkalikai","Kunchikal"],3),
+("First Indian satellite?",["Aryabhatta","INSAT","Rohini","Bhaskara"],0),
+("Largest lake of India?",["Chilika","Wular","Pulicat","Dal"],0),
+("Steel City?",["Jamshedpur","Bhilai","Rourkela","Durgapur"],0),
+("Which is longest mountain range?",["Himalaya","Andes","Alps","Ural"],1),
+("Highest plateau?",["Tibet","Deccan","Iran","Mongolia"],0),
+("Largest continent?",["Asia","Africa","Europe","America"],0),
+("Smallest continent?",["Australia","Europe","Antarctica","SA"],0),
+("Green City?",["Chandigarh","Dehradun","Gandhinagar","Shimla"],0),
+("Largest ocean?",["Pacific","Atlantic","Indian","Arctic"],0),
+("Land of thousand lakes?",["Finland","Norway","Sweden","Denmark"],0),
+("Land of midnight sun?",["Norway","Finland","Iceland","Canada"],0),
+("Silk City of India?",["Surat","Kanchipuram","Varanasi","Mysore"],0),
+("Pearl City?",["Hyderabad","Chennai","Mumbai","Kolkata"],0),
+("Manchester of India?",["Ahmedabad","Kanpur","Mumbai","Surat"],0),
+("Queen of Arabian Sea?",["Kochi","Goa","Calicut","Mumbai"],0)
 ]
 
-# LOGIN PAGE
-@app.route("/", methods=["GET","POST"])
-def login():
+TOTAL=len(QUESTIONS)
+
+LOGIN_HTML="""
+<h2 align=center>MOCK TEST BY MANOJ NEHRA</h2>
+<form method=post align=center>
+<input name=name placeholder="Enter Name" required><br><br>
+<button>Start</button></form>
+"""
+
+INSTR_HTML="""
+<h3 align=center>ALL THE BEST {{n}}</h3>
+<p align=center>Total Questions: {{t}}<br>1 Mark Each<br>Negative:0.25<br>30 sec per Question</p>
+<center><a href="/exam">Start Test</a></center>
+"""
+
+EXAM_HTML="""
+<h3>Question {{no}}/{{t}}</h3>
+<div>
+{% for i in range(t) %}
+<a href="/jump/{{i}}" style="padding:4px;">•</a>
+{% endfor %}
+</div><hr>
+<form method=post>
+<p>{{q}}</p>
+{% for o in opt %}
+<input type=radio name=ans value="{{loop.index0}}" required> {{o}}<br>
+{% endfor %}
+<br><button>Next</button></form>
+<p>Time Left: <span id=t>30</span>s</p>
+<script>
+let s=30;setInterval(()=>{s--;t.innerText=s;if(s==0)document.forms[0].submit()},1000)
+</script>
+"""
+
+RESULT_HTML="""
+<h2>RESULT</h2>
+<p>Marks: {{m}} / {{t}}</p>
+<p>Accuracy: {{acc}} %</p>
+<hr>
+{% for i in range(t) %}
+<p><b>Q{{i+1}}.</b> {{qs[i][0]}}<br>Correct: {{qs[i][1][qs[i][2]]}}</p>
+{% endfor %}
+"""
+
+@app.route("/",methods=["GET","POST"])
+def home():
     if request.method=="POST":
-        session.clear()
         session["name"]=request.form["name"]
-        return redirect("/welcome")
-    return """
-    <meta name=viewport content="width=device-width,initial-scale=1">
-    <body style="background:#0f172a;color:white;text-align:center;font-size:24px">
-    <h2 style="color:#22c55e">MOCK TEST BY MANOJ NEHRA</h2>
-    <form method=post>
-    Enter Your Name:<br><input name=name required style="font-size:22px"><br><br>
-    <button style="font-size:22px;background:#22c55e;padding:10px 20px;border:none">Next</button>
-    </form></body>
-    """
+        session["i"]=0
+        session["ans"]={}
+        return redirect("/start")
+    return LOGIN_HTML
 
-# WELCOME PAGE
-@app.route("/welcome", methods=["GET","POST"])
-def welcome():
-    if request.method=="POST":
-        session["q"]=0
-        session["score"]=0
-        session["answers"]={}
-        session["q_start"]=time.time()
-        return redirect("/exam")
-    return f"""
-    <meta name=viewport content="width=device-width,initial-scale=1">
-    <body style="background:#0f172a;color:white;text-align:center;font-size:22px">
-    <h2 style="color:#22c55e">ALL THE BEST, {session['name']}</h2>
-    <h3>MOCK TEST BY MANOJ NEHRA</h3>
-    <p>Total Questions : {len(QUESTIONS)}</p>
-    <p>Total Time : 25 Minutes</p>
-    <p>Marks Per Question : 1</p>
-    <p>Negative Marking : 0.25</p>
-    <form method=post>
-    <button style="font-size:22px;background:#22c55e;padding:10px 25px;border:none">Start Test</button>
-    </form></body>
-    """
+@app.route("/start")
+def start():
+    return render_template_string(INSTR_HTML,n=session["name"],t=TOTAL)
 
-# EXAM PAGE
-@app.route("/exam", methods=["GET","POST"])
+@app.route("/exam",methods=["GET","POST"])
 def exam():
-    qno=session["q"]
-    if qno>=len(QUESTIONS):
-        return redirect("/result")
-
-    elapsed=int(time.time()-session["q_start"])
-    left=max(0,Q_TIME-elapsed)
-
-    if left==0:
-        session["q"]+=1
-        session["q_start"]=time.time()
-        return redirect("/exam")
-
+    i=session["i"]
     if request.method=="POST":
-        if "ans" in request.form:
-            session["answers"][str(qno)] = request.form["ans"]
-        if "next" in request.form: session["q"]+=1
-        if "prev" in request.form: session["q"]=max(0,session["q"]-1)
-        session["q_start"]=time.time()
-        return redirect("/exam")
+        session["ans"][i]=int(request.form["ans"])
+        session["i"]+=1
+        i=session["i"]
+    if i>=TOTAL:
+        return redirect("/result")
+    q,op,_=QUESTIONS[i]
+    return render_template_string(EXAM_HTML,no=i+1,t=TOTAL,q=q,opt=op)
 
-    q,opts,_=QUESTIONS[qno]
-    attempted=len(session["answers"])
-    leftq=len(QUESTIONS)-attempted
+@app.route("/jump/<int:i>")
+def jump(i):
+    session["i"]=i
+    return redirect("/exam")
 
-    html=f"""
-    <meta name=viewport content="width=device-width,initial-scale=1">
-    <script>
-    let t={left};
-    setInterval(function(){{
-        document.getElementById("t").innerHTML=t;
-        t--;
-        if(t<0) document.getElementById("auto").submit();
-    }},1000);
-    </script>
-    <body style="background:#0f172a;color:white;font-size:22px;padding:15px">
-    <h3 style="color:#22c55e">MOCK TEST BY MANOJ NEHRA</h3>
-    <div>Attempted: {attempted} | Left: {leftq}</div>
-    <div>Time Left: <span id=t>{left}</span></div><hr>
-    <form id=auto method=post>
-    <p>{q}</p>
-    """
-    for i,o in enumerate(opts):
-        html+=f"<label><input type=radio name=ans value={i}> {o}</label><br>"
-    html+="<br><button name=prev>Previous</button> <button name=next>Next</button></form></body>"
-    return html
-
-# RESULT PAGE
 @app.route("/result")
 def result():
-    correct=0
-    for i,q in enumerate(QUESTIONS):
-        if str(i) in session["answers"]:
-            if int(session["answers"][str(i)])==q[2]:
-                correct+=1
-    wrong=len(session["answers"])-correct
-    marks=correct*PER_MARK - wrong*NEG_MARK
-    acc=(correct/len(session["answers"]))*100 if session["answers"] else 0
-    percentile=(marks/len(QUESTIONS))*100
-    return f"""
-    <meta name=viewport content="width=device-width,initial-scale=1">
-    <body style="background:#0f172a;color:white;text-align:center;font-size:24px">
-    <h2 style="color:#22c55e">RESULT</h2>
-    <p>Name: {session['name']}</p>
-    <p>Marks: {round(marks,2)} / {len(QUESTIONS)}</p>
-    <p>Accuracy: {round(acc,2)} %</p>
-    <p>Percentile: {round(percentile,2)} %</p>
-    </body>
-    """
+    score=0
+    for i,(q,o,a) in enumerate(QUESTIONS):
+        if i in session["ans"]:
+            if session["ans"][i]==a: score+=PER_MARK
+            else: score-=NEG_MARK
+    acc=round((score/TOTAL)*100,2)
+    return render_template_string(RESULT_HTML,m=round(score,2),t=TOTAL,acc=acc,qs=QUESTIONS)
 
-app.run(host="0.0.0.0",port=5000)
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+if __name__=="__main__":
+    app.run()
