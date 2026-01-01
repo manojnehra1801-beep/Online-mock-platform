@@ -37,14 +37,9 @@ NEGATIVE_MARK = 0.25
 ALL_RESULTS = []
 
 # ================== LOGIN ==================
-@app.route("/", methods=["GET", "POST"])
+@app.route("/")
 def login():
-    if request.method == "POST":
-        session.clear()
-        session["name"] = request.form["name"]
-        session["student_id"] = str(uuid.uuid4())
-        return redirect("/exam")
-    return render_template("login.html")
+    return "ROOT ROUTE FINAL TEST"
 # ================== EXAM ==================
 @app.route("/exam", methods=["GET", "POST"])
 def exam():
