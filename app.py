@@ -49,42 +49,44 @@ def login():
     # GET request → hamesha login page dikhao
     return render_template("login.html")
 # ================== EXAM ==================
-# ================= EXAM =================
 @app.route("/exam", methods=["GET", "POST"])
 def exam():
-
     if "student_id" not in session:
         return redirect("/")
 
-    # ================= SUBMIT EXAM =================
     if request.method == "POST":
+        result_data = []
+
         correct = 0
         incorrect = 0
 
         for q in QUESTIONS:
             user_ans = request.form.get(q["id"])
-            if user_ans is not None:
-                if user_ans == q["answer"]:
-                    correct += 1
-                else:
-                    incorrect += 1
+
+            if user_ans is None:
+                status = "unattempted"
+            elif int(user_ans) == q["answer"]:
+                status = "correct"
+                correct += 1
+            else:
+                status = "incorrect"
+                incorrect += 1
+
+            result_data.append({
+                "question": q["question"],
+                "options": q["options"],
+                "correct": q["answer"],
+                "user": user_ans,
+                "status": status
+            })
 
         attempted = correct + incorrect
         unattempted = len(QUESTIONS) - attempted
-
-        score = correct
-        total_marks = len(QUESTIONS)
-
-        if attempted > 0:
-            accuracy = round((correct / attempted) * 100, 2)
-        else:
-            accuracy = 0
+        accuracy = round((correct / attempted) * 100, 2) if attempted > 0 else 0
 
         return render_template(
-            "result.html",
-            questions=QUESTIONS,
-            score=score,
-            total=total_marks,
+            "review.html",
+            result_data=result_data,
             correct=correct,
             incorrect=incorrect,
             attempted=attempted,
@@ -92,7 +94,6 @@ def exam():
             accuracy=accuracy
         )
 
-    # ================= LOAD EXAM PAGE =================
     return render_template("exam.html", questions=QUESTIONS)
  
 
