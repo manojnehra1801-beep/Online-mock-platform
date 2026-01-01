@@ -70,12 +70,16 @@ def exam():
 
         attempted = correct + incorrect
         unattempted = len(QUESTIONS) - attempted
+
         score = correct
+        total_marks = len(QUESTIONS)
+
         accuracy = round((correct / attempted) * 100, 2) if attempted else 0
 
         return render_template(
             "result.html",
             score=score,
+            total=total_marks,
             correct=correct,
             incorrect=incorrect,
             attempted=attempted,
@@ -83,12 +87,12 @@ def exam():
             accuracy=accuracy
         )
 
+    # 👇 GET request (page load)
     return render_template("exam.html", questions=QUESTIONS)
 
 # ================== RESULT ==================
 
-@app.route("/exam", methods=["GET", "POST"])
-def exam():
+
     if "student_id" not in session:
         return redirect("/")
 
