@@ -1,16 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mock Test Login</title>
+
+<style>
+body{
+    margin:0;
+    padding:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#6a11cb,#2575fc);
+    font-family: Arial, sans-serif;
+}
+
+.container{
+    background:#ffffff;
+    width:90%;
+    max-width:350px;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+    text-align:center;
+}
+
+h1{
+    margin:0;
+    font-size:24px;
+    color:#2575fc;
+}
+
+h3{
+    margin:10px 0 20px;
+    color:#444;
+    font-weight:normal;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    font-size:16px;
+    margin-bottom:15px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    outline:none;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    font-size:18px;
+    border:none;
+    border-radius:8px;
+    background:linear-gradient(135deg,#ff512f,#dd2476);
+    color:white;
+    cursor:pointer;
+}
+
+button:hover{
+    opacity:0.9;
+}
+</style>
 </head>
+
 <body>
-    <h2>Online Mock Test</h2>
+
+<div class="container">
+    <h1>MOCK TEST</h1>
+    <h3>Enter Your Name</h3>
 
     <form method="post">
-        <input type="text" name="name" placeholder="Enter your name" required>
-        <br><br>
-        <button type="submit">Start Exam</button>
+        <input type="text" name="name" placeholder="Your Name" required>
+        <button type="submit">Start Test</button>
     </form>
+</div>
 
 </body>
 </html>
