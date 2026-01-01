@@ -72,27 +72,23 @@ def exam():
         score = correct
         total_marks = len(QUESTIONS)
 
-        accuracy = round((correct / attempted) * 100, 2) if attempted else 0
-
-        return render_template(
-            "result.html",
-            score=score,
-            total=total_marks,
-            correct=correct,
-            incorrect=incorrect,
-            attempted=attempted,
-            unattempted=unattempted,
-            accuracy=accuracy
-        )
-
+        accuracy = round((correct / attempted) * 100, 2)
+if attempted else 0
+     return render_template(
+    "result.html",
+    questions=QUESTIONS,
+    score=score,
+    total=total_marks,
+    correct=correct,
+    incorrect=incorrect,
+    attempted=attempted,
+    unattempted=unattempted,
+    accuracy=accuracy
+)
     # 👇 GET request (page load)
     return render_template("exam.html", questions=QUESTIONS)
 
-# ================== RESULT ==================
 
-
-    if "student_id" not in session:
-        return redirect("/")
 
     if request.method == "POST":
         correct = 0
