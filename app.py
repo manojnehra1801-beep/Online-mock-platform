@@ -52,13 +52,11 @@ def exam():
         return redirect("/")
 
     if request.method == "POST":
-        form_data = request.form
-
         correct = 0
         incorrect = 0
 
         for q in QUESTIONS:
-            user_ans = form_data.get(q["id"])
+            user_ans = request.form.get(q["id"])
             if user_ans is not None:
                 if user_ans == q["answer"]:
                     correct += 1
@@ -66,28 +64,19 @@ def exam():
                     incorrect += 1
 
         attempted = correct + incorrect
-        unattempted = TOTAL_QUESTIONS - attempted
+        unattempted = len(QUESTIONS) - attempted
+        score = correct
+        accuracy = round((correct / attempted) * 100, 2) if attempted else 0
 
-        score = (correct * MARK_PER_Q) - (incorrect * NEGATIVE_MARK)
-        score = round(score, 2)
-
-        accuracy = round((correct / attempted) * 100, 2) if attempted > 0 else 0
-
-        session["result"] = {
-            "correct": correct,
-            "incorrect": incorrect,
-            "attempted": attempted,
-            "unattempted": unattempted,
-            "score": score,
-            "accuracy": accuracy
-        }
-
-        ALL_RESULTS.append({
-            "id": session["student_id"],
-            "score": score
-        })
-
-        return redirect("/result")
+        return render_template(
+            "result.html",
+            score=score,
+            correct=correct,
+            incorrect=incorrect,
+            attempted=attempted,
+            unattempted=unattempted,
+            accuracy=accuracy
+        )
 
     return render_template("exam.html", questions=QUESTIONS)
 
