@@ -37,7 +37,7 @@ NEGATIVE_MARK = 0.25
 ALL_RESULTS = []
 
 # ================== LOGIN ==================
-@app.route("/", @app.route("/")
+@app.route("/")
 def login():
     return "ROOT ROUTE WORKING"
 # ================== EXAM ==================
