@@ -37,18 +37,16 @@ NEGATIVE_MARK = 0.25
 ALL_RESULTS = []
 
 # ================== LOGIN ==================
+
 @app.route("/", methods=["GET", "POST"])
 def login():
-    # 🔹 Agar already logged in hai (reattempt)
-    if "name" in session and request.method == "GET":
-        return redirect("/exam")
-
     if request.method == "POST":
         session.clear()
         session["name"] = request.form["name"]
         session["student_id"] = str(uuid.uuid4())
         return redirect("/exam")
 
+    # GET request → hamesha login page dikhao
     return render_template("login.html")
 # ================== EXAM ==================
 @app.route("/exam", methods=["GET", "POST"])
@@ -130,11 +128,11 @@ def exam():
 
     return render_template("exam.html", questions=QUESTIONS)
 # ================== REATTEMPT ==================
-@app.route("/reattempt")
-def reattempt():
-    session.clear()
-    return redirect("/")
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/exam")
 # ================== RUN ==================
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
