@@ -85,13 +85,28 @@ def exam():
 # ---------------- RESULT ----------------
 @app.route("/result")
 def result():
-    my = session.get("result")
-    my_id = session.get("id")
+    if "result" not in session or "id" not in session:
+        return redirect("/")
+
+    my = session["result"]
+    my_id = session["id"]
+
+    if not ALL_RESULTS:
+        return redirect("/")
 
     sorted_results = sorted(ALL_RESULTS, key=lambda x: x["score"], reverse=True)
-    rank = next(i+1 for i, r in enumerate(sorted_results) if r["id"] == my_id)
+
+    rank = total = None
+    for i, r in enumerate(sorted_results):
+        if r["id"] == my_id:
+            rank = i + 1
+            break
+
+    if rank is None:
+        return redirect("/")
 
     total = len(sorted_results)
+
     percentile = round(((total - rank) / total) * 100, 2)
     avg_score = round(sum(r["score"] for r in sorted_results) / total, 2)
     best_score = sorted_results[0]["score"]
@@ -103,9 +118,7 @@ def result():
         percentile=percentile,
         avg_score=avg_score,
         best_score=best_score
-    )
-
-# ---------------- REATTEMPT ----------------
+    )# ---------------- REATTEMPT ----------------
 @app.route("/reattempt")
 def reattempt():
     session.clear()
@@ -113,4 +126,4 @@ def reattempt():
 
 # ---------------- RUN ----------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
