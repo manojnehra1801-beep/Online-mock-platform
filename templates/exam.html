@@ -1,21 +1,112 @@
 <!DOCTYPE html>
 <html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exam</title>
+
+<style>
+body{
+    font-family: Arial;
+    padding: 10px;
+}
+.question-box{
+    display:none;
+}
+.question-box.active{
+    display:block;
+}
+button{
+    padding:10px;
+    margin:5px;
+    width:30%;
+    font-size:16px;
+}
+.timer{
+    font-weight:bold;
+    color:red;
+}
+.review{
+    background:#ffeaa7;
+}
+</style>
+</head>
+
 <body>
 
-<h2>Exam Page</h2>
+<h3>Time Left: <span class="timer" id="timer">30</span> sec</h3>
 
-<form method="post">
+<form method="post" id="examForm">
+
 {% for q in questions %}
-    <p>{{ q.question }}</p>
+<div class="question-box" id="q{{ loop.index0 }}">
+    <p><b>Q{{ loop.index }}. {{ q.question }}</b></p>
+
     {% for opt in q.options %}
-        <input type="radio" name="{{ q.id }}" value="{{ loop.index0 }}">
-        {{ opt }}<br>
+        <label>
+            <input type="radio" name="{{ q.id }}" value="{{ loop.index0 }}">
+            {{ opt }}
+        </label><br>
     {% endfor %}
-    <hr>
+</div>
 {% endfor %}
 
-<button type="submit">Submit</button>
+<br>
+
+<button type="button" onclick="prevQ()">Previous</button>
+<button type="button" onclick="markReview()">Mark for Review</button>
+<button type="button" onclick="nextQ()">Next</button>
+
+<br><br>
+<button type="submit">Submit Exam</button>
+
 </form>
+
+<script>
+let current = 0;
+let total = {{ questions|length }};
+let timer = 30;
+let interval;
+
+function showQ(index){
+    document.querySelectorAll('.question-box').forEach(q=>q.classList.remove('active'));
+    document.getElementById('q'+index).classList.add('active');
+    resetTimer();
+}
+
+function nextQ(){
+    if(current < total-1){
+        current++;
+        showQ(current);
+    }
+}
+
+function prevQ(){
+    if(current > 0){
+        current--;
+        showQ(current);
+    }
+}
+
+function markReview(){
+    document.getElementById('q'+current).classList.toggle('review');
+}
+
+function resetTimer(){
+    clearInterval(interval);
+    timer = 30;
+    document.getElementById('timer').innerText = timer;
+
+    interval = setInterval(()=>{
+        timer--;
+        document.getElementById('timer').innerText = timer;
+        if(timer === 0){
+            nextQ();
+        }
+    },1000);
+}
+
+showQ(0);
+</script>
 
 </body>
 </html>
