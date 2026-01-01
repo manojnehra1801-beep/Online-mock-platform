@@ -8,7 +8,7 @@
 body{
     font-family: Arial, sans-serif;
     margin:0;
-    padding-bottom:70px; /* space for submit */
+    padding-bottom:70px;
 }
 
 /* HEADER */
@@ -21,7 +21,6 @@ body{
     color:#fff;
     font-size:14px;
 }
-
 .header .center{
     font-size:16px;
     font-weight:bold;
@@ -38,9 +37,6 @@ body{
     display:none;
     padding:10px;
 }
-.question-box.active{
-    display:block;
-}
 
 /* PALETTE */
 .palette{
@@ -56,9 +52,6 @@ body{
     border-radius:50%;
     font-weight:bold;
 }
-.grey{ background:#dfe6e9; }
-.green{ background:#55efc4; }
-.yellow{ background:#ffeaa7; }
 
 /* CONTROLS */
 .controls{
@@ -103,15 +96,14 @@ body{
 <form method="post" id="examForm">
 
 {% for q in questions %}
-<div class="question-box" id="q{{ loop.index0 }}">
+<div class="question-box">
     <p><b>Q{{ loop.index }}. {{ q.question }}</b></p>
 
     {% for opt in q.options %}
     <label>
         <input type="radio"
                name="{{ q.id }}"
-               value="{{ loop.index0 }}"
-               onclick="toggleAnswer(this, {{ loop.index0 }})">
+               value="{{ loop.index0 }}">
         {{ opt }}
     </label><br>
     {% endfor %}
@@ -124,7 +116,6 @@ body{
     <button type="button" onclick="nextQ()">Next</button>
 </div>
 
-<!-- FIXED SUBMIT -->
 <div class="submit-fixed">
     <button type="submit">Submit Exam</button>
 </div>
@@ -132,39 +123,65 @@ body{
 </form>
 
 <script>
-let totalQ = {{ questions|length }};
-let perQTime = 30; // seconds per question
+// ---------------- TIMER ----------------
+const totalQ = document.querySelectorAll(".question-box").length;
+const perQTime = 30;
 let totalSeconds = totalQ * perQTime;
-let totalInterval;
+let timer;
 
-// format mm:ss
 function formatTime(sec){
-    let m = Math.floor(sec/60);
+    let m = Math.floor(sec / 60);
     let s = sec % 60;
     return m + "m " + s + "s";
 }
 
-// START TOTAL TIMER
 function startTotalTimer(){
     document.getElementById("totalTime").innerText = formatTime(totalSeconds);
 
-    totalInterval = setInterval(()=>{
+    timer = setInterval(()=>{
         totalSeconds--;
         document.getElementById("totalTime").innerText = formatTime(totalSeconds);
 
         if(totalSeconds <= 0){
-            clearInterval(totalInterval);
-            // optional: auto submit
+            clearInterval(timer);
             document.getElementById("examForm").submit();
         }
     },1000);
 }
 
-// page load par start
+// ---------------- QUESTIONS ----------------
+let currentQ = 0;
+
+function showQuestion(index){
+    const questions = document.querySelectorAll(".question-box");
+    questions.forEach(q => q.style.display = "none");
+
+    if(questions[index]){
+        questions[index].style.display = "block";
+        currentQ = index;
+    }
+}
+
+function nextQ(){
+    if(currentQ < document.querySelectorAll(".question-box").length - 1){
+        showQuestion(currentQ + 1);
+    }
+}
+
+function prevQ(){
+    if(currentQ > 0){
+        showQuestion(currentQ - 1);
+    }
+}
+
+function markReview(){
+    alert("Marked for review");
+}
+
+// ---------------- ON LOAD ----------------
 window.onload = function(){
     startTotalTimer();
-    // agar tum already showQ(0) use kar rahe ho, to yahin call rakho
-    if (typeof showQ === "function") showQ(0);
+    showQuestion(0);
 };
 </script>
 
