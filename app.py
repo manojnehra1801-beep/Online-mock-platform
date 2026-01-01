@@ -1,188 +1,116 @@
-from flask import Flask, request, session, redirect
-import time
+from flask import Flask, render_template, request, session, redirect
+import uuid
 
 app = Flask(__name__)
-app.secret_key = "cbt_demo"
+app.secret_key = "exam_secret"
 
-# ---------------- CONFIG ----------------
+# ---------------- QUESTIONS ----------------
 QUESTIONS = [
-    ("भारत की राजधानी क्या है?",
-     ["Delhi", "Mumbai", "Chennai", "Kolkata"], 0),
-    ("सबसे बड़ा ग्रह कौन सा है?",
-     ["Earth", "Mars", "Jupiter", "Venus"], 2),
-    ("ताजमहल कहाँ स्थित है?",
-     ["Delhi", "Agra", "Jaipur", "Lucknow"], 1)
+    {
+        "id": 1,
+        "question": "भारत की राजधानी क्या है?",
+        "options": ["Delhi", "Mumbai", "Chennai", "Kolkata"],
+        "answer": 0
+    },
+    {
+        "id": 2,
+        "question": "सबसे बड़ा ग्रह कौन सा है?",
+        "options": ["Earth", "Mars", "Jupiter", "Venus"],
+        "answer": 2
+    },
+    {
+        "id": 3,
+        "question": "ताजमहल कहाँ स्थित है?",
+        "options": ["Delhi", "Agra", "Jaipur", "Lucknow"],
+        "answer": 1
+    }
 ]
 
-PER_MARK = 1
-NEG_MARK = 0.25
-PER_Q_TIME = 30  # seconds per question
+TOTAL_QUESTIONS = len(QUESTIONS)
+MARK_PER_Q = 1
+NEGATIVE_MARK = 0.25
 
-# store scores of attempted students (runtime memory)
-ALL_SCORES = []
-# ----------------------------------------
+ALL_RESULTS = []
 
-
+# ---------------- LOGIN ----------------
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         session.clear()
         session["name"] = request.form["name"]
-        session["ans"] = {}
-        session["review"] = {}
-        session["q"] = 0
-        session["q_start"] = time.time()
+        session["id"] = str(uuid.uuid4())
         return redirect("/exam")
+    return render_template("login.html")
 
-    return """
-    <html><head><meta name=viewport content="width=device-width, initial-scale=1">
-    <style>
-    body{font-family:sans-serif;background:#020617;color:white;text-align:center}
-    input,button{width:90%;padding:14px;font-size:18px;margin:10px}
-    </style></head><body>
-    <h2>NTPC CBT MOCK</h2>
-    <form method=post>
-    <input name=name placeholder="Enter Name" required>
-    <button>START EXAM</button>
-    </form></body></html>
-    """
-
-
+# ---------------- EXAM ----------------
 @app.route("/exam", methods=["GET", "POST"])
 def exam():
-    q = session["q"]
+    if request.method == "POST":
+        answers = request.form
+        correct = 0
+        incorrect = 0
 
-    # auto-next after 30 sec
-    if time.time() - session["q_start"] > PER_Q_TIME:
-        session["q"] += 1
-        session["q_start"] = time.time()
-        return redirect("/exam")
+        for q in QUESTIONS:
+            user_ans = answers.get(str(q["id"]))
+            if user_ans is not None:
+                if int(user_ans) == q["answer"]:
+                    correct += 1
+                else:
+                    incorrect += 1
 
-    if q >= len(QUESTIONS):
+        attempted = correct + incorrect
+        unattempted = TOTAL_QUESTIONS - attempted
+
+        score = (correct * MARK_PER_Q) - (incorrect * NEGATIVE_MARK)
+        accuracy = round((correct / attempted) * 100, 2) if attempted else 0
+
+        session["result"] = {
+            "correct": correct,
+            "incorrect": incorrect,
+            "attempted": attempted,
+            "unattempted": unattempted,
+            "score": round(score, 2),
+            "accuracy": accuracy
+        }
+
+        ALL_RESULTS.append({
+            "id": session["id"],
+            "score": score
+        })
+
         return redirect("/result")
 
-    if request.method == "POST":
-        if "ans" in request.form:
-            session["ans"][str(q)] = request.form["ans"]
-        if "review" in request.form:
-            session["review"][str(q)] = True
-        if "prev" in request.form:
-            session["q"] = max(0, q - 1)
-        else:
-            session["q"] += 1
-        session["q_start"] = time.time()
-        return redirect("/exam")
+    return render_template("exam.html", questions=QUESTIONS)
 
-    qtext, opts, _ = QUESTIONS[q]
-    time_left = int(PER_Q_TIME - (time.time() - session["q_start"]))
-
-    palette = ""
-    for i in range(len(QUESTIONS)):
-        if i == q:
-            color = "#facc15"
-        elif str(i) in session["review"]:
-            color = "#a855f7"
-        elif str(i) in session["ans"]:
-            color = "#22c55e"
-        else:
-            color = "#ef4444"
-        palette += f"<a href='/jump/{i}' style='padding:6px;margin:3px;border-radius:50%;background:{color};color:black;text-decoration:none'>{i+1}</a>"
-
-    return f"""
-    <html><head><meta name=viewport content="width=device-width, initial-scale=1">
-    <style>
-    body{{font-family:sans-serif;background:#020617;color:white;font-size:16px}}
-    .timer{{position:fixed;top:10px;right:10px;
-            background:#dc2626;padding:10px;border-radius:8px}}
-    .opt{{padding:12px;border:1px solid #64748b;border-radius:10px;margin:8px 0}}
-    button{{width:100%;padding:14px;font-size:18px;margin:6px}}
-    </style></head><body>
-
-    <div class="timer">⏱ {time_left}s</div>
-
-    <div>{palette}</div>
-    <h3>Q{q+1}/{len(QUESTIONS)}</h3>
-
-    <form method=post>
-    <p>{qtext}</p>
-    {''.join([f"<div class='opt'><input type='radio' name='ans' value='{i}' {'checked' if session['ans'].get(str(q))==str(i) else ''}> {opts[i]}</div>" for i in range(4)])}
-    <button name="prev">PREVIOUS</button>
-    <button>SAVE & NEXT</button>
-    <button name="review">MARK FOR REVIEW</button>
-    </form>
-
-    </body></html>
-    """
-
-
-@app.route("/jump/<int:i>")
-def jump(i):
-    session["q"] = i
-    session["q_start"] = time.time()
-    return redirect("/exam")
-
-
+# ---------------- RESULT ----------------
 @app.route("/result")
 def result():
-    score = 0
-    correct = wrong = unattempted = 0
+    my = session.get("result")
+    my_id = session.get("id")
 
-    for i, (q, o, a) in enumerate(QUESTIONS):
-        u = session["ans"].get(str(i))
-        if u is None:
-            unattempted += 1
-        elif int(u) == a:
-            score += PER_MARK
-            correct += 1
-        else:
-            score -= NEG_MARK
-            wrong += 1
+    sorted_results = sorted(ALL_RESULTS, key=lambda x: x["score"], reverse=True)
+    rank = next(i+1 for i, r in enumerate(sorted_results) if r["id"] == my_id)
 
-    # store score for rank calculation (only attempted students)
-    ALL_SCORES.append(score)
+    total = len(sorted_results)
+    percentile = round(((total - rank) / total) * 100, 2)
+    avg_score = round(sum(r["score"] for r in sorted_results) / total, 2)
+    best_score = sorted_results[0]["score"]
 
-    # rank among attempted students only
-    sorted_scores = sorted(ALL_SCORES, reverse=True)
-    rank = sorted_scores.index(score) + 1
-    total_students = len(sorted_scores)
+    return render_template(
+        "result.html",
+        result=my,
+        rank=f"{rank}/{total}",
+        percentile=percentile,
+        avg_score=avg_score,
+        best_score=best_score
+    )
 
-    accuracy = round((correct / len(QUESTIONS)) * 100, 2)
-
-    return f"""
-    <html><head><meta name=viewport content="width=device-width, initial-scale=1">
-    <style>
-    body{{font-family:sans-serif;background:#020617;color:white;text-align:center;font-size:18px}}
-    button{{padding:14px;font-size:18px;width:90%;margin-top:20px}}
-    </style></head><body>
-
-    <h2>RESULT</h2>
-    Name: {session.get("name")}<br><br>
-
-    Score: {score}/{len(QUESTIONS)}<br>
-    Correct: {correct}<br>
-    Wrong: {wrong}<br>
-    Unattempted: {unattempted}<br><br>
-
-    Accuracy: {accuracy}%<br>
-    <b>Rank: {rank} / {total_students}</b><br><br>
-
-    <a href="/reattempt"><button>REATTEMPT TEST</button></a>
-
-    </body></html>
-    """
-
-
+# ---------------- REATTEMPT ----------------
 @app.route("/reattempt")
 def reattempt():
-    name = session.get("name")
     session.clear()
-    session["name"] = name
-    session["ans"] = {}
-    session["review"] = {}
-    session["q"] = 0
-    session["q_start"] = time.time()
-    return redirect("/exam")
+    return redirect("/")
 
-
+# ---------------- RUN ----------------
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
