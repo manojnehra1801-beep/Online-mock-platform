@@ -96,16 +96,17 @@ body{
 <form method="post" id="examForm">
 
 {% for q in questions %}
-<div class="question-box">
+<div class="question-box" id="q{{ loop.index0 }}">
     <p><b>Q{{ loop.index }}. {{ q.question }}</b></p>
 
     {% for opt in q.options %}
     <label>
         <input type="radio"
-               name="{{ q.id }}"
-               value="{{ loop.index0 }}">
-        {{ opt }}
+       name="{{ q.id }}
+       value="{{ loop.index0 }}"
+       onclick="toggleAnswer(this, {{ loop.index0 }})">
     </label><br>
+{ { br } }
     {% endfor %}
 </div>
 {% endfor %}
