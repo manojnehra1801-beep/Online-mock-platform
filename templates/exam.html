@@ -52,6 +52,9 @@ body{
     border-radius:50%;
     font-weight:bold;
 }
+.grey{ background:#dfe6e9; }
+.green{ background:#55efc4; }
+.yellow{ background:#ffeaa7; }
 
 /* CONTROLS */
 .controls{
@@ -102,11 +105,11 @@ body{
     {% for opt in q.options %}
     <label>
         <input type="radio"
-       name="{{ q.id }}
-       value="{{ loop.index0 }}"
-       onclick="toggleAnswer(this, {{ loop.index0 }})">
+               name="{{ q.id }}"
+               value="{{ loop.index0 }}"
+               onclick="markAttempted({{ loop.index0 }})">
+        {{ opt }}
     </label><br>
-{ { br } }
     {% endfor %}
 </div>
 {% endfor %}
@@ -124,7 +127,7 @@ body{
 </form>
 
 <script>
-// ---------------- TIMER ----------------
+// ================= TIMER =================
 const totalQ = document.querySelectorAll(".question-box").length;
 const perQTime = 30;
 let totalSeconds = totalQ * perQTime;
@@ -150,38 +153,60 @@ function startTotalTimer(){
     },1000);
 }
 
-// ---------------- QUESTIONS ----------------
+// ================= QUESTIONS =================
 let currentQ = 0;
+let paletteStatus = []; // 0=not seen, 1=attempted, 2=review
+
+function createPalette(){
+    const pal = document.getElementById("palette");
+    for(let i=0;i<totalQ;i++){
+        paletteStatus.push(0);
+        let btn = document.createElement("button");
+        btn.innerText = i+1;
+        btn.className = "grey";
+        btn.onclick = ()=>showQuestion(i);
+        btn.id = "p"+i;
+        pal.appendChild(btn);
+    }
+}
+
+function updatePalette(){
+    for(let i=0;i<paletteStatus.length;i++){
+        let btn = document.getElementById("p"+i);
+        if(paletteStatus[i] === 1) btn.className = "green";
+        else if(paletteStatus[i] === 2) btn.className = "yellow";
+        else btn.className = "grey";
+    }
+}
 
 function showQuestion(index){
-    const questions = document.querySelectorAll(".question-box");
-    questions.forEach(q => q.style.display = "none");
-
-    if(questions[index]){
-        questions[index].style.display = "block";
-        currentQ = index;
-    }
+    document.querySelectorAll(".question-box").forEach(q => q.style.display="none");
+    document.getElementById("q"+index).style.display="block";
+    currentQ = index;
 }
 
 function nextQ(){
-    if(currentQ < document.querySelectorAll(".question-box").length - 1){
-        showQuestion(currentQ + 1);
-    }
+    if(currentQ < totalQ-1) showQuestion(currentQ+1);
 }
 
 function prevQ(){
-    if(currentQ > 0){
-        showQuestion(currentQ - 1);
-    }
+    if(currentQ > 0) showQuestion(currentQ-1);
+}
+
+function markAttempted(){
+    paletteStatus[currentQ] = 1;
+    updatePalette();
 }
 
 function markReview(){
-    alert("Marked for review");
+    paletteStatus[currentQ] = 2;
+    updatePalette();
 }
 
-// ---------------- ON LOAD ----------------
+// ================= ON LOAD =================
 window.onload = function(){
     startTotalTimer();
+    createPalette();
     showQuestion(0);
 };
 </script>
