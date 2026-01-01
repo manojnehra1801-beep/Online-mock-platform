@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 import uuid
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=None)
+@app.route("/health")
+def health():
+    return "FLASK IS RUNNING"
 app.secret_key = "super_secret_exam_key_123"
 
 # ================== QUESTIONS ==================
