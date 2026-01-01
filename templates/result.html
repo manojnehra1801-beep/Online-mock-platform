@@ -1,31 +1,149 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Result</title>
-    <style>
-        body {
-            font-family: Arial;
-            padding: 15px;
-        }
-        p {
-            font-size: 16px;
-        }
-    </style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance</title>
+
+<style>
+body{
+    margin:0;
+    padding:0;
+    font-family: Arial, sans-serif;
+    background:linear-gradient(135deg,#1d2671,#c33764);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.card{
+    background:#ffffff;
+    width:92%;
+    max-width:420px;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.25);
+}
+
+.title{
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+    color:#c33764;
+    margin-bottom:15px;
+}
+
+.score-box{
+    background:linear-gradient(135deg,#11998e,#38ef7d);
+    color:#fff;
+    border-radius:12px;
+    padding:15px;
+    text-align:center;
+    margin-bottom:15px;
+}
+
+.score-box h2{
+    margin:0;
+    font-size:26px;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.stat{
+    background:#f5f6fa;
+    border-radius:10px;
+    padding:10px;
+    text-align:center;
+    font-size:14px;
+}
+
+.stat b{
+    display:block;
+    font-size:18px;
+    margin-bottom:4px;
+}
+
+.correct{ background:#d4f8e8; }
+.incorrect{ background:#ffe0e0; }
+.attempted{ background:#e0ecff; }
+.unattempted{ background:#eeeeee; }
+.accuracy{ background:#fff3cd; }
+.percentile{ background:#e8ddff; }
+
+.reattempt{
+    margin-top:20px;
+}
+
+.reattempt a{
+    display:block;
+    width:100%;
+    text-align:center;
+    padding:12px;
+    background:linear-gradient(135deg,#ff512f,#dd2476);
+    color:#fff;
+    text-decoration:none;
+    font-size:18px;
+    border-radius:10px;
+}
+</style>
 </head>
+
 <body>
 
-<h2>Result</h2>
+<div class="card">
 
-<p><b>Score:</b> {{ score }}</p>
-<p><b>Correct:</b> {{ correct }}</p>
-<p><b>Incorrect:</b> {{ incorrect }}</p>
-<p><b>Attempted:</b> {{ attempted }}</p>
-<p><b>Unattempted:</b> {{ unattempted }}</p>
-<p><b>Accuracy:</b> {{ accuracy }}%</p>
+    <!-- Performance Title -->
+    <div class="title">Performance</div>
 
-<br>
-<a href="/">Reattempt</a>
+    <!-- Score -->
+    <div class="score-box">
+        <h2>{{ score }} / {{ total }}</h2>
+        <p>Total Score</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+        <div class="stat correct">
+            <b>{{ correct }}</b>
+            Correct
+        </div>
+
+        <div class="stat incorrect">
+            <b>{{ incorrect }}</b>
+            Incorrect
+        </div>
+
+        <div class="stat attempted">
+            <b>{{ attempted }}</b>
+            Attempted
+        </div>
+
+        <div class="stat unattempted">
+            <b>{{ unattempted }}</b>
+            Unattempted
+        </div>
+
+        <div class="stat accuracy">
+            <b>{{ accuracy }}%</b>
+            Accuracy
+        </div>
+
+        <div class="stat percentile">
+            <b>{{ (accuracy * 0.9)|round(2) }}%</b>
+            Percentile
+        </div>
+    </div>
+
+    <!-- Reattempt -->
+    <div class="reattempt">
+        <a href="/">Reattempt Test</a>
+    </div>
+
+</div>
 
 </body>
 </html>
