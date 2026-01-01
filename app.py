@@ -1,10 +1,10 @@
 from flask import Flask, request, session, redirect
 import time
-import random
 
 app = Flask(__name__)
 app.secret_key = "cbt_demo"
 
+# ---------------- CONFIG ----------------
 QUESTIONS = [
     ("भारत की राजधानी क्या है?",
      ["Delhi", "Mumbai", "Chennai", "Kolkata"], 0),
@@ -14,11 +14,13 @@ QUESTIONS = [
      ["Delhi", "Agra", "Jaipur", "Lucknow"], 1)
 ]
 
-TOTAL = len(QUESTIONS)
 PER_MARK = 1
 NEG_MARK = 0.25
-PER_Q_TIME = 30          # ⏱️ 30 sec per question
-TOTAL_STUDENTS = 87000   # rank calculation base
+PER_Q_TIME = 30  # seconds per question
+
+# store scores of attempted students (runtime memory)
+ALL_SCORES = []
+# ----------------------------------------
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -50,13 +52,13 @@ def login():
 def exam():
     q = session["q"]
 
-    # ⏱️ auto move next if 30 sec over
+    # auto-next after 30 sec
     if time.time() - session["q_start"] > PER_Q_TIME:
         session["q"] += 1
         session["q_start"] = time.time()
         return redirect("/exam")
 
-    if q >= TOTAL:
+    if q >= len(QUESTIONS):
         return redirect("/result")
 
     if request.method == "POST":
@@ -75,7 +77,7 @@ def exam():
     time_left = int(PER_Q_TIME - (time.time() - session["q_start"]))
 
     palette = ""
-    for i in range(TOTAL):
+    for i in range(len(QUESTIONS)):
         if i == q:
             color = "#facc15"
         elif str(i) in session["review"]:
@@ -99,7 +101,7 @@ def exam():
     <div class="timer">⏱ {time_left}s</div>
 
     <div>{palette}</div>
-    <h3>Q{q+1}/{TOTAL}</h3>
+    <h3>Q{q+1}/{len(QUESTIONS)}</h3>
 
     <form method=post>
     <p>{qtext}</p>
@@ -136,33 +138,50 @@ def result():
             score -= NEG_MARK
             wrong += 1
 
-    accuracy = round((correct / TOTAL) * 100, 2)
+    # store score for rank calculation (only attempted students)
+    ALL_SCORES.append(score)
 
-    # 📊 Rank estimation
-    percentile = min(99.9, accuracy + random.uniform(5, 15))
-    rank = int((100 - percentile) / 100 * TOTAL_STUDENTS)
+    # rank among attempted students only
+    sorted_scores = sorted(ALL_SCORES, reverse=True)
+    rank = sorted_scores.index(score) + 1
+    total_students = len(sorted_scores)
+
+    accuracy = round((correct / len(QUESTIONS)) * 100, 2)
 
     return f"""
     <html><head><meta name=viewport content="width=device-width, initial-scale=1">
     <style>
     body{{font-family:sans-serif;background:#020617;color:white;text-align:center;font-size:18px}}
-    .box{{background:#020617;padding:20px;border-radius:12px}}
+    button{{padding:14px;font-size:18px;width:90%;margin-top:20px}}
     </style></head><body>
 
     <h2>RESULT</h2>
-    <div class="box">
     Name: {session.get("name")}<br><br>
-    Score: {score}/{TOTAL}<br>
+
+    Score: {score}/{len(QUESTIONS)}<br>
     Correct: {correct}<br>
     Wrong: {wrong}<br>
     Unattempted: {unattempted}<br><br>
+
     Accuracy: {accuracy}%<br>
-    <b>Rank: {rank} / {TOTAL_STUDENTS}</b><br>
-    Percentile: {round(percentile,2)}%
-    </div>
+    <b>Rank: {rank} / {total_students}</b><br><br>
+
+    <a href="/reattempt"><button>REATTEMPT TEST</button></a>
 
     </body></html>
     """
+
+
+@app.route("/reattempt")
+def reattempt():
+    name = session.get("name")
+    session.clear()
+    session["name"] = name
+    session["ans"] = {}
+    session["review"] = {}
+    session["q"] = 0
+    session["q_start"] = time.time()
+    return redirect("/exam")
 
 
 if __name__ == "__main__":
