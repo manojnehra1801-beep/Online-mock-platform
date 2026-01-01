@@ -37,13 +37,18 @@ NEGATIVE_MARK = 0.25
 ALL_RESULTS = []
 
 # ================== LOGIN ==================
-@app.route("/", methods=["GET","POST"])
+@app.route("/", methods=["GET", "POST"])
 def login():
+    # 🔹 Agar already logged in hai (reattempt)
+    if "name" in session and request.method == "GET":
+        return redirect("/exam")
+
     if request.method == "POST":
         session.clear()
         session["name"] = request.form["name"]
         session["student_id"] = str(uuid.uuid4())
         return redirect("/exam")
+
     return render_template("login.html")
 # ================== EXAM ==================
 @app.route("/exam", methods=["GET", "POST"])
@@ -81,43 +86,45 @@ def exam():
     return render_template("exam.html", questions=QUESTIONS)
 
 # ================== RESULT ==================
-@app.route("/result")
-def result():
-    if "result" not in session or "student_id" not in session:
+
+@app.route("/exam", methods=["GET", "POST"])
+def exam():
+    if "student_id" not in session:
         return redirect("/")
 
-    my_result = session["result"]
-    my_id = session["student_id"]
+    if request.method == "POST":
+        correct = 0
+        incorrect = 0
 
-    if not ALL_RESULTS:
-        return redirect("/")
+        for q in QUESTIONS:
+            user_ans = request.form.get(q["id"])
+            if user_ans is not None:
+                if user_ans == q["answer"]:
+                    correct += 1
+                else:
+                    incorrect += 1
 
-    sorted_results = sorted(ALL_RESULTS, key=lambda x: x["score"], reverse=True)
+        attempted = correct + incorrect
+        unattempted = len(QUESTIONS) - attempted
 
-    rank = None
-    for i, r in enumerate(sorted_results):
-        if r["id"] == my_id:
-            rank = i + 1
-            break
+        # 👉 1 mark per question
+        score = correct
+        total_marks = len(QUESTIONS)
 
-    if rank is None:
-        return redirect("/")
+        accuracy = round((correct / attempted) * 100, 2) if attempted else 0
 
-    total_students = len(sorted_results)
+        return render_template(
+            "result.html",
+            score=score,
+            total=total_marks,
+            correct=correct,
+            incorrect=incorrect,
+            attempted=attempted,
+            unattempted=unattempted,
+            accuracy=accuracy
+        )
 
-    percentile = round(((total_students - rank) / total_students) * 100, 2)
-    avg_score = round(sum(r["score"] for r in sorted_results) / total_students, 2)
-    best_score = sorted_results[0]["score"]
-
-    return render_template(
-        "result.html",
-        result=my_result,
-        rank=f"{rank}/{total_students}",
-        percentile=percentile,
-        avg_score=avg_score,
-        best_score=best_score
-    )
-
+    return render_template("exam.html", questions=QUESTIONS)
 # ================== REATTEMPT ==================
 @app.route("/reattempt")
 def reattempt():
