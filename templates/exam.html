@@ -6,145 +6,82 @@
 
 <style>
 body{
-    font-family: Arial;
-    padding:10px;
+    font-family: Arial, sans-serif;
+    margin:0;
+    padding-bottom:70px; /* space for submit */
 }
 
-.timer{
-    color:red;
+/* HEADER */
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px;
+    background:#2d3436;
+    color:#fff;
+    font-size:14px;
+}
+
+.header .center{
+    font-size:16px;
     font-weight:bold;
 }
 
+/* TIMER */
+.timer{
+    color:#ff7675;
+    font-weight:bold;
+}
+
+/* QUESTION */
 .question-box{
     display:none;
+    padding:10px;
 }
 .question-box.active{
     display:block;
 }
 
+/* PALETTE */
 .palette{
     display:flex;
     flex-wrap:wrap;
-    gap:8px;
-    margin-bottom:15px;
+    gap:6px;
+    padding:10px;
 }
-
 .palette button{
-    width:40px;
-    height:40px;
+    width:36px;
+    height:36px;
     border:none;
     border-radius:50%;
     font-weight:bold;
 }
-
 .grey{ background:#dfe6e9; }
 .green{ background:#55efc4; }
 .yellow{ background:#ffeaa7; }
 
+/* CONTROLS */
+.controls{
+    text-align:center;
+}
 .controls button{
     padding:10px;
     margin:5px;
     width:30%;
+    font-size:15px;
+}
+
+/* SUBMIT FIXED */
+.submit-fixed{
+    position:fixed;
+    right:10px;
+    bottom:10px;
+}
+.submit-fixed button{
+    padding:14px 18px;
     font-size:16px;
+    background:#e84393;
+    color:#fff;
+    border:none;
+    border-radius:30px;
 }
-</style>
-</head>
-
-<body>
-
-<h3>Time Left: <span class="timer" id="timer">30</span> sec</h3>
-
-<!-- Question Palette -->
-<div class="palette" id="palette"></div>
-
-<form method="post" id="examForm">
-
-{% for q in questions %}
-<div class="question-box" id="q{{ loop.index0 }}">
-    <p><b>Q{{ loop.index }}. {{ q.question }}</b></p>
-
-    {% for opt in q.options %}
-        <label>
-            <input type="radio"
-                   name="{{ q.id }}"
-                   value="{{ loop.index0 }}"
-                   onchange="markAnswered({{ loop.index0 }})">
-            {{ opt }}
-        </label><br>
-    {% endfor %}
-</div>
-{% endfor %}
-
-<div class="controls">
-    <button type="button" onclick="prevQ()">Previous</button>
-    <button type="button" onclick="markReview()">Review</button>
-    <button type="button" onclick="nextQ()">Next</button>
-</div>
-
-<br>
-<button type="submit">Submit Exam</button>
-
-</form>
-
-<script>
-let current = 0;
-let total = {{ questions|length }};
-let timer = 30;
-let interval;
-
-// palette create
-const paletteDiv = document.getElementById("palette");
-for(let i=0;i<total;i++){
-    let b = document.createElement("button");
-    b.innerText = i+1;
-    b.className = "grey";
-    b.onclick = ()=>showQ(i);
-    paletteDiv.appendChild(b);
-}
-
-function showQ(index){
-    document.querySelectorAll('.question-box').forEach(q=>q.classList.remove('active'));
-    document.getElementById('q'+index).classList.add('active');
-    current = index;
-    resetTimer();
-}
-
-function nextQ(){
-    if(current < total-1){
-        showQ(current+1);
-    }
-}
-
-function prevQ(){
-    if(current > 0){
-        showQ(current-1);
-    }
-}
-
-function markReview(){
-    paletteDiv.children[current].className = "yellow";
-}
-
-function markAnswered(index){
-    paletteDiv.children[index].className = "green";
-}
-
-function resetTimer(){
-    clearInterval(interval);
-    timer = 30;
-    document.getElementById("timer").innerText = timer;
-
-    interval = setInterval(()=>{
-        timer--;
-        document.getElementById("timer").innerText = timer;
-        if(timer === 0){
-            nextQ();
-        }
-    },1000);
-}
-
-showQ(0);
-</script>
-
-</body>
-</html>
