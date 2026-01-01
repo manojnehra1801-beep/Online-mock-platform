@@ -2,31 +2,50 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Exam</title>
+<title>Mock Test</title>
 
 <style>
 body{
     font-family: Arial;
-    padding: 10px;
+    padding:10px;
 }
+
+.timer{
+    color:red;
+    font-weight:bold;
+}
+
 .question-box{
     display:none;
 }
 .question-box.active{
     display:block;
 }
-button{
+
+.palette{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:15px;
+}
+
+.palette button{
+    width:40px;
+    height:40px;
+    border:none;
+    border-radius:50%;
+    font-weight:bold;
+}
+
+.grey{ background:#dfe6e9; }
+.green{ background:#55efc4; }
+.yellow{ background:#ffeaa7; }
+
+.controls button{
     padding:10px;
     margin:5px;
     width:30%;
     font-size:16px;
-}
-.timer{
-    font-weight:bold;
-    color:red;
-}
-.review{
-    background:#ffeaa7;
 }
 </style>
 </head>
@@ -34,6 +53,9 @@ button{
 <body>
 
 <h3>Time Left: <span class="timer" id="timer">30</span> sec</h3>
+
+<!-- Question Palette -->
+<div class="palette" id="palette"></div>
 
 <form method="post" id="examForm">
 
@@ -43,20 +65,23 @@ button{
 
     {% for opt in q.options %}
         <label>
-            <input type="radio" name="{{ q.id }}" value="{{ loop.index0 }}">
+            <input type="radio"
+                   name="{{ q.id }}"
+                   value="{{ loop.index0 }}"
+                   onchange="markAnswered({{ loop.index0 }})">
             {{ opt }}
         </label><br>
     {% endfor %}
 </div>
 {% endfor %}
 
+<div class="controls">
+    <button type="button" onclick="prevQ()">Previous</button>
+    <button type="button" onclick="markReview()">Review</button>
+    <button type="button" onclick="nextQ()">Next</button>
+</div>
+
 <br>
-
-<button type="button" onclick="prevQ()">Previous</button>
-<button type="button" onclick="markReview()">Mark for Review</button>
-<button type="button" onclick="nextQ()">Next</button>
-
-<br><br>
 <button type="submit">Submit Exam</button>
 
 </form>
@@ -67,38 +92,51 @@ let total = {{ questions|length }};
 let timer = 30;
 let interval;
 
+// palette create
+const paletteDiv = document.getElementById("palette");
+for(let i=0;i<total;i++){
+    let b = document.createElement("button");
+    b.innerText = i+1;
+    b.className = "grey";
+    b.onclick = ()=>showQ(i);
+    paletteDiv.appendChild(b);
+}
+
 function showQ(index){
     document.querySelectorAll('.question-box').forEach(q=>q.classList.remove('active'));
     document.getElementById('q'+index).classList.add('active');
+    current = index;
     resetTimer();
 }
 
 function nextQ(){
     if(current < total-1){
-        current++;
-        showQ(current);
+        showQ(current+1);
     }
 }
 
 function prevQ(){
     if(current > 0){
-        current--;
-        showQ(current);
+        showQ(current-1);
     }
 }
 
 function markReview(){
-    document.getElementById('q'+current).classList.toggle('review');
+    paletteDiv.children[current].className = "yellow";
+}
+
+function markAnswered(index){
+    paletteDiv.children[index].className = "green";
 }
 
 function resetTimer(){
     clearInterval(interval);
     timer = 30;
-    document.getElementById('timer').innerText = timer;
+    document.getElementById("timer").innerText = timer;
 
     interval = setInterval(()=>{
         timer--;
-        document.getElementById('timer').innerText = timer;
+        document.getElementById("timer").innerText = timer;
         if(timer === 0){
             nextQ();
         }
