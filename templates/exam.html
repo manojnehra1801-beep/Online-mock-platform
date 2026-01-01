@@ -132,60 +132,40 @@ body{
 </form>
 
 <script>
-let current = 0;
 let totalQ = {{ questions|length }};
-let perQTime = 30; // seconds
+let perQTime = 30; // seconds per question
 let totalSeconds = totalQ * perQTime;
+let totalInterval;
 
-// TOTAL TIME DISPLAY
+// format mm:ss
 function formatTime(sec){
     let m = Math.floor(sec/60);
     let s = sec % 60;
     return m + "m " + s + "s";
 }
-document.getElementById("totalTime").innerText = formatTime(totalSeconds);
 
-// PALETTE
-const palette = document.getElementById("palette");
-for(let i=0;i<totalQ;i++){
-    let b = document.createElement("button");
-    b.innerText = i+1;
-    b.className = "grey";
-    b.onclick = ()=>showQ(i);
-    palette.appendChild(b);
+// START TOTAL TIMER
+function startTotalTimer(){
+    document.getElementById("totalTime").innerText = formatTime(totalSeconds);
+
+    totalInterval = setInterval(()=>{
+        totalSeconds--;
+        document.getElementById("totalTime").innerText = formatTime(totalSeconds);
+
+        if(totalSeconds <= 0){
+            clearInterval(totalInterval);
+            // optional: auto submit
+            document.getElementById("examForm").submit();
+        }
+    },1000);
 }
 
-// SHOW QUESTION
-function showQ(i){
-    document.querySelectorAll('.question-box').forEach(q=>q.classList.remove('active'));
-    document.getElementById('q'+i).classList.add('active');
-    current = i;
-}
-
-// NAVIGATION
-function nextQ(){ if(current < totalQ-1) showQ(current+1); }
-function prevQ(){ if(current > 0) showQ(current-1); }
-
-// MARK REVIEW
-function markReview(){
-    palette.children[current].className = "yellow";
-}
-
-// TOGGLE ANSWER (click again = unattempt)
-function toggleAnswer(el, index){
-    if(el.dataset.checked === "true"){
-        el.checked = false;
-        el.dataset.checked = "false";
-        palette.children[index].className = "grey";
-    }else{
-        let group = document.getElementsByName(el.name);
-        group.forEach(r => r.dataset.checked = "false");
-        el.dataset.checked = "true";
-        palette.children[index].className = "green";
-    }
-}
-
-showQ(0);
+// page load par start
+window.onload = function(){
+    startTotalTimer();
+    // agar tum already showQ(0) use kar rahe ho, to yahin call rakho
+    if (typeof showQ === "function") showQ(0);
+};
 </script>
 
 </body>
