@@ -148,13 +148,28 @@ def admin_login():
             return redirect("/admin/dashboard")
         return "Invalid admin credentials"
     return render_template("admin_login.html")
-
-
 @app.route("/admin/dashboard")
 def admin_dashboard():
     if not session.get("admin"):
         return redirect("/admin")
-    return render_template("admin_dashboard.html", status=ANSWER_KEY_OPEN)
+    return render_template(
+        "admin_dashboard.html",
+        exam_active=EXAM_ACTIVE,
+        answer_key=ANSWER_KEY_OPEN
+    )
+
+
+
+
+@app.route("/admin/students")
+def admin_students():
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    return render_template(
+        "admin_students.html",
+        students=STUDENT_ATTEMPTS
+    )
 
 
 @app.route("/admin/toggle")
