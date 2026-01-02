@@ -4,8 +4,8 @@ app = Flask(__name__)
 app.secret_key = "ssc_mock_test_secret"
 
 # ================= ADMIN CONFIG =================
-ADMIN_USER = "admin"
-ADMIN_PASS = "admin123"
+ADMIN_USER = "Manojnehra"
+ADMIN_PASS = "Nehra@2233"
 ANSWER_KEY_OPEN = False   # admin control
 
 # ================= QUESTIONS (20) =================
