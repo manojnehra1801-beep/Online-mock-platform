@@ -1,111 +1,72 @@
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, redirect, session
 
 app = Flask(__name__)
-app.secret_key = "mock_test_secret_key"
+app.secret_key = "ssc_mock_test_secret"
 
+# ================= QUESTIONS (20) =================
 QUESTIONS = [
     {
         "id": "q1",
-        "question": "Which of the following statements is TRUE about the Industrial Policy Resolution of 1956?\nऔद्योगिक नीति संकल्प 1956 के बारे में कौन सा कथन सही है?",
+        "question": "Which statement is TRUE about the Industrial Policy Resolution of 1956?\n1956 की औद्योगिक नीति संकल्प के बारे में कौन सा कथन सत्य है?",
         "options": [
-            "It aimed to promote only private industries / केवल निजी उद्योग",
-            "It classified industries into three categories / उद्योगों को तीन श्रेणियों में बाँटा",
-            "It discouraged public sector investment / सार्वजनिक क्षेत्र को हतोत्साहित किया",
-            "It focused only on agriculture / केवल कृषि पर केंद्रित"
+            "It aimed to promote only private industries",
+            "It classified industries into three categories",
+            "It discouraged public sector investment",
+            "It focused only on agriculture"
         ],
         "answer": 1
     },
     {
         "id": "q2",
-        "question": "What was the name of the play written by Shudrak in the 4th century?\nचौथी शताब्दी में शूद्रक द्वारा लिखा गया नाटक कौन सा था?",
-        "options": [
-            "Ditha Mangalika / दीठ मंगलिका",
-            "Mrichchhakatika / मृच्छकटिक",
-            "Jataka Kathayen / जातक कथाएँ",
-            "Manusmriti / मनुस्मृति"
-        ],
+        "question": "Shudraka wrote which play where Charudatta is a Brahmin and merchant?\nशूद्रक द्वारा रचित वह नाटक कौन सा है?",
+        "options": ["Ditta Mangalika", "Mrichchhakatika", "Jataka Kathayen", "Manusmriti"],
         "answer": 1
     },
     {
         "id": "q3",
-        "question": "The festival of Baisakhi is associated with the formation of which Sikh institution?\nबैसाखी किस सिख संस्था के गठन से जुड़ी है?",
-        "options": [
-            "Akal Takht / अकाल तख्त",
-            "Khalsa Panth / खालसा पंथ",
-            "Harmandir Sahib / हरमंदिर साहिब",
-            "Guru Granth Sahib / गुरु ग्रंथ साहिब"
-        ],
+        "question": "The festival of Baisakhi is associated with which Sikh institution?\nबैसाखी किस सिख संस्था से जुड़ा है?",
+        "options": ["Akal Takht", "Khalsa Panth", "Harmandir Sahib", "Guru Granth Sahib"],
         "answer": 1
     },
     {
         "id": "q4",
-        "question": "Which Indian state is considered the birthplace of Kho-Kho?\nखो-खो का जन्मस्थान किस राज्य को माना जाता है?",
-        "options": [
-            "Tamil Nadu / तमिलनाडु",
-            "Maharashtra / महाराष्ट्र",
-            "Punjab / पंजाब",
-            "Haryana / हरियाणा"
-        ],
+        "question": "Which Indian state is considered the birthplace of Kho-Kho?\nखो-खो का जन्मस्थान कौन सा राज्य है?",
+        "options": ["Tamil Nadu", "Maharashtra", "Punjab", "Haryana"],
         "answer": 1
     },
     {
         "id": "q5",
-        "question": "Where was the final match of the first IPL tournament held in 2008?\n2008 में पहले IPL टूर्नामेंट का फाइनल कहाँ हुआ था?",
-        "options": [
-            "Kolkata / कोलकाता",
-            "Mumbai / मुंबई",
-            "Chennai / चेन्नई",
-            "Bangalore / बेंगलुरु"
-        ],
-        "answer": 1
+        "question": "Where was the final match of the first IPL held in 2008?\n2008 IPL का फाइनल कहाँ खेला गया?",
+        "options": ["Kolkata", "Mumbai", "Chennai", "Bangalore"],
+        "answer": 0
     },
     {
         "id": "q6",
-        "question": "Where was the final match of the first Men’s Kabaddi World Cup held?\nपहले पुरुष कबड्डी विश्व कप का फाइनल कहाँ हुआ था?",
-        "options": [
-            "New Delhi / नई दिल्ली",
-            "Mumbai / मुंबई",
-            "Ahmedabad / अहमदाबाद",
-            "Patna / पटना"
-        ],
+        "question": "Where was the final match of the first Men's Kabaddi World Cup held?\nपहला पुरुष कबड्डी विश्व कप फाइनल कहाँ हुआ?",
+        "options": ["New Delhi", "Mumbai", "Ahmedabad", "Patna"],
         "answer": 1
     },
     {
         "id": "q7",
-        "question": "National Education Day of India marks the birth anniversary of whom?\nभारत का राष्ट्रीय शिक्षा दिवस किसकी जयंती पर मनाया जाता है?",
-        "options": [
-            "Jyotirao Phule / ज्योतिराव फुले",
-            "Dr. B. R. Ambedkar / डॉ. भीमराव अंबेडकर",
-            "Maulana Abul Kalam Azad / मौलाना अबुल कलाम आज़ाद",
-            "C. R. Das / सी. आर. दास"
-        ],
+        "question": "National Education Day is celebrated on whose birth anniversary?\nराष्ट्रीय शिक्षा दिवस किसकी जयंती पर मनाया जाता है?",
+        "options": ["Jyotirao Phule", "Dr. B. R. Ambedkar", "Maulana Abul Kalam Azad", "C. R. Das"],
         "answer": 2
     },
     {
         "id": "q8",
-        "question": "Who is India’s first full-time woman Finance Minister?\nभारत की पहली पूर्णकालिक महिला वित्त मंत्री कौन हैं?",
-        "options": [
-            "Indira Gandhi / इंदिरा गांधी",
-            "Hemvati Nandan Bahuguna / हेमवती नंदन बहुगुणा",
-            "Sushma Swaraj / सुषमा स्वराज",
-            "Nirmala Sitharaman / निर्मला सीतारमण"
-        ],
+        "question": "Who is India's first full-time woman Finance Minister?\nभारत की पहली पूर्णकालिक महिला वित्त मंत्री कौन हैं?",
+        "options": ["Indira Gandhi", "Hemvati Nandan Bahuguna", "Sushma Swaraj", "Nirmala Sitharaman"],
         "answer": 3
     },
     {
         "id": "q9",
-        "question": "What is the primary objective of Pradhan Mantri Jan Dhan Yojana?\nप्रधानमंत्री जन धन योजना का मुख्य उद्देश्य क्या है?",
-        "options": [
-            "Providing housing to all / सभी को आवास",
-            "Financial inclusion of the poor / गरीबों का वित्तीय समावेशन",
-            "Free education for girls / बालिकाओं को मुफ्त शिक्षा",
-            "Rural electrification / ग्रामीण विद्युतीकरण"
-        ],
+        "question": "What is the main objective of PM Jan Dhan Yojana?\nप्रधानमंत्री जन धन योजना का मुख्य उद्देश्य क्या है?",
+        "options": ["Housing for all", "Financial inclusion", "Free education", "Rural electrification"],
         "answer": 1
     },
     {
         "id": "q10",
-        "question": "Gabriel Garcia Marquez won the Nobel Prize in Literature for which novel?\nगेब्रियल गार्सिया मार्केज़ को किस उपन्यास के लिए नोबेल पुरस्कार मिला?",
+        "question": "Gabriel Garcia Marquez won the Nobel Prize for which novel?\nगैब्रियल गार्सिया मार्केज़ को किस उपन्यास के लिए नोबेल मिला?",
         "options": [
             "The Autumn of the Patriarch",
             "Love in the Time of Cholera",
@@ -116,70 +77,50 @@ QUESTIONS = [
     },
     {
         "id": "q11",
-        "question": "Rag Darbari is written by which author?\n'राग दरबारी' किस लेखक द्वारा लिखी गई है?",
-        "options": [
-            "Sri Lal Shukla / श्रीलाल शुक्ल",
-            "Kamleshwar / कमलेश्वर",
-            "Yashpal / यशपाल",
-            "Premchand / प्रेमचंद"
-        ],
+        "question": "‘Raag Darbari’ novel was written by?\n‘राग दरबारी’ किसने लिखा?",
+        "options": ["Sri Lal Shukla", "Kamleshwar", "Yashpal", "Premchand"],
         "answer": 0
     },
     {
         "id": "q12",
-        "question": "The Global Innovation Index is released by which organization?\nवैश्विक नवाचार सूचकांक किसके द्वारा जारी किया जाता है?",
-        "options": [
-            "IMF",
-            "UNCTAD",
-            "WIPO",
-            "World Bank"
-        ],
+        "question": "Global Innovation Index is released by?\nग्लोबल इनोवेशन इंडेक्स कौन जारी करता है?",
+        "options": ["IMF", "UNCTAD", "WIPO", "World Bank"],
         "answer": 2
     },
     {
         "id": "q13",
-        "question": "Natural increase of population is measured by which difference?\nजनसंख्या की प्राकृतिक वृद्धि किस अंतर से मापी जाती है?",
+        "question": "Natural increase of population is measured by?\nजनसंख्या की प्राकृतिक वृद्धि किससे मापी जाती है?",
         "options": [
-            "Birth rate and migration",
-            "Death rate and life expectancy",
-            "Birth rate and death rate",
-            "Fertility rate and sex ratio"
+            "Birth rate & migration",
+            "Death rate & life expectancy",
+            "Birth rate & death rate",
+            "Fertility rate & sex ratio"
         ],
         "answer": 2
     },
     {
         "id": "q14",
-        "question": "Shifting cultivation known as Jhum is practiced in which region?\nझूम खेती किस क्षेत्र में की जाती है?",
-        "options": [
-            "Rajasthan",
-            "Punjab",
-            "North-East India",
-            "Western Ghats"
-        ],
+        "question": "Shifting cultivation ‘Jhum’ is practiced in which region?\nझूम कृषि कहाँ प्रचलित है?",
+        "options": ["Rajasthan", "Punjab", "North-East India", "Western Ghats"],
         "answer": 2
     },
     {
         "id": "q15",
-        "question": "In Kho-Kho, how many defenders start a defensive turn?\nखो-खो में रक्षा पारी की शुरुआत में कितने खिलाड़ी होते हैं?",
+        "question": "In Kho-Kho, how many defenders start the defense?\nखो-खो में रक्षा की शुरुआत में कितने खिलाड़ी होते हैं?",
         "options": ["2", "3", "4", "5"],
         "answer": 1
     },
     {
         "id": "q16",
-        "question": "Judicial Review is borrowed from which country?\nन्यायिक समीक्षा की अवधारणा किस देश से ली गई है?",
-        "options": [
-            "USA",
-            "Canada",
-            "Australia",
-            "UK"
-        ],
+        "question": "Judicial Review concept is borrowed from which country?\nन्यायिक पुनरावलोकन की अवधारणा किस देश से ली गई?",
+        "options": ["USA", "Canada", "Australia", "UK"],
         "answer": 0
     },
     {
         "id": "q17",
-        "question": "What is the effect of currency devaluation?\nमुद्रा अवमूल्यन का प्रभाव क्या होता है?",
+        "question": "Effect of devaluation of currency?\nमुद्रा अवमूल्यन का प्रभाव क्या होता है?",
         "options": [
-            "Cause deflation",
+            "Deflation",
             "Improve trade balance",
             "Reduce exports",
             "Increase imports"
@@ -188,18 +129,18 @@ QUESTIONS = [
     },
     {
         "id": "q18",
-        "question": "What happens when corporate tax is reduced?\nजब कॉर्पोरेट टैक्स घटाया जाता है तो क्या होता है?",
+        "question": "Reducing corporate tax leads to?\nकॉर्पोरेट टैक्स घटाने से क्या होता है?",
         "options": [
-            "Imports rise immediately",
-            "Reduction in fiscal deficit",
-            "Decrease in disposable income",
-            "Increase in supply-side investment"
+            "Imports rise",
+            "Fiscal deficit reduces",
+            "Disposable income decreases",
+            "Supply-side investment increases"
         ],
         "answer": 3
     },
     {
         "id": "q19",
-        "question": "Who wrote the Malayalam novel 'Chemmeen'?\n'चेम्मीन' उपन्यास किसने लिखा?",
+        "question": "Who wrote Malayalam novel ‘Chemmeen’?\nमलयालम उपन्यास ‘चेम्मीन’ किसने लिखा?",
         "options": [
             "O. V. Vijayan",
             "Thakazhi Sivasankara Pillai",
@@ -210,17 +151,18 @@ QUESTIONS = [
     },
     {
         "id": "q20",
-        "question": "Which ministry launched NYPS 2.0 portal in March 2025?\nमार्च 2025 में NYPS 2.0 पोर्टल किस मंत्रालय ने लॉन्च किया?",
+        "question": "Which ministry launched NYPS 2.0 in March 2025?\nमार्च 2025 में NYPS 2.0 किस मंत्रालय ने लॉन्च किया?",
         "options": [
             "Ministry of Education",
             "Ministry of Parliamentary Affairs",
-            "Ministry of Youth Affairs and Sports",
-            "Ministry of Information and Broadcasting"
+            "Ministry of Youth Affairs & Sports",
+            "Ministry of Information & Broadcasting"
         ],
         "answer": 1
     }
 ]
 
+# ================= ROUTES =================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -229,35 +171,34 @@ def login():
         return redirect("/exam")
     return render_template("login.html")
 
+
 @app.route("/exam", methods=["GET", "POST"])
 def exam():
     if request.method == "POST":
         correct = 0
         incorrect = 0
+        result_data = []
 
         for q in QUESTIONS:
             ans = request.form.get(q["id"])
             if ans is not None:
-                if int(ans) == q["answer"]:
+                ans = int(ans)
+                if ans == q["answer"]:
                     correct += 1
                 else:
                     incorrect += 1
 
+                result_data.append({
+                    "question": q["question"],
+                    "options": q["options"],
+                    "correct": q["answer"],
+                    "selected": ans
+                })
+
         attempted = correct + incorrect
         unattempted = len(QUESTIONS) - attempted
         accuracy = round((correct / attempted) * 100, 2) if attempted > 0 else 0
-result_data = []
 
-for q in QUESTIONS:
-    user_ans = request.form.get(q["id"])
-    result_data.append({
-        "question": q["question"],
-        "options": q["options"],
-        "correct": q["answer"],
-        "user": int(user_ans) if user_ans is not None else None
-    })
-
-session["result_data"] = result_data
         session.update({
             "score": correct,
             "total": len(QUESTIONS),
@@ -265,16 +206,34 @@ session["result_data"] = result_data
             "incorrect": incorrect,
             "attempted": attempted,
             "unattempted": unattempted,
-            "accuracy": accuracy
+            "accuracy": accuracy,
+            "result_data": result_data
         })
 
         return redirect("/result")
 
     return render_template("exam.html", questions=QUESTIONS)
 
+
 @app.route("/result")
 def result():
+    if "score" not in session:
+        return redirect("/")
     return render_template("result.html", **session)
+
+
+@app.route("/answer-key")
+def answer_key():
+    if "result_data" not in session:
+        return redirect("/")
+    return render_template("review.html", result_data=session["result_data"])
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
