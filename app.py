@@ -104,7 +104,13 @@ def exam():
         attempted = correct + incorrect
         unattempted = len(QUESTIONS) - attempted
         accuracy = round((correct / attempted) * 100, 2) if attempted else 0
-
+STUDENT_ATTEMPTS.append({
+            "name": session.get("name"),
+            "score": correct,
+            "attempted": attempted,
+            "total": len(QUESTIONS),
+            "accuracy": accuracy
+        })
         session.update({
             "score": correct,
             "total": len(QUESTIONS),
