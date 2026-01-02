@@ -311,7 +311,9 @@ def admin_login():
         return "Invalid admin login"
     return render_template("admin_login.html")
 
-
+@app.route("/exam-status")
+def exam_status():
+    return {"active": EXAM_ACTIVE}
 @app.route("/admin/dashboard")
 def admin_dashboard():
     if not session.get("admin"):
