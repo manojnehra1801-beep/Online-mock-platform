@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student List</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#f5f6fa;
+    padding:20px;
+}
+h2{
+    text-align:center;
+}
+table{
+    width:100%;
+    max-width:600px;
+    margin:auto;
+    border-collapse:collapse;
+    background:#fff;
+}
+th, td{
+    padding:10px;
+    border:1px solid #ddd;
+    text-align:center;
+}
+th{
+    background:#2d3436;
+    color:#fff;
+}
+tr:nth-child(even){
+    background:#f2f2f2;
+}
+.back{
+    display:block;
+    text-align:center;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Student Attempts</h2>
+
+<table>
+<tr>
+    <th>#</th>
+    <th>Name</th>
+    <th>Score</th>
+    <th>Attempted</th>
+    <th>Accuracy (%)</th>
+</tr>
+
+{% for s in students %}
+<tr>
+    <td>{{ loop.index }}</td>
+    <td>{{ s.name }}</td>
+    <td>{{ s.score }}/{{ s.total }}</td>
+    <td>{{ s.attempted }}</td>
+    <td>{{ s.accuracy }}</td>
+</tr>
+{% endfor %}
+
+{% if students|length == 0 %}
+<tr>
+    <td colspan="5">No students attempted yet</td>
+</tr>
+{% endif %}
+</table>
+
+<a class="back" href="/admin/dashboard">⬅ Back to Dashboard</a>
+
+</body>
+</html>
