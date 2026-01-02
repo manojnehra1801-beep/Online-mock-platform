@@ -2,70 +2,46 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Answer Review</title>
+<title>Answer Key</title>
 
 <style>
 body{
-    font-family: Arial;
+    font-family:Arial;
     background:#f5f6fa;
     margin:0;
     padding:10px;
 }
-
-h2{
-    text-align:center;
-}
-
 .card{
     background:#fff;
     padding:12px;
     margin-bottom:10px;
     border-radius:10px;
 }
-
 .correct{ background:#d4edda; }
-.incorrect{ background:#f8d7da; }
-.unattempted{ background:#ececec; }
-
+.wrong{ background:#f8d7da; }
 .option{
     padding:6px;
     margin:4px 0;
     border-radius:6px;
 }
-
 .opt-correct{
     background:#55efc4;
     font-weight:bold;
 }
-
 .opt-wrong{
     background:#ff7675;
     color:#fff;
-}
-
-.summary{
-    display:flex;
-    justify-content:space-around;
-    margin:15px 0;
-    font-weight:bold;
 }
 </style>
 </head>
 
 <body>
 
-<h2>Answer Review</h2>
-
-<div class="summary">
-    <div>✔ {{ correct }}</div>
-    <div>✖ {{ incorrect }}</div>
-    <div>⚪ {{ unattempted }}</div>
-    <div>🎯 {{ accuracy }}%</div>
-</div>
+<h2 style="text-align:center;">Answer Key</h2>
 
 {% for q in result_data %}
 <div class="card {{ q.status }}">
-    <p><b>Q{{ loop.index }}. {{ q.question }}</b></p>
+    <b>Q{{ loop.index }}. {{ q.question }}</b>
 
     {% for opt in q.options %}
         {% set idx = loop.index0 %}
