@@ -246,7 +246,18 @@ def exam():
         attempted = correct + incorrect
         unattempted = len(QUESTIONS) - attempted
         accuracy = round((correct / attempted) * 100, 2) if attempted > 0 else 0
+result_data = []
 
+for q in QUESTIONS:
+    user_ans = request.form.get(q["id"])
+    result_data.append({
+        "question": q["question"],
+        "options": q["options"],
+        "correct": q["answer"],
+        "user": int(user_ans) if user_ans is not None else None
+    })
+
+session["result_data"] = result_data
         session.update({
             "score": correct,
             "total": len(QUESTIONS),
