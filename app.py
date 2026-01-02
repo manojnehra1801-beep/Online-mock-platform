@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, abort
 
 app = Flask(__name__)
 app.secret_key = "ssc_mock_test_secret"
-
+STUDENT_ATTEMPTS = []
 # ================= ADMIN CONFIG =================
 ADMIN_USER = "Manojnehra"
 ADMIN_PASS = "Nehra@2233"
