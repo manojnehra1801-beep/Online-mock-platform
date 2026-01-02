@@ -2,92 +2,39 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Performance</title>
+<title>Result</title>
 
 <style>
 body{
-    margin:0;
-    padding:0;
-    font-family: Arial, sans-serif;
-    background:linear-gradient(135deg,#1d2671,#c33764);
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.card{
-    background:#ffffff;
-    width:92%;
-    max-width:420px;
-    border-radius:14px;
-    padding:20px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.25);
-}
-
-.title{
-    text-align:center;
-    font-size:24px;
-    font-weight:bold;
-    color:#c33764;
-    margin-bottom:15px;
-}
-
-.score-box{
-    background:linear-gradient(135deg,#11998e,#38ef7d);
-    color:#fff;
-    border-radius:12px;
-    padding:15px;
-    text-align:center;
-    margin-bottom:15px;
-}
-
-.score-box h2{
-    margin:0;
-    font-size:26px;
-}
-
-.stats{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-}
-
-.stat{
+    font-family:Arial;
     background:#f5f6fa;
-    border-radius:10px;
-    padding:10px;
-    text-align:center;
-    font-size:14px;
+    margin:0;
+    padding:20px;
 }
-
-.stat b{
-    display:block;
-    font-size:18px;
-    margin-bottom:4px;
+.card{
+    max-width:400px;
+    margin:auto;
+    background:#fff;
+    padding:20px;
+    border-radius:12px;
+    position:relative;
 }
-
-.correct{ background:#d4f8e8; }
-.incorrect{ background:#ffe0e0; }
-.attempted{ background:#e0ecff; }
-.unattempted{ background:#eeeeee; }
-.accuracy{ background:#fff3cd; }
-.percentile{ background:#e8ddff; }
-
-.reattempt{
-    margin-top:20px;
+.top-btn{
+    position:absolute;
+    top:15px;
+    right:15px;
 }
-
-.reattempt a{
-    display:block;
-    width:100%;
-    text-align:center;
-    padding:12px;
-    background:linear-gradient(135deg,#ff512f,#dd2476);
-    color:#fff;
+.top-btn a{
     text-decoration:none;
-    font-size:18px;
-    border-radius:10px;
+    background:#0984e3;
+    color:#fff;
+    padding:8px 14px;
+    border-radius:20px;
+    font-size:13px;
+}
+.stat{
+    margin:8px 0;
+    font-size:16px;
 }
 </style>
 </head>
@@ -95,54 +42,19 @@ body{
 <body>
 
 <div class="card">
-
-    <!-- Performance Title -->
-    <div class="title">Performance</div>
-
-    <!-- Score -->
-    <div class="score-box">
-        <h2>{{ score }} / {{ total }}</h2>
-        <p>Total Score</p>
+    <!-- SEE ANSWER KEY BUTTON -->
+    <div class="top-btn">
+        <a href="/answer-key">See Answer Key</a>
     </div>
 
-    <!-- Stats -->
-    <div class="stats">
-        <div class="stat correct">
-            <b>{{ correct }}</b>
-            Correct
-        </div>
+    <h2>Performance</h2>
 
-        <div class="stat incorrect">
-            <b>{{ incorrect }}</b>
-            Incorrect
-        </div>
-
-        <div class="stat attempted">
-            <b>{{ attempted }}</b>
-            Attempted
-        </div>
-
-        <div class="stat unattempted">
-            <b>{{ unattempted }}</b>
-            Unattempted
-        </div>
-
-        <div class="stat accuracy">
-            <b>{{ accuracy }}%</b>
-            Accuracy
-        </div>
-
-        <div class="stat percentile">
-            <b>{{ (accuracy * 0.9)|round(2) }}%</b>
-            Percentile
-        </div>
-    </div>
-
-    <!-- Reattempt -->
-   <!-- Reattempt -->
-<div class="reattempt">
-    <a href="/logout" class="btn">🔁 Reattempt Test</a>
-</div>
+    <div class="stat">Score: <b>{{ score }}/{{ total }}</b></div>
+    <div class="stat">Correct: {{ correct }}</div>
+    <div class="stat">Incorrect: {{ incorrect }}</div>
+    <div class="stat">Attempted: {{ attempted }}</div>
+    <div class="stat">Unattempted: {{ unattempted }}</div>
+    <div class="stat">Accuracy: {{ accuracy }}%</div>
 </div>
 
 </body>
