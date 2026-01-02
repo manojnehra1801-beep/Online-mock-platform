@@ -241,9 +241,13 @@ QUESTIONS = [
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
+        if not EXAM_ACTIVE:
+            return {"status": "blocked"}
+
         session.clear()
         session["name"] = request.form["name"]
-        return redirect("/exam")
+        return {"status": "ok"}
+
     return render_template("login.html")
 
 
