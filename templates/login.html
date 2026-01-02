@@ -6,76 +6,124 @@
 
 <style>
 body{
-    margin:0;
-    padding:0;
-    height:100vh;
+    font-family: Arial, sans-serif;
+    background:#f5f6fa;
     display:flex;
     justify-content:center;
     align-items:center;
-    background:linear-gradient(135deg,#6a11cb,#2575fc);
-    font-family: Arial, sans-serif;
+    height:100vh;
 }
-
-.container{
+.box{
     background:#ffffff;
-    width:90%;
-    max-width:350px;
-    padding:25px;
+    padding:30px;
+    width:100%;
+    max-width:360px;
     border-radius:12px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+    box-shadow:0 0 15px rgba(0,0,0,0.15);
     text-align:center;
 }
-
-h1{
-    margin:0;
-    font-size:24px;
-    color:#2575fc;
-}
-
-h3{
-    margin:10px 0 20px;
-    color:#444;
-    font-weight:normal;
-}
-
 input{
-    width:100%;
+    width:90%;
     padding:12px;
-    font-size:16px;
-    margin-bottom:15px;
+    margin:10px 0;
+    font-size:15px;
     border-radius:8px;
     border:1px solid #ccc;
-    outline:none;
 }
-
 button{
-    width:100%;
+    width:95%;
     padding:12px;
-    font-size:18px;
+    font-size:16px;
+    background:#0984e3;
+    color:white;
     border:none;
     border-radius:8px;
-    background:linear-gradient(135deg,#ff512f,#dd2476);
-    color:white;
     cursor:pointer;
 }
-
-button:hover{
-    opacity:0.9;
+button:disabled{
+    background:#b2bec3;
+    cursor:not-allowed;
+}
+.popup{
+    display:none;
+    background:#ffeaa7;
+    color:#2d3436;
+    padding:10px;
+    margin-top:15px;
+    border-radius:8px;
+    font-size:14px;
+}
+.success{
+    background:#d4f8e8;
+    color:#1e8449;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-    <h1>MOCK TEST</h1>
-    <h3>Enter Your Name</h3>
+<div class="box">
+    <h2>Mock Test</h2>
 
-    <form method="post">
-        <input type="text" name="name" placeholder="Your Name" required>
-        <button type="submit">Start Test</button>
-    </form>
+    <input type="text" id="name" placeholder="Enter your name">
+
+    <button id="startBtn" onclick="startTest()" disabled>
+        Waiting for exam to start
+    </button>
+
+    <div class="popup" id="popup">
+        Please wait.<br>
+        Administration has not started the exam yet.
+    </div>
 </div>
+
+<script>
+let examStarted = false;
+
+// 🔁 CHECK EXAM STATUS EVERY 3 SECONDS
+setInterval(() => {
+    fetch("/exam-status")
+    .then(res => res.json())
+    .then(data => {
+        if(data.active && !examStarted){
+            examStarted = true;
+
+            const btn = document.getElementById("startBtn");
+            btn.disabled = false;
+            btn.innerText = "Start Exam";
+
+            const popup = document.getElementById("popup");
+            popup.style.display = "block";
+            popup.classList.add("success");
+            popup.innerHTML = "✅ You can start the exam now";
+        }
+    });
+}, 3000);
+
+function startTest(){
+    const name = document.getElementById("name").value;
+    if(name.trim() === ""){
+        alert("Please enter your name");
+        return;
+    }
+
+    fetch("/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "name=" + encodeURIComponent(name)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "blocked"){
+            document.getElementById("popup").style.display = "block";
+        } else {
+            window.location.href = "/exam";
+        }
+    });
+}
+</script>
 
 </body>
 </html>
