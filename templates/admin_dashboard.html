@@ -1,20 +1,120 @@
 <!DOCTYPE html>
 <html>
-<body style="text-align:center;margin-top:80px;">
-<h2>Admin Dashboard</h2>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
 
-<p>
-Answer Key Status :
-<b style="color:{{ 'green' if status else 'red' }}">
-{{ 'OPEN' if status else 'LOCKED' }}
-</b>
-</p>
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f6fa;
+    margin:0;
+}
+.container{
+    max-width:420px;
+    margin:60px auto;
+    background:#ffffff;
+    padding:25px;
+    border-radius:14px;
+    box-shadow:0 0 15px rgba(0,0,0,0.15);
+    text-align:center;
+}
+h2{
+    margin-bottom:20px;
+    color:#2d3436;
+}
+.status-box{
+    margin:15px 0;
+    padding:12px;
+    border-radius:10px;
+    font-size:16px;
+}
+.green{
+    background:#d4f8e8;
+    color:#1e8449;
+    font-weight:bold;
+}
+.red{
+    background:#fdecea;
+    color:#c0392b;
+    font-weight:bold;
+}
+button{
+    width:95%;
+    padding:12px;
+    margin:6px 0;
+    font-size:15px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+.btn-green{
+    background:#27ae60;
+    color:white;
+}
+.btn-red{
+    background:#e74c3c;
+    color:white;
+}
+.btn-blue{
+    background:#0984e3;
+    color:white;
+}
+a{
+    text-decoration:none;
+}
+.logout{
+    margin-top:15px;
+    display:inline-block;
+    color:#636e72;
+    font-size:14px;
+}
+</style>
+</head>
 
-<a href="/admin/toggle">
-<button>{{ 'Lock Answer Key' if status else 'Release Answer Key' }}</button>
-</a>
+<body>
 
-<br><br>
-<a href="/admin/logout">Logout</a>
+<div class="container">
+    <h2>Admin Dashboard</h2>
+
+    <!-- EXAM STATUS -->
+    <div class="status-box {{ 'green' if exam_active else 'red' }}">
+        Exam Status :
+        {{ 'ACTIVE' if exam_active else 'STOPPED' }}
+    </div>
+
+    <a href="/admin/toggle-exam">
+        <button class="{{ 'btn-red' if exam_active else 'btn-green' }}">
+            {{ 'Stop Exam' if exam_active else 'Start Exam' }}
+        </button>
+    </a>
+
+    <hr>
+
+    <!-- ANSWER KEY STATUS -->
+    <div class="status-box {{ 'green' if answer_key else 'red' }}">
+        Answer Key :
+        {{ 'RELEASED' if answer_key else 'LOCKED' }}
+    </div>
+
+    <a href="/admin/toggle-answer-key">
+        <button class="{{ 'btn-red' if answer_key else 'btn-green' }}">
+            {{ 'Lock Answer Key' if answer_key else 'Release Answer Key' }}
+        </button>
+    </a>
+
+    <hr>
+
+    <!-- STEP 5: STUDENT LIST BUTTON -->
+    <a href="/admin/students">
+        <button class="btn-blue">
+            View Student List
+        </button>
+    </a>
+
+    <br>
+    <a class="logout" href="/admin/logout">Logout</a>
+</div>
+
 </body>
 </html>
