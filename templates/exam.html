@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Mock Test</title>
 
 <style>
@@ -9,6 +9,8 @@ body{
     font-family: Arial, sans-serif;
     margin:0;
     padding-bottom:70px;
+    user-select:none;           /* text select block */
+    -webkit-user-select:none;
 }
 
 /* HEADER */
@@ -107,7 +109,7 @@ body{
         <input type="radio"
                name="{{ q.id }}"
                value="{{ loop.index0 }}"
-               onclick="markAttempted({{ loop.index0 }})">
+               onclick="markAttempted()">
         {{ opt }}
     </label><br>
     {% endfor %}
@@ -153,7 +155,7 @@ function startTotalTimer(){
     },1000);
 }
 
-// ================= QUESTIONS =================
+// ================= QUESTIONS + PALETTE =================
 let currentQ = 0;
 let paletteStatus = []; // 0=not seen, 1=attempted, 2=review
 
@@ -202,6 +204,31 @@ function markReview(){
     paletteStatus[currentQ] = 2;
     updatePalette();
 }
+
+// ================= ANTI-CHEAT (POINT 4 & 5) =================
+
+// Disable right click
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+// Disable copy
+document.addEventListener("copy", e => {
+    e.preventDefault();
+    alert("Copy is disabled during exam");
+});
+
+// Tab change / minimize → auto submit
+document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+        alert("You left the exam. Test submitted.");
+        document.getElementById("examForm").submit();
+    }
+});
+
+// Window blur (Alt+Tab / app switch)
+window.onblur = function () {
+    alert("You left the exam window. Test submitted.");
+    document.getElementById("examForm").submit();
+};
 
 // ================= ON LOAD =================
 window.onload = function(){
