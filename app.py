@@ -1,64 +1,48 @@
-from flask import Flask, render_template, request, session, redirect, url_for
-import uuid
+from flask import Flask, render_template, request, redirect, session
 
-app = Flask(__name__, static_folder=None)
-@app.route("/health")
-def health():
-    return "FLASK IS RUNNING"
-app.secret_key = "super_secret_exam_key_123"
+app = Flask(__name__)
+app.secret_key = "mock_test_secret"
 
-# ================== QUESTIONS ==================
+# ================= QUESTIONS =================
 QUESTIONS = [
     {
-        "id": "1",
+        "id": "q1",
         "question": "भारत की राजधानी क्या है?",
-        "options": ["Delhi", "Mumbai", "Chennai", "Kolkata"],
-        "answer": "0"
+        "options": ["मुंबई", "दिल्ली", "कोलकाता", "चेन्नई"],
+        "answer": 1
     },
     {
-        "id": "2",
+        "id": "q2",
         "question": "सबसे बड़ा ग्रह कौन सा है?",
-        "options": ["Earth", "Mars", "Jupiter", "Venus"],
-        "answer": "2"
+        "options": ["पृथ्वी", "मंगल", "बृहस्पति", "शुक्र"],
+        "answer": 2
     },
     {
-        "id": "3",
+        "id": "q3",
         "question": "ताजमहल कहाँ स्थित है?",
-        "options": ["Delhi", "Agra", "Jaipur", "Lucknow"],
-        "answer": "1"
+        "options": ["जयपुर", "आगरा", "दिल्ली", "लखनऊ"],
+        "answer": 1
     }
 ]
 
-TOTAL_QUESTIONS = len(QUESTIONS)
-MARK_PER_Q = 1
-NEGATIVE_MARK = 0.25
-
-# runtime memory (Render-safe basic)
-ALL_RESULTS = []
-
-# ================== LOGIN ==================
-
+# ================= LOGIN =================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         session.clear()
         session["name"] = request.form["name"]
-        session["student_id"] = str(uuid.uuid4())
         return redirect("/exam")
-
-    # GET request → hamesha login page dikhao
     return render_template("login.html")
-# ================== EXAM ==================
+
+# ================= EXAM =================
 @app.route("/exam", methods=["GET", "POST"])
 def exam():
-    if "student_id" not in session:
+    if "name" not in session:
         return redirect("/")
 
     if request.method == "POST":
         result_data = []
-
-        correct = 0
-        incorrect = 0
+        correct = incorrect = 0
 
         for q in QUESTIONS:
             user_ans = request.form.get(q["id"])
@@ -84,29 +68,53 @@ def exam():
         unattempted = len(QUESTIONS) - attempted
         accuracy = round((correct / attempted) * 100, 2) if attempted > 0 else 0
 
-        return render_template(
-            "review.html",
-            result_data=result_data,
-            correct=correct,
-            incorrect=incorrect,
-            attempted=attempted,
-            unattempted=unattempted,
-            accuracy=accuracy
-        )
+        # save in session
+        session["result_data"] = result_data
+        session["score"] = correct
+        session["total"] = len(QUESTIONS)
+        session["correct"] = correct
+        session["incorrect"] = incorrect
+        session["attempted"] = attempted
+        session["unattempted"] = unattempted
+        session["accuracy"] = accuracy
+
+        return redirect("/result")
 
     return render_template("exam.html", questions=QUESTIONS)
- 
 
-    
+# ================= RESULT (ONLY RESULT) =================
+@app.route("/result")
+def result():
+    if "score" not in session:
+        return redirect("/")
 
+    return render_template(
+        "result.html",
+        score=session["score"],
+        total=session["total"],
+        correct=session["correct"],
+        incorrect=session["incorrect"],
+        attempted=session["attempted"],
+        unattempted=session["unattempted"],
+        accuracy=session["accuracy"]
+    )
 
- 
-# ================== REATTEMPT ==================
+# ================= ANSWER KEY =================
+@app.route("/answer-key")
+def answer_key():
+    if "result_data" not in session:
+        return redirect("/")
 
+    return render_template(
+        "review.html",
+        result_data=session["result_data"]
+    )
+
+# ================= LOGOUT / REATTEMPT =================
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect("/exam")
-# ================== RUN ==================
+    return redirect("/")
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(debug=True)
