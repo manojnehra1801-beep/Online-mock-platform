@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Student Login | Mock Test</title>
 
-<!-- ✅ PWA -->
+<!-- PWA -->
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#6c5ce7">
 
@@ -20,7 +19,6 @@ body{
     background:#f5f6fa;
     font-family:Arial, sans-serif;
 }
-
 .card{
     background:#fff;
     width:90%;
@@ -30,17 +28,8 @@ body{
     box-shadow:0 8px 20px rgba(0,0,0,0.15);
     text-align:center;
 }
-
-h2{
-    margin-bottom:5px;
-    color:#2d3436;
-}
-p{
-    color:#636e72;
-    font-size:14px;
-    margin-bottom:20px;
-}
-
+h2{ margin-bottom:5px; }
+p{ color:#636e72; font-size:14px; margin-bottom:20px; }
 input{
     width:100%;
     padding:12px;
@@ -49,7 +38,6 @@ input{
     border:1px solid #dcdde1;
     font-size:15px;
 }
-
 button{
     width:100%;
     padding:12px;
@@ -58,9 +46,7 @@ button{
     background:#6c5ce7;
     color:#fff;
     font-size:16px;
-    cursor:pointer;
 }
-
 .wait{
     margin-top:15px;
     color:#d63031;
@@ -87,7 +73,7 @@ button{
     {% endif %}
 </div>
 
-<!-- ✅ SERVICE WORKER REGISTER -->
+<!-- Service Worker -->
 <script>
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/service-worker.js");
