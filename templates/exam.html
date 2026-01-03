@@ -6,23 +6,22 @@
 <title>Online Exam</title>
 
 <style>
-*{ box-sizing:border-box; }
-
+*{box-sizing:border-box}
 body{
     margin:0;
-    font-family:Arial, sans-serif;
+    font-family:Arial,sans-serif;
     background:#f5f6fa;
-    padding-bottom:90px; /* space for submit */
+    padding-bottom:90px;
 }
 
-/* ===== HEADER ===== */
+/* HEADER */
 .header{
     position:sticky;
     top:0;
     z-index:10;
     background:#6c5ce7;
     color:#fff;
-    padding:12px;
+    padding:10px;
     display:flex;
     justify-content:space-between;
     align-items:center;
@@ -30,17 +29,18 @@ body{
 }
 .header .center{
     font-weight:bold;
-    font-size:16px;
 }
 
-/* ===== QUESTION CARD ===== */
+/* QUESTION CARD */
 .card{
     background:#fff;
     margin:12px;
     padding:16px;
     border-radius:14px;
     box-shadow:0 6px 15px rgba(0,0,0,0.12);
+    display:none;
 }
+.card.active{ display:block; }
 
 .question{
     font-size:16px;
@@ -48,7 +48,7 @@ body{
     margin-bottom:14px;
 }
 
-/* ===== OPTIONS ===== */
+/* OPTIONS */
 .option{
     display:block;
     border:1px solid #dcdde1;
@@ -57,11 +57,44 @@ body{
     margin-bottom:10px;
     font-size:15px;
 }
-.option input{
-    margin-right:8px;
+.option input{ margin-right:8px; }
+
+/* CONTROLS */
+.controls{
+    display:flex;
+    justify-content:space-between;
+    margin:12px;
+}
+.controls button{
+    flex:1;
+    margin:0 4px;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    background:#0984e3;
+    color:#fff;
+    font-size:14px;
 }
 
-/* ===== SUBMIT ===== */
+/* PALETTE */
+.palette{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    padding:10px;
+}
+.palette button{
+    width:36px;
+    height:36px;
+    border:none;
+    border-radius:50%;
+    font-weight:bold;
+}
+.grey{background:#dfe6e9;}
+.green{background:#55efc4;}
+.yellow{background:#ffeaa7;}
+
+/* SUBMIT */
 .submit-fixed{
     position:fixed;
     bottom:12px;
@@ -77,10 +110,6 @@ body{
     border-radius:30px;
     background:#e84393;
     color:#fff;
-    cursor:pointer;
-}
-.submit-fixed button:active{
-    transform:scale(0.98);
 }
 </style>
 </head>
@@ -91,35 +120,110 @@ body{
 <div class="header">
     <div>{{ session.get('name') }}</div>
     <div class="center">MOCK TEST</div>
-    <div>{{ questions|length }} Q</div>
+    <div id="timer">00:00</div>
 </div>
+
+<!-- PALETTE -->
+<div class="palette" id="palette"></div>
 
 <form method="post" id="examForm">
 
 {% for q in questions %}
-<div class="card">
+<div class="card" id="q{{ loop.index0 }}">
     <div class="question">
         Q{{ loop.index }}. {{ q.question }}
     </div>
 
     {% for opt in q.options %}
-        <label class="option">
-            <input 
-                type="radio" 
-                name="{{ q.id }}" 
-                value="{{ loop.index0 }}">
-            {{ opt }}
-        </label>
+    <label class="option">
+        <input type="radio"
+               name="{{ q.id }}"
+               value="{{ loop.index0 }}"
+               onclick="markAnswered({{ loop.index0 }})">
+        {{ opt }}
+    </label>
     {% endfor %}
 </div>
 {% endfor %}
 
-<!-- SUBMIT BUTTON -->
+<!-- CONTROLS -->
+<div class="controls">
+    <button type="button" onclick="prevQ()">Previous</button>
+    <button type="button" onclick="markReview()">Mark for Review</button>
+    <button type="button" onclick="nextQ()">Next</button>
+</div>
+
+<!-- SUBMIT -->
 <div class="submit-fixed">
-    <button type="submit">Submit Exam</button>
+    <button type="submit">Submit Test</button>
 </div>
 
 </form>
+
+<script>
+/* TIMER */
+let totalSeconds = {{ questions|length }} * 60;
+function updateTimer(){
+    let m = Math.floor(totalSeconds/60);
+    let s = totalSeconds % 60;
+    document.getElementById("timer").innerText =
+        (m<10?"0":"")+m+":"+(s<10?"0":"")+s;
+    if(totalSeconds<=0){
+        document.getElementById("examForm").submit();
+    }
+    totalSeconds--;
+}
+setInterval(updateTimer,1000);
+updateTimer();
+
+/* QUESTIONS */
+let current = 0;
+const totalQ = {{ questions|length }};
+let status = Array(totalQ).fill(0); // 0=not seen,1=answered,2=review
+
+function showQ(i){
+    document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
+    document.getElementById("q"+i).classList.add("active");
+    current=i;
+    updatePalette();
+}
+function nextQ(){ if(current<totalQ-1) showQ(current+1); }
+function prevQ(){ if(current>0) showQ(current-1); }
+
+function markAnswered(){
+    status[current]=1;
+    updatePalette();
+}
+function markReview(){
+    status[current]=2;
+    updatePalette();
+}
+
+/* PALETTE */
+function createPalette(){
+    const p=document.getElementById("palette");
+    for(let i=0;i<totalQ;i++){
+        let b=document.createElement("button");
+        b.innerText=i+1;
+        b.className="grey";
+        b.onclick=()=>showQ(i);
+        b.id="p"+i;
+        p.appendChild(b);
+    }
+}
+function updatePalette(){
+    for(let i=0;i<totalQ;i++){
+        let b=document.getElementById("p"+i);
+        if(status[i]==1) b.className="green";
+        else if(status[i]==2) b.className="yellow";
+        else b.className="grey";
+    }
+}
+
+/* INIT */
+createPalette();
+showQ(0);
+</script>
 
 </body>
 </html>
