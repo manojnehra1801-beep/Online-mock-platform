@@ -1,26 +1,124 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Exam</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Exam</title>
+
+<style>
+*{ box-sizing:border-box; }
+
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#f5f6fa;
+    padding-bottom:90px; /* space for submit */
+}
+
+/* ===== HEADER ===== */
+.header{
+    position:sticky;
+    top:0;
+    z-index:10;
+    background:#6c5ce7;
+    color:#fff;
+    padding:12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:14px;
+}
+.header .center{
+    font-weight:bold;
+    font-size:16px;
+}
+
+/* ===== QUESTION CARD ===== */
+.card{
+    background:#fff;
+    margin:12px;
+    padding:16px;
+    border-radius:14px;
+    box-shadow:0 6px 15px rgba(0,0,0,0.12);
+}
+
+.question{
+    font-size:16px;
+    font-weight:bold;
+    margin-bottom:14px;
+}
+
+/* ===== OPTIONS ===== */
+.option{
+    display:block;
+    border:1px solid #dcdde1;
+    border-radius:10px;
+    padding:12px;
+    margin-bottom:10px;
+    font-size:15px;
+}
+.option input{
+    margin-right:8px;
+}
+
+/* ===== SUBMIT ===== */
+.submit-fixed{
+    position:fixed;
+    bottom:12px;
+    left:50%;
+    transform:translateX(-50%);
+    width:92%;
+}
+.submit-fixed button{
+    width:100%;
+    padding:15px;
+    font-size:17px;
+    border:none;
+    border-radius:30px;
+    background:#e84393;
+    color:#fff;
+    cursor:pointer;
+}
+.submit-fixed button:active{
+    transform:scale(0.98);
+}
+</style>
 </head>
+
 <body>
 
-<h2>Online Exam</h2>
+<!-- HEADER -->
+<div class="header">
+    <div>{{ session.get('name') }}</div>
+    <div class="center">MOCK TEST</div>
+    <div>{{ questions|length }} Q</div>
+</div>
 
-<form method="post">
+<form method="post" id="examForm">
+
 {% for q in questions %}
-    <p><b>Q{{ loop.index }}. {{ q.question }}</b></p>
+<div class="card">
+    <div class="question">
+        Q{{ loop.index }}. {{ q.question }}
+    </div>
 
     {% for opt in q.options %}
-        <label>
-            <input type="radio" name="{{ q.id }}" value="{{ loop.index0 }}">
+        <label class="option">
+            <input 
+                type="radio" 
+                name="{{ q.id }}" 
+                value="{{ loop.index0 }}">
             {{ opt }}
-        </label><br>
+        </label>
     {% endfor %}
-    <hr>
+</div>
 {% endfor %}
 
-<button type="submit">Submit Exam</button>
+<!-- SUBMIT BUTTON -->
+<div class="submit-fixed">
+    <button type="submit">Submit Exam</button>
+</div>
+
 </form>
 
 </body>
