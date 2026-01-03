@@ -1,130 +1,87 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mock Test Login</title>
 
 <style>
 body{
-    font-family: Arial, sans-serif;
-    background:#f5f6fa;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
+  margin:0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg,#eef2ff,#f7f9ff);
 }
-.box{
-    background:#ffffff;
-    padding:30px;
-    width:100%;
-    max-width:360px;
-    border-radius:12px;
-    box-shadow:0 0 15px rgba(0,0,0,0.15);
-    text-align:center;
+.container{
+  max-width:360px;
+  margin:120px auto;
+  background:#ffffff;
+  padding:22px;
+  border-radius:14px;
+  box-shadow:0 12px 30px rgba(0,0,0,.12);
+  text-align:center;
+}
+h2{
+  margin:0 0 10px;
+  color:#2d3436;
+}
+p{
+  margin:6px 0 14px;
+  color:#636e72;
+  font-size:14px;
 }
 input{
-    width:90%;
-    padding:12px;
-    margin:10px 0;
-    font-size:15px;
-    border-radius:8px;
-    border:1px solid #ccc;
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:8px;
+  border:1px solid #dfe6e9;
+  font-size:14px;
 }
 button{
-    width:95%;
-    padding:12px;
-    font-size:16px;
-    background:#0984e3;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
+  width:100%;
+  padding:12px;
+  background:#6c5ce7;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  font-size:15px;
+  cursor:pointer;
 }
-button:disabled{
-    background:#b2bec3;
-    cursor:not-allowed;
+button:hover{
+  background:#5a4bdc;
 }
-.popup{
-    display:none;
-    background:#ffeaa7;
-    color:#2d3436;
-    padding:10px;
-    margin-top:15px;
-    border-radius:8px;
-    font-size:14px;
+.note{
+  margin-top:12px;
+  font-size:13px;
+  color:#d63031;
 }
-.success{
-    background:#d4f8e8;
-    color:#1e8449;
+.footer{
+  margin-top:14px;
+  font-size:12px;
+  color:#b2bec3;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
-    <h2>Mock Test</h2>
+<div class="container">
+  <h2>Mock Test</h2>
+  <p>Please enter your name to continue</p>
 
-    <input type="text" id="name" placeholder="Enter your name">
+  <form method="post">
+    <input type="text" name="name" placeholder="Enter your full name" required>
+    <button type="submit">Start Exam</button>
+  </form>
 
-    <button id="startBtn" onclick="startTest()" disabled>
-        Waiting for exam to start
-    </button>
+  {% if not EXAM_ACTIVE %}
+    <div class="note">Exam has not started yet. Please wait.</div>
+  {% endif %}
 
-    <div class="popup" id="popup">
-        Please wait.<br>
-        Administration has not started the exam yet.
-    </div>
+  <div class="footer">
+    Powered by Online Exam System
+  </div>
 </div>
-
-<script>
-let examStarted = false;
-
-// 🔁 CHECK EXAM STATUS EVERY 3 SECONDS
-setInterval(() => {
-    fetch("/exam-status")
-    .then(res => res.json())
-    .then(data => {
-        if(data.active && !examStarted){
-            examStarted = true;
-
-            const btn = document.getElementById("startBtn");
-            btn.disabled = false;
-            btn.innerText = "Start Exam";
-
-            const popup = document.getElementById("popup");
-            popup.style.display = "block";
-            popup.classList.add("success");
-            popup.innerHTML = "✅ You can start the exam now";
-        }
-    });
-}, 3000);
-
-function startTest(){
-    const name = document.getElementById("name").value;
-    if(name.trim() === ""){
-        alert("Please enter your name");
-        return;
-    }
-
-    fetch("/", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: "name=" + encodeURIComponent(name)
-    })
-    .then(res => res.json())
-    .then(data => {
-        if(data.status === "ok"){
-            // ✅ THIS IS THE FIX — JS SIDE REDIRECT
-            window.location.href = "/exam";
-        } else {
-            document.getElementById("popup").style.display = "block";
-        }
-    });
-}
-</script>
 
 </body>
 </html>
