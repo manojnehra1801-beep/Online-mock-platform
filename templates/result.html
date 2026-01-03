@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Result</title>
+<title>Result | Abhyas App</title>
 
 <style>
 body{
@@ -17,14 +18,21 @@ body{
     padding:22px;
     color:#fff;
     text-align:center;
-    font-size:20px;
-    font-weight:bold;
+}
+.header h2{
+    margin:0;
+    font-size:22px;
+}
+.header p{
+    margin:4px 0 0;
+    font-size:14px;
+    opacity:0.9;
 }
 
 /* CARD */
 .card{
     background:#fff;
-    margin:20px;
+    margin:18px;
     padding:20px;
     border-radius:18px;
     box-shadow:0 10px 25px rgba(0,0,0,0.08);
@@ -32,11 +40,14 @@ body{
 
 /* SCORE */
 .score{
-    font-size:34px;
+    text-align:center;
+    font-size:38px;
     font-weight:bold;
     color:#6c5ce7;
-    text-align:center;
-    margin-bottom:15px;
+}
+.score small{
+    font-size:16px;
+    color:#636e72;
 }
 
 /* GRID */
@@ -44,7 +55,7 @@ body{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:12px;
-    margin-top:10px;
+    margin-top:20px;
 }
 .box{
     background:#f1f3f9;
@@ -55,18 +66,23 @@ body{
 }
 .box span{
     display:block;
+    margin-top:6px;
     font-size:18px;
     font-weight:bold;
-    margin-top:5px;
 }
 
-/* PROGRESS */
-.progress-wrap{
-    margin-top:18px;
+/* ACCURACY */
+.accuracy{
+    margin-top:22px;
+}
+.accuracy-label{
+    text-align:center;
+    font-size:14px;
+    margin-bottom:6px;
 }
 .progress{
     width:100%;
-    height:12px;
+    height:14px;
     background:#e0e0e0;
     border-radius:20px;
     overflow:hidden;
@@ -76,19 +92,20 @@ body{
     background:linear-gradient(90deg,#00b894,#55efc4);
 }
 
-/* BUTTONS */
+/* BUTTON */
 .btn{
     width:100%;
+    margin-top:24px;
     padding:15px;
+    font-size:16px;
     border:none;
     border-radius:30px;
-    font-size:16px;
-    margin-top:15px;
-    cursor:pointer;
-}
-.exit{
     background:#e84393;
     color:#fff;
+    cursor:pointer;
+}
+.btn:active{
+    transform:scale(0.98);
 }
 
 /* FOOTER */
@@ -96,24 +113,30 @@ body{
     text-align:center;
     font-size:12px;
     color:#999;
-    margin-bottom:15px;
+    margin:18px 0;
 }
 </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
 <div class="header">
-    Performance<br>
-    <small style="font-weight:normal;">Mock Test</small>
+    <h2>Performance Summary</h2>
+    <p>Abhyas App – Online Mock Test</p>
 </div>
 
+<!-- RESULT CARD -->
 <div class="card">
 
+    <!-- SCORE -->
     <div class="score">
         {{ correct }} / {{ total }}
+        <br>
+        <small>Marks Scored</small>
     </div>
 
+    <!-- STATS -->
     <div class="grid">
         <div class="box">✅ Correct<span>{{ correct }}</span></div>
         <div class="box">❌ Incorrect<span>{{ incorrect }}</span></div>
@@ -121,23 +144,25 @@ body{
         <div class="box">⏭ Unattempted<span>{{ unattempted }}</span></div>
     </div>
 
-    <div class="progress-wrap">
-        <div style="text-align:center;font-size:14px;margin-bottom:6px;">
-            🎯 Accuracy {{ accuracy }}%
+    <!-- ACCURACY -->
+    <div class="accuracy">
+        <div class="accuracy-label">
+            🎯 Accuracy: <b>{{ accuracy }}%</b>
         </div>
         <div class="progress">
             <div class="progress-bar" style="width: {{ accuracy }}%;"></div>
         </div>
     </div>
 
-    <button class="btn exit" onclick="window.location.href='/'">
+    <!-- EXIT -->
+    <button class="btn" onclick="window.location.href='/'">
         Exit Test
     </button>
 
 </div>
 
 <div class="footer">
-    Result generated automatically
+    Result generated automatically • Powered by Abhyas App
 </div>
 
 </body>
