@@ -1,174 +1,40 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mock Test</title>
-
-<style>
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#f5f6fa;
-  padding-bottom:90px;
-}
-.header{
-  display:flex;
-  justify-content:space-between;
-  padding:12px;
-  background:#6c5ce7;
-  color:#fff;
-}
-.header .center{ font-weight:bold; }
-.timer{ font-weight:bold; }
-
-.tabs{
-  display:flex;
-}
-.tabs button{
-  flex:1;
-  padding:10px;
-  border:none;
-  background:#dfe6e9;
-  font-weight:bold;
-}
-.tabs button.active{
-  background:#6c5ce7;
-  color:#fff;
-}
-
-.section{
-  display:none;
-  background:#fff;
-  margin:10px;
-  padding:15px;
-  border-radius:10px;
-}
-
-label{
-  display:block;
-  margin:6px 0;
-  background:#f1f2f6;
-  padding:8px;
-  border-radius:6px;
-}
-
-.controls{
-  display:flex;
-  justify-content:space-around;
-  padding:10px;
-}
-
-.submit-fixed{
-  position:fixed;
-  right:15px;
-  bottom:15px;
-}
-.submit-fixed button{
-  padding:14px 20px;
-  background:#e84393;
-  color:#fff;
-  border:none;
-  border-radius:30px;
-}
-</style>
-</head>
-
-<body>
-
-<!-- HEADER -->
-<div class="header">
-  <div>{{ session['student_name'] }}</div>
-  <div class="center">MOCK TEST</div>
-  <div class="timer" id="totalTime">Loading…</div>
-</div>
-
-<!-- SECTION TABS -->
-<div class="tabs">
-{% for sec in exam %}
-  <button onclick="openSection('{{ sec }}')" id="tab-{{ sec }}">{{ sec }}</button>
-{% endfor %}
-</div>
-
-<form method="post" id="examForm">
-
-{% for sec in exam %}
-<div class="section" id="{{ sec }}">
-  <h3>{{ sec }}</h3>
-
-  {% for q in exam[sec] %}
-    <p><b>Q{{ loop.index }}.</b> {{ q.q }}</p>
-
-    {% for opt in q.opt %}
-      <label>
-        <input type="radio" name="{{ q.id }}" value="{{ loop.index0 }}">
-        {{ opt }}
-      </label>
-    {% endfor %}
-  {% endfor %}
-</div>
-{% endfor %}
-
-<div class="controls">
-  <button type="button" onclick="prev()">Previous</button>
-  <button type="button" onclick="next()">Next</button>
-</div>
-
-<div class="submit-fixed">
-  <button type="submit">Submit Exam</button>
-</div>
-
-</form>
-
 <script>
-/* ===== TIMER ===== */
-let totalQ = 0;
-{% for sec in exam %}
-  totalQ += {{ exam[sec]|length }};
-{% endfor %}
+/* ================= STEP-2 SECURITY ================= */
 
-let totalSeconds = totalQ * 30;
+let violations = 0;
+const MAX_VIOLATIONS = 2;
 
-function formatTime(sec){
-  let m = Math.floor(sec/60);
-  let s = sec % 60;
-  return m + "m " + s + "s";
+/* ---- Fullscreen ---- */
+function enterFullscreen() {
+    const el = document.documentElement;
+    if (el.requestFullscreen) el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
 }
+enterFullscreen();
 
-setInterval(()=>{
-  document.getElementById("totalTime").innerText = formatTime(totalSeconds);
-  if(totalSeconds <= 0){
-    document.getElementById("examForm").submit();
-  }
-  totalSeconds--;
-},1000);
+/* ---- Visibility / Minimize Detect ---- */
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        violations++;
+        alert("⚠️ Do not minimize or switch apps!");
+        checkViolation();
+    }
+});
 
-/* ===== SECTION NAV ===== */
-let sections = Array.from(document.querySelectorAll(".section"));
-let index = 0;
+/* ---- Back Button Block ---- */
+history.pushState(null, null, location.href);
+window.onpopstate = function () {
+    history.go(1);
+    violations++;
+    alert("⚠️ Back button is disabled during exam");
+    checkViolation();
+};
 
-function show(i){
-  sections.forEach(s=>s.style.display="none");
-  sections[i].style.display="block";
+/* ---- Violation Check ---- */
+function checkViolation(){
+    if(violations >= MAX_VIOLATIONS){
+        alert("❌ Exam terminated due to multiple violations");
+        document.getElementById("examForm").submit();
+    }
 }
-
-function openSection(name){
-  sections.forEach((s,i)=>{
-    if(s.id === name){ index=i; show(i); }
-  });
-  document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
-  document.getElementById("tab-"+name).classList.add("active");
-}
-
-function next(){
-  if(index < sections.length-1){ index++; show(index); }
-}
-function prev(){
-  if(index > 0){ index--; show(index); }
-}
-
-/* INIT */
-openSection("Reasoning");
 </script>
-
-</body>
-</html>
