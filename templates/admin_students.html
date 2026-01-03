@@ -2,75 +2,59 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Student List</title>
-
+<title>Student Performance</title>
 <style>
-body{
-    font-family: Arial;
-    background:#f5f6fa;
-    padding:20px;
-}
-h2{
-    text-align:center;
-}
+body{font-family:Arial;background:#f5f6fa;margin:0;padding:20px;}
 table{
-    width:100%;
-    max-width:600px;
-    margin:auto;
-    border-collapse:collapse;
-    background:#fff;
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+  border-radius:10px;
+  overflow:hidden;
 }
 th, td{
-    padding:10px;
-    border:1px solid #ddd;
-    text-align:center;
+  padding:12px;
+  border-bottom:1px solid #eee;
+  text-align:center;
 }
 th{
-    background:#2d3436;
-    color:#fff;
+  background:#6c5ce7;
+  color:#fff;
 }
-tr:nth-child(even){
-    background:#f2f2f2;
-}
-.back{
-    display:block;
-    text-align:center;
-    margin-top:20px;
+a{
+  padding:6px 12px;
+  background:#0984e3;
+  color:#fff;
+  text-decoration:none;
+  border-radius:6px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>Student Attempts</h2>
+<h2>Student Performance</h2>
 
 <table>
 <tr>
-    <th>#</th>
-    <th>Name</th>
-    <th>Score</th>
-    <th>Attempted</th>
-    <th>Accuracy (%)</th>
+  <th>Name</th>
+  <th>Marks</th>
+  <th>Accuracy</th>
+  <th>Action</th>
 </tr>
 
 {% for s in students %}
 <tr>
-    <td>{{ loop.index }}</td>
-    <td>{{ s.name }}</td>
-    <td>{{ s.score }}/{{ s.total }}</td>
-    <td>{{ s.attempted }}</td>
-    <td>{{ s.accuracy }}</td>
+  <td>{{ s.name }}</td>
+  <td>{{ s.score }} / {{ s.total }}</td>
+  <td>{{ s.accuracy }}%</td>
+  <td>
+    <a href="/admin/student/{{ loop.index0 }}">View</a>
+  </td>
 </tr>
 {% endfor %}
 
-{% if students|length == 0 %}
-<tr>
-    <td colspan="5">No students attempted yet</td>
-</tr>
-{% endif %}
 </table>
-
-<a class="back" href="/admin/dashboard">⬅ Back to Dashboard</a>
 
 </body>
 </html>
