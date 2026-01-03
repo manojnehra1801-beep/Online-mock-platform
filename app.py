@@ -9,8 +9,8 @@ ADMIN_USER = "Manojnehra"
 ADMIN_PASS = "NEHRA@2233"
 EXAM_ACTIVE = False
 
-# ================= SERVER-SIDE STORAGE =================
-ACTIVE_EXAMS = {}   # key = student name, value = exam dict
+# ================= SERVER SIDE STORAGE =================
+ACTIVE_EXAMS = {}
 
 # ================= QUESTION BANK =================
 REASONING = [
@@ -50,7 +50,7 @@ ENGLISH = [
 def login():
     if request.method == "POST":
         if not EXAM_ACTIVE:
-            return "Exam not started"
+            return "Exam not started yet"
 
         name = request.form.get("name")
         session["name"] = name
