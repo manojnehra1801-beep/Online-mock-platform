@@ -1,15 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Result</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Result</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#f5f6fa;
+}
+.card{
+    background:#fff;
+    margin:16px;
+    padding:20px;
+    border-radius:16px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.12);
+    text-align:center;
+}
+h2{
+    margin-top:0;
+    color:#2d3436;
+}
+.score{
+    font-size:36px;
+    font-weight:bold;
+    color:#6c5ce7;
+    margin:10px 0;
+}
+.stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:16px;
+}
+.stat{
+    background:#f1f2f6;
+    padding:12px;
+    border-radius:12px;
+    font-size:14px;
+}
+button{
+    margin-top:20px;
+    width:100%;
+    padding:14px;
+    font-size:16px;
+    border:none;
+    border-radius:30px;
+    background:#e84393;
+    color:#fff;
+    cursor:pointer;
+}
+button:active{ transform:scale(0.98); }
+.footer{
+    margin:20px;
+    text-align:center;
+    font-size:12px;
+    color:#b2bec3;
+}
+</style>
 </head>
+
 <body>
 
-<h2>Result</h2>
+<div class="card">
+    <h2>Thank You for Attempting</h2>
 
-<p>Score: {{ score }} / {{ total }}</p>
+    <div class="score">
+        {{ correct }} / {{ total }}
+    </div>
 
-<a href="/logout">Exit</a>
+    <div class="stats">
+        <div class="stat">Correct: <b>{{ correct }}</b></div>
+        <div class="stat">Incorrect: <b>{{ incorrect }}</b></div>
+        <div class="stat">Attempted: <b>{{ attempted }}</b></div>
+        <div class="stat">Unattempted: <b>{{ unattempted }}</b></div>
+        <div class="stat" style="grid-column:1/3;">
+            Accuracy: <b>{{ accuracy }}%</b>
+        </div>
+    </div>
+
+    <form action="/logout" method="get">
+        <button type="submit">Exit</button>
+    </form>
+</div>
+
+<div class="footer">
+    Result generated automatically • Contact admin for queries
+</div>
 
 </body>
 </html>
