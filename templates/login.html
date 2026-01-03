@@ -1,132 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Abhyas App | Student Login</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abhyas App | Login</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
+<style>
+    * {
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
+    }
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #5f6cff, #7b5cff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    body {
+        margin: 0;
+        height: 100vh;
+        background: linear-gradient(135deg, #6c5ce7, #5f27cd);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-        .login-card {
-            width: 90%;
-            max-width: 380px;
-            background: #fff;
-            border-radius: 16px;
-            padding: 28px 22px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            text-align: center;
-        }
+    .card {
+        width: 92%;
+        max-width: 380px;
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 28px 22px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        text-align: center;
+    }
 
-        .login-card h1 {
-            margin: 0;
-            font-size: 22px;
-            font-weight: 700;
-            color: #333;
-        }
+    h1 {
+        margin: 0;
+        font-size: 24px;
+        color: #2d3436;
+    }
 
-        .login-card p {
-            margin: 6px 0 22px;
-            font-size: 14px;
-            color: #777;
-        }
+    .tagline {
+        margin-top: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #6c5ce7;
+    }
 
-        .input-box {
-            width: 100%;
-            margin-bottom: 14px;
-        }
+    .sub {
+        margin-top: 12px;
+        font-size: 14px;
+        color: #636e72;
+    }
 
-        .input-box input {
-            width: 100%;
-            padding: 14px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            font-size: 15px;
-            outline: none;
-        }
+    input {
+        width: 100%;
+        padding: 14px;
+        margin-top: 14px;
+        border-radius: 10px;
+        border: 1px solid #dcdde1;
+        font-size: 15px;
+        outline: none;
+    }
 
-        .input-box input:focus {
-            border-color: #6c63ff;
-        }
+    input:focus {
+        border-color: #6c5ce7;
+    }
 
-        .login-btn {
-            width: 100%;
-            margin-top: 10px;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            background: #6c63ff;
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-        }
+    button {
+        width: 100%;
+        margin-top: 18px;
+        padding: 14px;
+        background: #6c5ce7;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-        .login-btn:active {
-            transform: scale(0.98);
-        }
+    button:hover {
+        background: #5f27cd;
+    }
 
-        .signup {
-            margin-top: 16px;
-            font-size: 14px;
-            color: #555;
-        }
+    .signup {
+        margin-top: 16px;
+        font-size: 14px;
+        color: #636e72;
+    }
 
-        .signup a {
-            color: #6c63ff;
-            text-decoration: none;
-            font-weight: 600;
-        }
+    .signup a {
+        color: #6c5ce7;
+        font-weight: 600;
+        text-decoration: none;
+    }
 
-        .footer-text {
-            margin-top: 18px;
-            font-size: 12px;
-            color: #aaa;
-        }
-    </style>
+    .footer {
+        margin-top: 14px;
+        font-size: 12px;
+        color: #b2bec3;
+    }
+</style>
 </head>
 
 <body>
 
-    <div class="login-card">
-        <h1>Welcome to Abhyas App</h1>
-        <p>Login to start your mock test</p>
+<div class="card">
+    <h1>Welcome to Abhyas App</h1>
+    <div class="tagline">Practice smart. Perform better</div>
+    <div class="sub">Login to your account ↓</div>
 
-        <form method="POST">
-            <div class="input-box">
-                <input type="text" name="username" placeholder="Student Username" required>
-            </div>
+    <form method="POST">
+        <input type="text" name="username" placeholder="Student Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
 
-            <div class="input-box">
-                <input type="password" name="password" placeholder="Password" required>
-            </div>
-
-            <button type="submit" class="login-btn">
-                Login
-            </button>
-        </form>
-
-        <div class="signup">
-            New student?
-            <a href="/signup">Create account</a>
-        </div>
-
-        <div class="footer-text">
-            Best viewed on mobile • Secure exam
-        </div>
+    <div class="signup">
+        New student? <a href="#">Create account</a>
     </div>
+
+    <div class="footer">
+        Powered by Nehra infotech pvt Ltd.
+    </div>
+</div>
 
 </body>
 </html>
