@@ -96,18 +96,18 @@ def exam():
             "score": correct
         })
 
-        session.update({
-            "score": correct,
-            "total": len(QUESTIONS),
-            "correct": correct,
-            "incorrect": incorrect,
-            "attempted": attempted,
-            "unattempted": len(QUESTIONS) - attempted,
-            "accuracy": accuracy,
-            "user_answers": user_answers
-        })
+     session.update({
+    "score": correct,
+    "total": len(QUESTIONS),
+    "correct": correct,
+    "incorrect": incorrect,
+    "attempted": attempted,
+    "unattempted": len(QUESTIONS) - attempted,
+    "accuracy": accuracy
+})
 
-        return redirect("/result")
+# 🔑 answers ko memory me rakho (not session)
+session["answers_key"] = str(user_answers)
 
     return render_template("exam.html", questions=QUESTIONS)
 
