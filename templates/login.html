@@ -1,132 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mock Test Login</title>
+    <meta charset="UTF-8">
+    <title>Abhyas App | Student Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- PWA -->
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#4b7bec">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
-<style>
-*{
-    box-sizing:border-box;
-}
-body{
-    margin:0;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:linear-gradient(135deg,#4b7bec,#6c5ce7);
-    font-family:Arial, sans-serif;
-}
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #5f6cff, #7b5cff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-/* Card */
-.card{
-    background:#fff;
-    width:92%;
-    max-width:380px;
-    padding:28px 22px;
-    border-radius:18px;
-    box-shadow:0 15px 30px rgba(0,0,0,0.25);
-    text-align:center;
-}
+        .login-card {
+            width: 90%;
+            max-width: 380px;
+            background: #fff;
+            border-radius: 16px;
+            padding: 28px 22px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            text-align: center;
+        }
 
-/* Title */
-.card h1{
-    margin:0;
-    font-size:24px;
-    color:#2d3436;
-}
-.card h2{
-    margin:6px 0 18px;
-    font-size:16px;
-    font-weight:normal;
-    color:#636e72;
-}
+        .login-card h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+            color: #333;
+        }
 
-/* Input */
-input{
-    width:100%;
-    padding:14px;
-    font-size:16px;
-    border-radius:10px;
-    border:1px solid #dcdde1;
-    margin-bottom:18px;
-    outline:none;
-}
-input:focus{
-    border-color:#6c5ce7;
-}
+        .login-card p {
+            margin: 6px 0 22px;
+            font-size: 14px;
+            color: #777;
+        }
 
-/* Button */
-button{
-    width:100%;
-    padding:14px;
-    font-size:17px;
-    border:none;
-    border-radius:30px;
-    background:#6c5ce7;
-    color:#fff;
-    cursor:pointer;
-}
-button:active{
-    transform:scale(0.98);
-}
+        .input-box {
+            width: 100%;
+            margin-bottom: 14px;
+        }
 
-/* Info / wait */
-.info{
-    margin-top:16px;
-    font-size:14px;
-    color:#d63031;
-}
-.footer{
-    margin-top:18px;
-    font-size:12px;
-    color:#b2bec3;
-}
-</style>
+        .input-box input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .input-box input:focus {
+            border-color: #6c63ff;
+        }
+
+        .login-btn {
+            width: 100%;
+            margin-top: 10px;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: #6c63ff;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .login-btn:active {
+            transform: scale(0.98);
+        }
+
+        .signup {
+            margin-top: 16px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .signup a {
+            color: #6c63ff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-text {
+            margin-top: 18px;
+            font-size: 12px;
+            color: #aaa;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="card">
-    <h1>Online Mock Test</h1>
-    <h2>Enter your name to start</h2>
+    <div class="login-card">
+        <h1>Welcome to Abhyas App</h1>
+        <p>Login to start your mock test</p>
 
-    <form method="post">
-        <input 
-            type="text" 
-            name="name" 
-            placeholder="Your Full Name" 
-            required
-            autocomplete="off">
-        <button type="submit">Start Exam</button>
-    </form>
+        <form method="POST">
+            <div class="input-box">
+                <input type="text" name="username" placeholder="Student Username" required>
+            </div>
 
-    {% if error %}
-        <div class="info">{{ error }}</div>
-    {% endif %}
+            <div class="input-box">
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
 
-    {% if exam_active == false %}
-        <div class="info">
-            ⏳ Waiting for administration to start the exam
+            <button type="submit" class="login-btn">
+                Login
+            </button>
+        </form>
+
+        <div class="signup">
+            New student?
+            <a href="/signup">Create account</a>
         </div>
-    {% endif %}
 
-    <div class="footer">
-        Best viewed on mobile • Secure exam
+        <div class="footer-text">
+            Best viewed on mobile • Secure exam
+        </div>
     </div>
-</div>
-
-<!-- Service Worker -->
-<script>
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/service-worker.js");
-}
-</script>
 
 </body>
 </html>
