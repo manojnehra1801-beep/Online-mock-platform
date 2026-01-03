@@ -50,9 +50,7 @@ button{
     border-radius:30px;
     background:#e84393;
     color:#fff;
-    cursor:pointer;
 }
-button:active{ transform:scale(0.98); }
 .footer{
     margin:20px;
     text-align:center;
@@ -65,19 +63,19 @@ button:active{ transform:scale(0.98); }
 <body>
 
 <div class="card">
-    <h2>Thank You for Attempting</h2>
+    <h2>Performance</h2>
 
     <div class="score">
         {{ correct }} / {{ total }}
     </div>
 
     <div class="stats">
-        <div class="stat">Correct: <b>{{ correct }}</b></div>
-        <div class="stat">Incorrect: <b>{{ incorrect }}</b></div>
-        <div class="stat">Attempted: <b>{{ attempted }}</b></div>
-        <div class="stat">Unattempted: <b>{{ unattempted }}</b></div>
+        <div class="stat">✅ Correct<br><b>{{ correct }}</b></div>
+        <div class="stat">❌ Incorrect<br><b>{{ incorrect }}</b></div>
+        <div class="stat">✍️ Attempted<br><b>{{ attempted }}</b></div>
+        <div class="stat">⏭ Unattempted<br><b>{{ unattempted }}</b></div>
         <div class="stat" style="grid-column:1/3;">
-            Accuracy: <b>{{ accuracy }}%</b>
+            🎯 Accuracy<br><b>{{ accuracy }}%</b>
         </div>
     </div>
 
@@ -87,7 +85,7 @@ button:active{ transform:scale(0.98); }
 </div>
 
 <div class="footer">
-    Result generated automatically • Contact admin for queries
+    Result generated automatically
 </div>
 
 </body>
