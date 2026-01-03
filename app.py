@@ -3,6 +3,8 @@ import random
 
 app = Flask(__name__)
 app.secret_key = "stable_secret_key_123"
+EXAM_ACTIVE = False
+ANSWER_KEY_ACTIVE = False
 
 # ================= ADMIN =================
 ADMIN_USER = "Manojnehra"
@@ -127,6 +129,22 @@ def toggle():
     global EXAM_ACTIVE
     if not session.get("admin"):
         abort(403)
+    EXAM_ACTIVE = not EXAM_ACTIVE
+    return redirect("/admin/dashboard")
+@app.route("/admin/toggle-answer-key")
+def toggle_answer_key():
+    global ANSWER_KEY_ACTIVE
+    if not session.get("admin"):
+        abort(403)
+
+    ANSWER_KEY_ACTIVE = not ANSWER_KEY_ACTIVE
+    return redirect("/admin/dashboard")
+@app.route("/admin/toggle-exam")
+def toggle_exam():
+    global EXAM_ACTIVE
+    if not session.get("admin"):
+        abort(403)
+
     EXAM_ACTIVE = not EXAM_ACTIVE
     return redirect("/admin/dashboard")
 
