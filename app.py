@@ -117,18 +117,25 @@ def result():
     name = session.get("student_name")
     exam = ACTIVE_EXAMS.get(name, {})
     answers = session.get("answers", {})
-    status = read_status()
 
+    total = 20
+    correct = session.get("score", 0)
+    attempted = len([v for v in answers.values() if v is not None])
+    incorrect = attempted - correct
+    accuracy = round((correct / attempted) * 100, 2) if attempted else 0
+
+    status = read_status()
     if not status["answer_key_active"]:
         return "Thank you for attempting the test. Result will be updated soon."
 
     return render_template(
         "result.html",
-        exam=exam,
-        answers=answers,
-        score=session.get("score", 0),
-        total=20,
-        name=name
+        name=name,
+        correct=correct,
+        incorrect=incorrect,
+        attempted=attempted,
+        total=total,
+        accuracy=accuracy
     )
 
 # ================= ADMIN LOGIN =================
