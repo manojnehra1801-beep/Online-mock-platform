@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, abort, jsonify
+from flask import Flask, render_template, request, redirect, session, abort, send_from_directory
 import ast
 
 app = Flask(__name__)
@@ -49,6 +49,15 @@ QUESTIONS = [
     }
 ]
 
+# ================= PWA FILES =================
+@app.route("/manifest.json")
+def manifest():
+    return send_from_directory(".", "manifest.json")
+
+@app.route("/service-worker.js")
+def service_worker():
+    return send_from_directory(".", "service-worker.js")
+
 # ================= STUDENT LOGIN =================
 @app.route("/", methods=["GET", "POST"])
 def login():
@@ -62,11 +71,16 @@ def login():
 
     return render_template("login.html")
 
+# ================= EXAM STATUS (POLLING) =================
+@app.route("/exam-status")
+def exam_status():
+    return {"active": EXAM_ACTIVE}
+
 # ================= EXAM =================
 @app.route("/exam", methods=["GET", "POST"])
 def exam():
     if not EXAM_ACTIVE:
-        return render_template("wait.html")
+        return redirect("/")
 
     if request.method == "POST":
         correct = 0
@@ -86,7 +100,6 @@ def exam():
                 user_answers[q["id"]] = None
 
         attempted = correct + incorrect
-        unattempted = len(QUESTIONS) - attempted
         accuracy = round((correct / attempted) * 100, 2) if attempted else 0
 
         STUDENT_ATTEMPTS.append({
@@ -101,7 +114,7 @@ def exam():
             "correct": correct,
             "incorrect": incorrect,
             "attempted": attempted,
-            "unattempted": unattempted,
+            "unattempted": len(QUESTIONS) - attempted,
             "accuracy": accuracy,
             "answers_key": str(user_answers)
         })
@@ -113,32 +126,13 @@ def exam():
 # ================= RESULT =================
 @app.route("/result")
 def result():
-    if "score" not in session:
-        return redirect("/")
-
+    user_answers = ast.literal_eval(session.get("answers_key", "{}"))
     return render_template(
         "result.html",
-        score=session["score"],
-        total=session["total"],
-        correct=session["correct"],
-        incorrect=session["incorrect"],
-        attempted=session["attempted"],
-        unattempted=session["unattempted"],
-        accuracy=session["accuracy"]
-    )
-
-# ================= ANSWER KEY =================
-@app.route("/answer-key")
-def answer_key():
-    if not ANSWER_KEY_ACTIVE:
-        abort(403)
-
-    user_answers = ast.literal_eval(session.get("answers_key", "{}"))
-
-    return render_template(
-        "answer_key.html",
         questions=QUESTIONS,
-        user_answers=user_answers
+        user_answers=user_answers,
+        show_answer_key=ANSWER_KEY_ACTIVE,
+        **session
     )
 
 # ================= ADMIN LOGIN =================
@@ -152,7 +146,6 @@ def admin_login():
             session["admin"] = True
             return redirect("/admin/dashboard")
         return "Invalid admin credentials"
-
     return render_template("admin_login.html")
 
 # ================= ADMIN DASHBOARD =================
@@ -160,7 +153,6 @@ def admin_login():
 def admin_dashboard():
     if not session.get("admin"):
         return redirect("/admin")
-
     return render_template(
         "admin_dashboard.html",
         exam_active=EXAM_ACTIVE,
@@ -173,7 +165,6 @@ def toggle_exam():
     global EXAM_ACTIVE
     if not session.get("admin"):
         abort(403)
-
     EXAM_ACTIVE = not EXAM_ACTIVE
     return redirect("/admin/dashboard")
 
@@ -183,7 +174,6 @@ def toggle_answer_key():
     global ANSWER_KEY_ACTIVE
     if not session.get("admin"):
         abort(403)
-
     ANSWER_KEY_ACTIVE = not ANSWER_KEY_ACTIVE
     return redirect("/admin/dashboard")
 
@@ -192,7 +182,6 @@ def toggle_answer_key():
 def admin_students():
     if not session.get("admin"):
         return redirect("/admin")
-
     return render_template("admin_students.html", students=STUDENT_ATTEMPTS)
 
 # ================= ADMIN LOGOUT =================
