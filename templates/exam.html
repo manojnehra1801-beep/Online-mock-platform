@@ -108,4 +108,67 @@ label{
 </div>
 {% endfor %}
 
-<div class="controls
+<div class="controls">
+  <button type="button" onclick="prev()">Previous</button>
+  <button type="button" onclick="next()">Next</button>
+</div>
+
+<div class="submit-fixed">
+  <button type="submit">Submit Exam</button>
+</div>
+
+</form>
+
+<script>
+/* ===== TIMER ===== */
+let totalQ = 0;
+{% for sec in exam %}
+  totalQ += {{ exam[sec]|length }};
+{% endfor %}
+
+let totalSeconds = totalQ * 30;
+
+function formatTime(sec){
+  let m = Math.floor(sec/60);
+  let s = sec % 60;
+  return m + "m " + s + "s";
+}
+
+setInterval(()=>{
+  document.getElementById("totalTime").innerText = formatTime(totalSeconds);
+  if(totalSeconds <= 0){
+    document.getElementById("examForm").submit();
+  }
+  totalSeconds--;
+},1000);
+
+/* ===== SECTION NAV ===== */
+let sections = Array.from(document.querySelectorAll(".section"));
+let index = 0;
+
+function show(i){
+  sections.forEach(s=>s.style.display="none");
+  sections[i].style.display="block";
+}
+
+function openSection(name){
+  sections.forEach((s,i)=>{
+    if(s.id === name){ index=i; show(i); }
+  });
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
+  document.getElementById("tab-"+name).classList.add("active");
+}
+
+function next(){
+  if(index < sections.length-1){ index++; show(index); }
+}
+function prev(){
+  if(index > 0){ index--; show(index); }
+}
+
+/* INIT */
+openSection("Reasoning");
+</script>
+
+</body>
+</html>
