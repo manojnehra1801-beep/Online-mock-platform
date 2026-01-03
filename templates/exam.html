@@ -10,27 +10,15 @@ body{
     font-family:Arial, sans-serif;
     padding-bottom:80px;
 }
-
-/* HEADER */
 .header{
     display:flex;
     justify-content:space-between;
-    align-items:center;
     padding:10px;
     background:#2d3436;
     color:#fff;
-    font-size:14px;
 }
-.header .center{
-    font-size:16px;
-    font-weight:bold;
-}
-
-/* SECTION TABS */
 .tabs{
     display:flex;
-    overflow-x:auto;
-    background:#f1f2f6;
 }
 .tabs button{
     flex:1;
@@ -43,14 +31,82 @@ body{
     background:#6c5ce7;
     color:#fff;
 }
-
-/* QUESTION BOX */
-.question-box{
+.section{
     display:none;
     padding:12px;
 }
-.question-box.active{
-    display:block;
+.option{
+    margin:6px 0;
+}
+.submit{
+    position:fixed;
+    bottom:10px;
+    right:10px;
+}
+.submit button{
+    padding:14px 18px;
+    background:#e84393;
+    color:#fff;
+    border:none;
+    border-radius:30px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <div>{{ session.name }}</div>
+    <div>MOCK TEST</div>
+    <div>20 Q</div>
+</div>
+
+<!-- SECTION TABS -->
+<div class="tabs">
+{% for sec in exam %}
+    <button onclick="openSection('{{ sec }}')" id="tab-{{ sec }}">{{ sec }}</button>
+{% endfor %}
+</div>
+
+<form method="post">
+
+{% for sec in exam %}
+<div class="section" id="{{ sec }}">
+    <h3>{{ sec }}</h3>
+
+    {% for q in exam[sec] %}
+        <p><b>{{ q.q }}</b></p>
+
+        {% for opt in q.opt %}
+        <div class="option">
+            <label>
+                <input type="radio" name="{{ q.id }}" value="{{ loop.index0 }}">
+                {{ opt }}
+            </label>
+        </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+{% endfor %}
+
+<div class="submit">
+    <button type="submit">Submit Exam</button>
+</div>
+
+</form>
+
+<script>
+function openSection(sec){
+    document.querySelectorAll(".section").forEach(s=>s.style.display="none");
+    document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
+
+    document.getElementById(sec).style.display="block";
+    document.getElementById("tab-"+sec).classList.add("active");
 }
 
-/*
+// default open first section
+openSection("Reasoning");
+</script>
+
+</body>
+</html>
