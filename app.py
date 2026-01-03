@@ -88,6 +88,9 @@ def exam_status():
 # ================= EXAM =================
 @app.route("/exam", methods=["GET","POST"])
 def exam():
+if request.method == "POST":
+    score = 0
+    answers = {}
     name = session.get("student_name")
     if not name or name not in ACTIVE_EXAMS:
         return redirect("/")
