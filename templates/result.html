@@ -1,96 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Result</title>
-
-<style>
-body{
-    font-family: Arial, sans-serif;
-    background:#f4f6fb;
-    margin:0;
-}
-.header{
-    background:#6c5ce7;
-    color:#fff;
-    padding:20px;
-    text-align:center;
-}
-.card{
-    background:#fff;
-    margin:20px;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
-.grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:15px;
-    margin-top:15px;
-}
-.box{
-    background:#f1f2f6;
-    padding:15px;
-    border-radius:12px;
-    text-align:center;
-    font-weight:bold;
-}
-.progress{
-    margin-top:20px;
-}
-.progress-bar{
-    height:10px;
-    background:#dfe6e9;
-    border-radius:10px;
-    overflow:hidden;
-}
-.progress-fill{
-    height:100%;
-    width: {{ accuracy }}%;
-    background:#00b894;
-}
-.btn{
-    display:block;
-    width:100%;
-    padding:15px;
-    margin-top:15px;
-    border:none;
-    border-radius:30px;
-    font-size:16px;
-}
-.blue{ background:#0984e3; color:#fff; }
-.grey{ background:#dfe6e9; }
-</style>
+    <title>Result</title>
 </head>
-
 <body>
 
-<div class="header">
-    <h2>Performance</h2>
-    <p>{{ name }} • Mock Test</p>
-</div>
+<h2>Result</h2>
 
-<div class="card">
-    <h1 style="text-align:center">{{ correct }} / {{ total }}</h1>
+<p>Score: {{ score }} / {{ total }}</p>
 
-    <div class="grid">
-        <div class="box">Correct<br>{{ correct }}</div>
-        <div class="box">Incorrect<br>{{ incorrect }}</div>
-        <div class="box">Attempted<br>{{ attempted }} / {{ total }}</div>
-        <div class="box">Accuracy<br>{{ accuracy }}%</div>
-    </div>
-
-    <div class="progress">
-        <p style="text-align:center">Accuracy Progress</p>
-        <div class="progress-bar">
-            <div class="progress-fill"></div>
-        </div>
-    </div>
-
-    <button class="btn blue">View Answer Key</button>
-    <button class="btn grey" onclick="window.location.href='/'">Exit Test</button>
-</div>
+<a href="/logout">Exit</a>
 
 </body>
 </html>
