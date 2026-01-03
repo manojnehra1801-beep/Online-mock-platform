@@ -59,18 +59,20 @@ def service_worker():
     return send_from_directory(".", "service-worker.js")
 
 # ================= STUDENT LOGIN =================
+
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         if not EXAM_ACTIVE:
-            return render_template("wait.html")
+            # Exam off hai, login page hi dikhao with message
+            return render_template("login.html", exam_active=EXAM_ACTIVE)
 
         session.clear()
         session["name"] = request.form.get("name")
         return redirect("/exam")
 
-    return render_template("login.html")
-
+    # GET request
+    return render_template("login.html", exam_active=EXAM_ACTIVE)
 # ================= EXAM STATUS (POLLING) =================
 @app.route("/exam-status")
 def exam_status():
