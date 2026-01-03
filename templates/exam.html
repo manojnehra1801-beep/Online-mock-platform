@@ -6,49 +6,60 @@
 
 <style>
 body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    padding-bottom:80px;
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#f5f7fb;
+  padding-bottom:90px;
 }
 .header{
-    display:flex;
-    justify-content:space-between;
-    padding:10px;
-    background:#2d3436;
-    color:#fff;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px;
+  background:#2d3436;
+  color:#fff;
 }
 .tabs{
-    display:flex;
+  display:flex;
 }
 .tabs button{
-    flex:1;
-    padding:10px;
-    border:none;
-    background:#dfe6e9;
-    font-weight:bold;
+  flex:1;
+  padding:10px;
+  border:none;
+  background:#dfe6e9;
+  font-weight:bold;
 }
 .tabs button.active{
-    background:#6c5ce7;
-    color:#fff;
+  background:#6c5ce7;
+  color:#fff;
 }
 .section{
-    display:none;
-    padding:12px;
+  display:none;
+  padding:14px;
 }
 .option{
-    margin:6px 0;
+  margin:6px 0;
+}
+.controls{
+  display:flex;
+  justify-content:space-between;
+  padding:10px;
+}
+.controls button{
+  width:32%;
+  padding:10px;
 }
 .submit{
-    position:fixed;
-    bottom:10px;
-    right:10px;
+  position:fixed;
+  right:10px;
+  bottom:10px;
 }
 .submit button{
-    padding:14px 18px;
-    background:#e84393;
-    color:#fff;
-    border:none;
-    border-radius:30px;
+  padding:14px 18px;
+  background:#e84393;
+  color:#fff;
+  border:none;
+  border-radius:30px;
 }
 </style>
 </head>
@@ -56,55 +67,76 @@ body{
 <body>
 
 <div class="header">
-    <div>{{ session.name }}</div>
-    <div>MOCK TEST</div>
-    <div>20 Q</div>
+  <div>{{ session.name }}</div>
+  <div>MOCK TEST</div>
+  <div>20 Q</div>
 </div>
 
-<!-- SECTION TABS -->
 <div class="tabs">
 {% for sec in exam %}
-    <button onclick="openSection('{{ sec }}')" id="tab-{{ sec }}">{{ sec }}</button>
+  <button onclick="openSection('{{ sec }}')" id="tab-{{ sec }}">{{ sec }}</button>
 {% endfor %}
 </div>
 
-<form method="post">
+<form method="post" id="examForm">
 
 {% for sec in exam %}
 <div class="section" id="{{ sec }}">
-    <h3>{{ sec }}</h3>
-
-    {% for q in exam[sec] %}
-        <p><b>{{ q.q }}</b></p>
-
-        {% for opt in q.opt %}
-        <div class="option">
-            <label>
-                <input type="radio" name="{{ q.id }}" value="{{ loop.index0 }}">
-                {{ opt }}
-            </label>
-        </div>
-        {% endfor %}
+  <h3>{{ sec }}</h3>
+  {% for q in exam[sec] %}
+    <p><b>{{ q.q }}</b></p>
+    {% for opt in q.opt %}
+      <div class="option">
+        <label>
+          <input type="radio" name="{{ q.id }}" value="{{ loop.index0 }}">
+          {{ opt }}
+        </label>
+      </div>
     {% endfor %}
+  {% endfor %}
 </div>
 {% endfor %}
 
+<div class="controls">
+  <button type="button" onclick="prev()">Previous</button>
+  <button type="button" onclick="next()">Next</button>
+  <button type="button" onclick="clearAns()">Clear</button>
+</div>
+
 <div class="submit">
-    <button type="submit">Submit Exam</button>
+  <button type="submit">Submit Exam</button>
 </div>
 
 </form>
 
 <script>
-function openSection(sec){
-    document.querySelectorAll(".section").forEach(s=>s.style.display="none");
-    document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
+let sections = Array.from(document.querySelectorAll(".section"));
+let index = 0;
 
-    document.getElementById(sec).style.display="block";
-    document.getElementById("tab-"+sec).classList.add("active");
+function show(i){
+  sections.forEach(s=>s.style.display="none");
+  sections[i].style.display="block";
 }
 
-// default open first section
+function next(){
+  if(index < sections.length-1){ index++; show(index); }
+}
+function prev(){
+  if(index > 0){ index--; show(index); }
+}
+function clearAns(){
+  let radios = sections[index].querySelectorAll("input[type=radio]");
+  radios.forEach(r=>r.checked=false);
+}
+
+function openSection(sec){
+  sections.forEach((s,i)=>{
+    if(s.id === sec){ index=i; show(i); }
+  });
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
+  document.getElementById("tab-"+sec).classList.add("active");
+}
+
 openSection("Reasoning");
 </script>
 
