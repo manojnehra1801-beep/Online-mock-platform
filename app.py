@@ -1,50 +1,121 @@
-# ===== BLANK SCREEN FIX : MINIMAL & SAFE app.py =====
-# Is file ko POORA copy–paste karo. Extra kuch nahi.
-
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, abort
 
 app = Flask(__name__)
-app.secret_key = "mock_exam_secret_key_123"
+app.secret_key = "exam_secret_123"
 
-# ===== FLAG =====
-EXAM_ACTIVE = True   # test ke liye True rakho
+# ================= ADMIN =================
+ADMIN_USER = "Manojnehra"
+ADMIN_PASS = "NEHRA@2233"
+EXAM_ACTIVE = False
 
-# ===== QUESTIONS =====
+# ================= QUESTIONS =================
 QUESTIONS = [
     {
         "id": "q1",
-        "question": "2 + 2 = ?",
-        "options": ["3", "4", "5", "6"],
+        "question": "Industrial Policy Resolution 1956 classified industries into?",
+        "options": [
+            "Two categories",
+            "Three categories",
+            "Four categories",
+            "Only private sector"
+        ],
+        "answer": 1
+    },
+    {
+        "id": "q2",
+        "question": "Baisakhi is related to which Sikh institution?",
+        "options": [
+            "Akal Takht",
+            "Khalsa Panth",
+            "Guru Granth Sahib",
+            "Harmandir Sahib"
+        ],
+        "answer": 1
+    },
+    {
+        "id": "q3",
+        "question": "Who wrote Mrichchhakatika?",
+        "options": [
+            "Kalidasa",
+            "Shudraka",
+            "Bhasa",
+            "Valmiki"
+        ],
         "answer": 1
     }
 ]
 
-# ===== LOGIN =====
+# ================= STUDENT LOGIN =================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         if not EXAM_ACTIVE:
-            return render_template("login.html", exam_active=EXAM_ACTIVE)
-
-        session.clear()
-        session["name"] = request.form.get("name")
+            return render_template("login.html", error="Exam not started yet")
+        session["student"] = request.form.get("name")
         return redirect("/exam")
+    return render_template("login.html")
 
-    return render_template("login.html", exam_active=EXAM_ACTIVE)
-
-# ===== EXAM =====
+# ================= EXAM =================
 @app.route("/exam", methods=["GET", "POST"])
 def exam():
+    if "student" not in session:
+        return redirect("/")
+
     if request.method == "POST":
+        score = 0
+        for q in QUESTIONS:
+            ans = request.form.get(q["id"])
+            if ans and int(ans) == q["answer"]:
+                score += 1
+
+        session["score"] = score
+        session["total"] = len(QUESTIONS)
         return redirect("/result")
 
     return render_template("exam.html", questions=QUESTIONS)
 
-# ===== RESULT =====
+# ================= RESULT =================
 @app.route("/result")
 def result():
-    return "Result Page Working"
+    if "score" not in session:
+        return redirect("/")
+    return render_template(
+        "result.html",
+        score=session["score"],
+        total=session["total"]
+    )
 
-# ===== RUN =====
+# ================= ADMIN LOGIN =================
+@app.route("/admin", methods=["GET", "POST"])
+def admin_login():
+    if request.method == "POST":
+        if request.form.get("username") == ADMIN_USER and request.form.get("password") == ADMIN_PASS:
+            session["admin"] = True
+            return redirect("/admin/dashboard")
+        return render_template("admin_login.html", error="Invalid login")
+    return render_template("admin_login.html")
+
+# ================= ADMIN DASHBOARD =================
+@app.route("/admin/dashboard")
+def admin_dashboard():
+    if not session.get("admin"):
+        return redirect("/admin")
+    return render_template("admin_dashboard.html", exam_active=EXAM_ACTIVE)
+
+# ================= TOGGLE EXAM =================
+@app.route("/admin/toggle")
+def toggle_exam():
+    global EXAM_ACTIVE
+    if not session.get("admin"):
+        abort(403)
+    EXAM_ACTIVE = not EXAM_ACTIVE
+    return redirect("/admin/dashboard")
+
+# ================= LOGOUT =================
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
