@@ -6,155 +6,90 @@
 
 <style>
 body{
-    margin:0;
     font-family: Arial, sans-serif;
-    background:#f5f6fa;
+    background:#f4f6fb;
+    margin:0;
 }
-
-/* HEADER */
 .header{
     background:#6c5ce7;
     color:#fff;
-    padding:25px 15px;
+    padding:20px;
     text-align:center;
 }
-.header h1{
-    margin:0;
-    font-size:22px;
-}
-.header p{
-    margin:6px 0 0;
-    font-size:14px;
-    opacity:0.9;
-}
-
-/* CARD */
 .card{
     background:#fff;
     margin:20px;
     padding:20px;
-    border-radius:16px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.08);
-    text-align:center;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
-
-/* SCORE */
-.score{
-    font-size:32px;
-    font-weight:bold;
-    margin-bottom:15px;
-}
-
-/* STATS GRID */
-.stats{
+.grid{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:12px;
+    gap:15px;
     margin-top:15px;
 }
-.stat-box{
+.box{
     background:#f1f2f6;
-    padding:12px;
+    padding:15px;
     border-radius:12px;
-    font-size:14px;
-}
-.stat-box span{
-    display:block;
-    font-size:18px;
+    text-align:center;
     font-weight:bold;
-    margin-top:4px;
 }
-
-/* PROGRESS */
 .progress{
-    margin:20px 0;
+    margin-top:20px;
 }
 .progress-bar{
-    width:100%;
-    height:12px;
-    background:#dcdde1;
+    height:10px;
+    background:#dfe6e9;
     border-radius:10px;
     overflow:hidden;
 }
 .progress-fill{
     height:100%;
+    width: {{ accuracy }}%;
     background:#00b894;
 }
-
-/* BUTTONS */
 .btn{
+    display:block;
     width:100%;
-    padding:14px;
+    padding:15px;
+    margin-top:15px;
     border:none;
     border-radius:30px;
     font-size:16px;
-    cursor:pointer;
-    margin-top:12px;
 }
-.btn-primary{
-    background:#0984e3;
-    color:#fff;
-}
-.btn-exit{
-    background:#dfe6e9;
-    color:#2d3436;
-}
+.blue{ background:#0984e3; color:#fff; }
+.grey{ background:#dfe6e9; }
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <div class="header">
-    <h1>Performance</h1>
-    <p>{{ session['name'] }} · Mock Test</p>
+    <h2>Performance</h2>
+    <p>{{ name }} • Mock Test</p>
 </div>
 
-<!-- RESULT CARD -->
 <div class="card">
+    <h1 style="text-align:center">{{ correct }} / {{ total }}</h1>
 
-    <!-- SCORE -->
-    <div class="score">
-        {{ score }} / {{ total }}
+    <div class="grid">
+        <div class="box">Correct<br>{{ correct }}</div>
+        <div class="box">Incorrect<br>{{ incorrect }}</div>
+        <div class="box">Attempted<br>{{ attempted }} / {{ total }}</div>
+        <div class="box">Accuracy<br>{{ accuracy }}%</div>
     </div>
 
-    <!-- STATS -->
-    <div class="stats">
-        <div class="stat-box">
-            Correct
-            <span>{{ correct }}</span>
-        </div>
-        <div class="stat-box">
-            Incorrect
-            <span>{{ incorrect }}</span>
-        </div>
-        <div class="stat-box">
-            Attempted
-            <span>{{ attempted }} / {{ total }}</span>
-        </div>
-        <div class="stat-box">
-            Accuracy %
-            <span>{{ accuracy }}%</span>
-        </div>
-    </div>
-
-    <!-- PROGRESS -->
     <div class="progress">
+        <p style="text-align:center">Accuracy Progress</p>
         <div class="progress-bar">
-            <div class="progress-fill" style="width: {{ accuracy }}%;"></div>
+            <div class="progress-fill"></div>
         </div>
-        <small>Accuracy Progress</small>
     </div>
 
-    <!-- ACTIONS -->
-    <button class="btn btn-primary" onclick="window.location.href='/answer-key'">
-        View Answer Key
-    </button>
-
-    <button class="btn btn-exit" onclick="window.location.href='/logout'">
-        Exit Test
-    </button>
-
+    <button class="btn blue">View Answer Key</button>
+    <button class="btn grey" onclick="window.location.href='/'">Exit Test</button>
 </div>
 
 </body>
