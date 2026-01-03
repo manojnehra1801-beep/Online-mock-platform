@@ -1,16 +1,19 @@
+# ================= FULL app.py (COPY–PASTE READY) =================
+# Purpose: Login (no blank screen) → Exam with questions → Submit → Result
+# Notes:
+# - Uses in-memory flags (simple & stable for now)
+# - Templates required: login.html, exam.html, result.html
+# - PWA files optional: manifest.json, service-worker.js (served below)
+
 from flask import Flask, render_template, request, redirect, session, abort, send_from_directory
 import ast
 
 app = Flask(__name__)
 app.secret_key = "mock_exam_secret_key_123"
 
-# ================= ADMIN CONFIG =================
-ADMIN_USER = "Manojnehra"
-ADMIN_PASS = "NEHRA@2233"
-
-EXAM_ACTIVE = False
-ANSWER_KEY_ACTIVE = False
-STUDENT_ATTEMPTS = []
+# ================= ADMIN FLAGS =================
+EXAM_ACTIVE = True        # set False to block exam
+ANSWER_KEY_ACTIVE = True # set False to hide answers
 
 # ================= QUESTIONS =================
 QUESTIONS = [
@@ -58,25 +61,18 @@ def manifest():
 def service_worker():
     return send_from_directory(".", "service-worker.js")
 
-# ================= STUDENT LOGIN =================
-
+# ================= LOGIN =================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         if not EXAM_ACTIVE:
-            # Exam off hai, login page hi dikhao with message
             return render_template("login.html", exam_active=EXAM_ACTIVE)
 
         session.clear()
         session["name"] = request.form.get("name")
         return redirect("/exam")
 
-    # GET request
     return render_template("login.html", exam_active=EXAM_ACTIVE)
-# ================= EXAM STATUS (POLLING) =================
-@app.route("/exam-status")
-def exam_status():
-    return {"active": EXAM_ACTIVE}
 
 # ================= EXAM =================
 @app.route("/exam", methods=["GET", "POST"])
@@ -102,21 +98,16 @@ def exam():
                 user_answers[q["id"]] = None
 
         attempted = correct + incorrect
+        unattempted = len(QUESTIONS) - attempted
         accuracy = round((correct / attempted) * 100, 2) if attempted else 0
 
-        STUDENT_ATTEMPTS.append({
-            "name": session.get("name"),
-            "score": correct,
-            "accuracy": accuracy
-        })
-
         session.update({
-            "score": correct,
+            "name": session.get("name"),
             "total": len(QUESTIONS),
             "correct": correct,
             "incorrect": incorrect,
             "attempted": attempted,
-            "unattempted": len(QUESTIONS) - attempted,
+            "unattempted": unattempted,
             "accuracy": accuracy,
             "answers_key": str(user_answers)
         })
@@ -128,69 +119,24 @@ def exam():
 # ================= RESULT =================
 @app.route("/result")
 def result():
+    if "correct" not in session:
+        return redirect("/")
+
     user_answers = ast.literal_eval(session.get("answers_key", "{}"))
+
     return render_template(
         "result.html",
+        name=session.get("name"),
+        total=session.get("total"),
+        correct=session.get("correct"),
+        incorrect=session.get("incorrect"),
+        attempted=session.get("attempted"),
+        unattempted=session.get("unattempted"),
+        accuracy=session.get("accuracy"),
         questions=QUESTIONS,
         user_answers=user_answers,
-        show_answer_key=ANSWER_KEY_ACTIVE,
-        **session
+        show_answer_key=ANSWER_KEY_ACTIVE
     )
-
-# ================= ADMIN LOGIN =================
-@app.route("/admin", methods=["GET", "POST"])
-def admin_login():
-    if request.method == "POST":
-        if (
-            request.form.get("username") == ADMIN_USER
-            and request.form.get("password") == ADMIN_PASS
-        ):
-            session["admin"] = True
-            return redirect("/admin/dashboard")
-        return "Invalid admin credentials"
-    return render_template("admin_login.html")
-
-# ================= ADMIN DASHBOARD =================
-@app.route("/admin/dashboard")
-def admin_dashboard():
-    if not session.get("admin"):
-        return redirect("/admin")
-    return render_template(
-        "admin_dashboard.html",
-        exam_active=EXAM_ACTIVE,
-        answer_key_active=ANSWER_KEY_ACTIVE
-    )
-
-# ================= TOGGLE EXAM =================
-@app.route("/admin/toggle-exam")
-def toggle_exam():
-    global EXAM_ACTIVE
-    if not session.get("admin"):
-        abort(403)
-    EXAM_ACTIVE = not EXAM_ACTIVE
-    return redirect("/admin/dashboard")
-
-# ================= TOGGLE ANSWER KEY =================
-@app.route("/admin/toggle-answer-key")
-def toggle_answer_key():
-    global ANSWER_KEY_ACTIVE
-    if not session.get("admin"):
-        abort(403)
-    ANSWER_KEY_ACTIVE = not ANSWER_KEY_ACTIVE
-    return redirect("/admin/dashboard")
-
-# ================= STUDENT LIST =================
-@app.route("/admin/students")
-def admin_students():
-    if not session.get("admin"):
-        return redirect("/admin")
-    return render_template("admin_students.html", students=STUDENT_ATTEMPTS)
-
-# ================= ADMIN LOGOUT =================
-@app.route("/admin/logout")
-def admin_logout():
-    session.clear()
-    return redirect("/admin")
 
 # ================= RUN =================
 if __name__ == "__main__":
