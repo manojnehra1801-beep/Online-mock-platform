@@ -1,26 +1,35 @@
-from flask import Flask, render_template, request, redirect, session, abort
+from flask import Flask, render_template, request, redirect, session, abort, jsonify
+import json
+import os
 import random
 
 app = Flask(__name__)
 app.secret_key = "stable_secret_key_123"
-EXAM_ACTIVE = False
-ANSWER_KEY_ACTIVE = False
 
-# ================= ADMIN =================
+# ================= ADMIN CONFIG =================
 ADMIN_USER = "Manojnehra"
 ADMIN_PASS = "NEHRA@2233"
-EXAM_ACTIVE = False
 
-# ================= SERVER SIDE STORAGE =================
-ACTIVE_EXAMS = {}
+STATUS_FILE = "exam_status.json"
+
+# ================= UTILS =================
+def read_status():
+    if not os.path.exists(STATUS_FILE):
+        return {"exam_active": False, "answer_key_active": False}
+    with open(STATUS_FILE, "r") as f:
+        return json.load(f)
+
+def write_status(data):
+    with open(STATUS_FILE, "w") as f:
+        json.dump(data, f)
 
 # ================= QUESTION BANK =================
 REASONING = [
     {"id":"r1","q":"Odd one out: 2, 4, 8, 16, 18","opt":["8","16","18","4"],"ans":2},
     {"id":"r2","q":"If A=1, B=2 then Z=?","opt":["24","25","26","27"],"ans":2},
-    {"id":"r3","q":"Mirror image relates to?","opt":["Reflection","Rotation","Refraction","None"],"ans":0},
-    {"id":"r4","q":"Odd one: Cat, Dog, Cow, Chair","opt":["Cat","Dog","Cow","Chair"],"ans":3},
-    {"id":"r5","q":"3, 6, 12, ?","opt":["18","20","24","30"],"ans":2},
+    {"id":"r3","q":"3, 6, 12, ?","opt":["18","20","24","30"],"ans":2},
+    {"id":"r4","q":"Mirror image is related to?","opt":["Reflection","Rotation","Refraction","None"],"ans":0},
+    {"id":"r5","q":"Odd one: Cat, Dog, Cow, Chair","opt":["Cat","Dog","Cow","Chair"],"ans":3},
 ]
 
 GK = [
@@ -47,30 +56,39 @@ ENGLISH = [
     {"id":"e5","q":"Fill blank: I ___ a book","opt":["read","reads","reading","have"],"ans":0},
 ]
 
-# ================= LOGIN =================
+ACTIVE_EXAMS = {}
+
+# ================= STUDENT LOGIN =================
 @app.route("/", methods=["GET","POST"])
 def login():
+    status = read_status()
     if request.method == "POST":
-        if not EXAM_ACTIVE:
+        if not status["exam_active"]:
             return "Exam not started yet"
 
         name = request.form.get("name")
-        session["name"] = name
+        session["student_name"] = name
 
         ACTIVE_EXAMS[name] = {
-            "Reasoning": random.sample(REASONING,5),
-            "GK": random.sample(GK,5),
-            "Maths": random.sample(MATHS,5),
-            "English": random.sample(ENGLISH,5),
+            "Reasoning": random.sample(REASONING, 5),
+            "GK": random.sample(GK, 5),
+            "Maths": random.sample(MATHS, 5),
+            "English": random.sample(ENGLISH, 5),
         }
         return redirect("/exam")
 
     return render_template("login.html")
 
+# ================= EXAM STATUS (POLLING) =================
+@app.route("/exam-status")
+def exam_status():
+    status = read_status()
+    return jsonify({"active": status["exam_active"]})
+
 # ================= EXAM =================
 @app.route("/exam", methods=["GET","POST"])
 def exam():
-    name = session.get("name")
+    name = session.get("student_name")
     if not name or name not in ACTIVE_EXAMS:
         return redirect("/")
 
@@ -96,57 +114,76 @@ def exam():
 # ================= RESULT =================
 @app.route("/result")
 def result():
-    name = session.get("name")
+    name = session.get("student_name")
     exam = ACTIVE_EXAMS.get(name, {})
     answers = session.get("answers", {})
+    status = read_status()
+
+    if not status["answer_key_active"]:
+        return "Thank you for attempting the test. Result will be updated soon."
 
     return render_template(
         "result.html",
         exam=exam,
         answers=answers,
-        score=session.get("score",0),
+        score=session.get("score", 0),
+        total=20,
         name=name
     )
 
-# ================= ADMIN =================
+# ================= ADMIN LOGIN =================
 @app.route("/admin", methods=["GET","POST"])
-def admin():
+def admin_login():
     if request.method == "POST":
-        if request.form["username"] == ADMIN_USER and request.form["password"] == ADMIN_PASS:
+        if request.form.get("username") == ADMIN_USER and request.form.get("password") == ADMIN_PASS:
             session["admin"] = True
+            session["admin_user"] = ADMIN_USER
             return redirect("/admin/dashboard")
-        return "Invalid login"
+        return "Invalid admin login"
+
     return render_template("admin_login.html")
 
+# ================= ADMIN DASHBOARD =================
 @app.route("/admin/dashboard")
 def admin_dashboard():
     if not session.get("admin"):
         return redirect("/admin")
-    return render_template("admin_dashboard.html", exam_active=EXAM_ACTIVE)
 
-@app.route("/admin/toggle")
-def toggle():
-    global EXAM_ACTIVE
-    if not session.get("admin"):
-        abort(403)
-    EXAM_ACTIVE = not EXAM_ACTIVE
-    return redirect("/admin/dashboard")
-@app.route("/admin/toggle-answer-key")
-def toggle_answer_key():
-    global ANSWER_KEY_ACTIVE
-    if not session.get("admin"):
-        abort(403)
+    status = read_status()
+    return render_template(
+        "admin_dashboard.html",
+        exam_active=status["exam_active"],
+        answer_key_active=status["answer_key_active"]
+    )
 
-    ANSWER_KEY_ACTIVE = not ANSWER_KEY_ACTIVE
-    return redirect("/admin/dashboard")
+# ================= TOGGLES =================
 @app.route("/admin/toggle-exam")
 def toggle_exam():
-    global EXAM_ACTIVE
     if not session.get("admin"):
         abort(403)
 
-    EXAM_ACTIVE = not EXAM_ACTIVE
+    status = read_status()
+    status["exam_active"] = not status["exam_active"]
+    write_status(status)
     return redirect("/admin/dashboard")
 
+@app.route("/admin/toggle-answer-key")
+def toggle_answer_key():
+    if not session.get("admin"):
+        abort(403)
+
+    status = read_status()
+    status["answer_key_active"] = not status["answer_key_active"]
+    write_status(status)
+    return redirect("/admin/dashboard")
+
+# ================= ADMIN LOGOUT =================
+@app.route("/admin/logout")
+def admin_logout():
+    session.pop("admin", None)
+    session.pop("admin_user", None)
+    return redirect("/admin")
+
+# ================= RUN =================
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
