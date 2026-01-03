@@ -1,127 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel</title>
-
-<style>
-body{
-    margin:0;
-    font-family: Arial, sans-serif;
-    background:#f5f6fa;
-}
-
-/* HEADER */
-.header{
-    background:#2d3436;
-    color:#fff;
-    padding:20px;
-    text-align:center;
-}
-.header h2{
-    margin:0;
-    font-size:22px;
-}
-.header p{
-    margin-top:6px;
-    font-size:14px;
-    opacity:0.9;
-}
-
-/* PANEL */
-.panel{
-    background:#fff;
-    margin:20px;
-    padding:20px;
-    border-radius:14px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.08);
-}
-
-/* ROW */
-.row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:18px;
-    font-size:16px;
-}
-
-/* TOGGLE BUTTON */
-.toggle{
-    padding:10px 18px;
-    border:none;
-    border-radius:30px;
-    font-size:14px;
-    cursor:pointer;
-    color:#fff;
-}
-.on{
-    background:#00b894;
-}
-.off{
-    background:#d63031;
-}
-
-/* LOGOUT */
-.logout{
-    width:100%;
-    margin-top:10px;
-    padding:14px;
-    border:none;
-    border-radius:30px;
-    background:#636e72;
-    color:#fff;
-    font-size:16px;
-    cursor:pointer;
-}
-</style>
+    <title>Admin Dashboard</title>
 </head>
-
 <body>
 
-<!-- HEADER -->
-<div class="header">
-    <h2>Welcome Manoj Nehra</h2>
-    <p>to your Online Exam Panel</p>
-</div>
+<h2>Welcome Manoj Nehra</h2>
 
-<!-- ADMIN PANEL -->
-<div class="panel">
+<p>Exam Status:
+<b style="color:{{ 'green' if exam_active else 'red' }}">
+{{ 'ON' if exam_active else 'OFF' }}
+</b>
+</p>
 
-    <!-- EXAM CONTROL -->
-    <div class="row">
-        <span>Exam Status</span>
-        {% if exam_active %}
-            <button class="toggle on" onclick="location.href='/admin/toggle-exam'">
-                ON
-            </button>
-        {% else %}
-            <button class="toggle off" onclick="location.href='/admin/toggle-exam'">
-                OFF
-            </button>
-        {% endif %}
-    </div>
+<a href="/admin/toggle">
+    {{ 'Stop Exam' if exam_active else 'Start Exam' }}
+</a>
 
-    <!-- ANSWER KEY CONTROL -->
-    <div class="row">
-        <span>Answer Key Status</span>
-        {% if answer_key_active %}
-            <button class="toggle on" onclick="location.href='/admin/toggle-answer-key'">
-                ON
-            </button>
-        {% else %}
-            <button class="toggle off" onclick="location.href='/admin/toggle-answer-key'">
-                OFF
-            </button>
-        {% endif %}
-    </div>
-
-    <!-- LOGOUT -->
-    <button class="logout" onclick="location.href='/admin/logout'">
-        Logout Admin
-    </button>
-
-</div>
+<br><br>
+<a href="/logout">Logout</a>
 
 </body>
 </html>
