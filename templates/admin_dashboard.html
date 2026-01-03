@@ -1,24 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#f5f6fa;
+}
+.header{
+    background:#6c5ce7;
+    color:#fff;
+    padding:14px;
+    text-align:center;
+}
+.card{
+    background:#fff;
+    margin:16px;
+    padding:18px;
+    border-radius:14px;
+    box-shadow:0 6px 15px rgba(0,0,0,0.12);
+}
+.status{
+    font-size:18px;
+    margin-bottom:12px;
+}
+.on{ color:#00b894; font-weight:bold; }
+.off{ color:#d63031; font-weight:bold; }
+button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:30px;
+    font-size:16px;
+    background:#0984e3;
+    color:#fff;
+    cursor:pointer;
+}
+.logout{
+    margin:16px;
+    text-align:center;
+}
+.logout a{
+    color:#636e72;
+    text-decoration:none;
+}
+</style>
 </head>
+
 <body>
 
-<h2>Welcome Manoj Nehra</h2>
+<div class="header">
+    Welcome Manoj Nehra — Online Exam Panel
+</div>
 
-<p>Exam Status:
-<b style="color:{{ 'green' if exam_active else 'red' }}">
-{{ 'ON' if exam_active else 'OFF' }}
-</b>
-</p>
+<div class="card">
+    <div class="status">
+        Exam Status:
+        {% if exam_active %}
+            <span class="on">ON</span>
+        {% else %}
+            <span class="off">OFF</span>
+        {% endif %}
+    </div>
 
-<a href="/admin/toggle">
-    {{ 'Stop Exam' if exam_active else 'Start Exam' }}
-</a>
+    <a href="/admin/toggle">
+        <button>
+            {% if exam_active %}Stop Exam{% else %}Start Exam{% endif %}
+        </button>
+    </a>
+</div>
 
-<br><br>
-<a href="/logout">Logout</a>
+<div class="logout">
+    <a href="/logout">Logout</a>
+</div>
 
 </body>
 </html>
