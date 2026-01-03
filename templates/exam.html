@@ -1,143 +1,221 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mock Test</title>
 
 <style>
 body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#f5f7fb;
-  padding-bottom:90px;
+    font-family: Arial, sans-serif;
+    margin:0;
+    padding-bottom:90px;
+    background:#f5f6fa;
 }
+
+/* HEADER */
 .header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:10px;
-  background:#2d3436;
-  color:#fff;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px;
+    background:#6c5ce7;
+    color:#fff;
 }
-.tabs{
-  display:flex;
+.header .center{
+    font-size:16px;
+    font-weight:bold;
 }
-.tabs button{
-  flex:1;
-  padding:10px;
-  border:none;
-  background:#dfe6e9;
-  font-weight:bold;
+.timer{
+    font-weight:bold;
 }
-.tabs button.active{
-  background:#6c5ce7;
-  color:#fff;
+
+/* PALETTE */
+.palette{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    padding:10px;
+    background:#fff;
 }
-.section{
-  display:none;
-  padding:14px;
+.palette button{
+    width:36px;
+    height:36px;
+    border:none;
+    border-radius:50%;
+    font-weight:bold;
+    cursor:pointer;
 }
-.option{
-  margin:6px 0;
+.grey{ background:#dfe6e9; }
+.green{ background:#55efc4; }
+.yellow{ background:#ffeaa7; }
+
+/* QUESTION */
+.question-box{
+    display:none;
+    background:#fff;
+    margin:10px;
+    padding:15px;
+    border-radius:10px;
 }
+.question-box p{
+    font-size:15px;
+    margin-bottom:10px;
+}
+
+/* OPTIONS */
+label{
+    display:block;
+    padding:8px;
+    border-radius:6px;
+    margin-bottom:6px;
+    background:#f1f2f6;
+}
+
+/* CONTROLS */
 .controls{
-  display:flex;
-  justify-content:space-between;
-  padding:10px;
+    display:flex;
+    justify-content:space-around;
+    padding:10px;
 }
 .controls button{
-  width:32%;
-  padding:10px;
+    padding:10px;
+    width:30%;
+    border:none;
+    border-radius:6px;
+    font-size:14px;
 }
-.submit{
-  position:fixed;
-  right:10px;
-  bottom:10px;
+
+/* SUBMIT */
+.submit-fixed{
+    position:fixed;
+    right:15px;
+    bottom:15px;
 }
-.submit button{
-  padding:14px 18px;
-  background:#e84393;
-  color:#fff;
-  border:none;
-  border-radius:30px;
+.submit-fixed button{
+    padding:14px 20px;
+    font-size:16px;
+    background:#e84393;
+    color:#fff;
+    border:none;
+    border-radius:30px;
 }
 </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
 <div class="header">
-  <div>{{ session.name }}</div>
-  <div>MOCK TEST</div>
-  <div>20 Q</div>
+    <div>{{ session['name'] }}</div>
+    <div class="center">MOCK TEST</div>
+    <div class="timer" id="totalTime"></div>
 </div>
 
-<div class="tabs">
-{% for sec in exam %}
-  <button onclick="openSection('{{ sec }}')" id="tab-{{ sec }}">{{ sec }}</button>
-{% endfor %}
-</div>
+<!-- PALETTE -->
+<div class="palette" id="palette"></div>
 
 <form method="post" id="examForm">
 
-{% for sec in exam %}
-<div class="section" id="{{ sec }}">
-  <h3>{{ sec }}</h3>
-  {% for q in exam[sec] %}
-    <p><b>{{ q.q }}</b></p>
-    {% for opt in q.opt %}
-      <div class="option">
-        <label>
-          <input type="radio" name="{{ q.id }}" value="{{ loop.index0 }}">
-          {{ opt }}
-        </label>
-      </div>
+{% for q in questions %}
+<div class="question-box" id="q{{ loop.index0 }}">
+    <p><b>Q{{ loop.index }}.</b> {{ q.question }}</p>
+
+    {% for opt in q.options %}
+    <label>
+        <input type="radio"
+               name="{{ q.id }}"
+               value="{{ loop.index0 }}"
+               onclick="markAttempted()">
+        {{ opt }}
+    </label>
     {% endfor %}
-  {% endfor %}
 </div>
 {% endfor %}
 
 <div class="controls">
-  <button type="button" onclick="prev()">Previous</button>
-  <button type="button" onclick="next()">Next</button>
-  <button type="button" onclick="clearAns()">Clear</button>
+    <button type="button" onclick="prevQ()">Previous</button>
+    <button type="button" onclick="markReview()">Mark for Review</button>
+    <button type="button" onclick="nextQ()">Next</button>
 </div>
 
-<div class="submit">
-  <button type="submit">Submit Exam</button>
+<div class="submit-fixed">
+    <button type="submit">Submit Exam</button>
 </div>
 
 </form>
 
 <script>
-let sections = Array.from(document.querySelectorAll(".section"));
-let index = 0;
+/* TIMER */
+const totalQ = document.querySelectorAll(".question-box").length;
+let totalSeconds = totalQ * 30;
 
-function show(i){
-  sections.forEach(s=>s.style.display="none");
-  sections[i].style.display="block";
-}
-
-function next(){
-  if(index < sections.length-1){ index++; show(index); }
-}
-function prev(){
-  if(index > 0){ index--; show(index); }
-}
-function clearAns(){
-  let radios = sections[index].querySelectorAll("input[type=radio]");
-  radios.forEach(r=>r.checked=false);
+function formatTime(sec){
+    let m = Math.floor(sec/60);
+    let s = sec % 60;
+    return m + "m " + s + "s";
 }
 
-function openSection(sec){
-  sections.forEach((s,i)=>{
-    if(s.id === sec){ index=i; show(i); }
-  });
-  document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
-  document.getElementById("tab-"+sec).classList.add("active");
+setInterval(()=>{
+    document.getElementById("totalTime").innerText = formatTime(totalSeconds);
+    totalSeconds--;
+    if(totalSeconds < 0){
+        document.getElementById("examForm").submit();
+    }
+},1000);
+
+/* QUESTIONS */
+let currentQ = 0;
+let paletteStatus = []; // 0=not seen, 1=attempted, 2=review
+
+function createPalette(){
+    const p = document.getElementById("palette");
+    for(let i=0;i<totalQ;i++){
+        paletteStatus.push(0);
+        let b = document.createElement("button");
+        b.innerText = i+1;
+        b.className = "grey";
+        b.onclick = ()=>showQuestion(i);
+        b.id = "p"+i;
+        p.appendChild(b);
+    }
 }
 
-openSection("Reasoning");
+function updatePalette(){
+    for(let i=0;i<paletteStatus.length;i++){
+        let b = document.getElementById("p"+i);
+        if(paletteStatus[i] === 1) b.className="green";
+        else if(paletteStatus[i] === 2) b.className="yellow";
+        else b.className="grey";
+    }
+}
+
+function showQuestion(i){
+    document.querySelectorAll(".question-box").forEach(q=>q.style.display="none");
+    document.getElementById("q"+i).style.display="block";
+    currentQ = i;
+}
+
+function nextQ(){
+    if(currentQ < totalQ-1) showQuestion(currentQ+1);
+}
+function prevQ(){
+    if(currentQ > 0) showQuestion(currentQ-1);
+}
+function markAttempted(){
+    paletteStatus[currentQ] = 1;
+    updatePalette();
+}
+function markReview(){
+    paletteStatus[currentQ] = 2;
+    updatePalette();
+}
+
+/* INIT */
+window.onload = ()=>{
+    createPalette();
+    showQuestion(0);
+};
 </script>
 
 </body>
