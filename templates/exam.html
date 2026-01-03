@@ -107,15 +107,16 @@ label{
 
 <!-- HEADER -->
 <div class="header">
-    <div>{{ session['name'] }}</div>
+    <div>{{ session['student_name'] }}</div>
     <div class="center">MOCK TEST</div>
-    <div class="timer" id="totalTime"></div>
+    <div class="timer" id="totalTime">Loading...</div>
 </div>
 
 <!-- PALETTE -->
 <div class="palette" id="palette"></div>
 
-<form method="post" id="examForm">
+<form method="post" id="examForm"
+      onsubmit="return confirm('Are you sure you want to submit the exam?')">
 
 {% for q in questions %}
 <div class="question-box" id="q{{ loop.index0 }}">
@@ -146,25 +147,34 @@ label{
 </form>
 
 <script>
-/* TIMER */
+/* ================= TIMER (SAFE) ================= */
+let timerStarted = false;
 const totalQ = document.querySelectorAll(".question-box").length;
-let totalSeconds = totalQ * 30;
+let totalSeconds = totalQ * 30; // 30 sec per question
 
 function formatTime(sec){
-    let m = Math.floor(sec/60);
+    let m = Math.floor(sec / 60);
     let s = sec % 60;
     return m + "m " + s + "s";
 }
 
-setInterval(()=>{
-    document.getElementById("totalTime").innerText = formatTime(totalSeconds);
-    totalSeconds--;
-    if(totalSeconds < 0){
-        document.getElementById("examForm").submit();
-    }
-},1000);
+function startTimer(){
+    if(timerStarted || totalQ === 0) return;
+    timerStarted = true;
 
-/* QUESTIONS */
+    document.getElementById("totalTime").innerText = formatTime(totalSeconds);
+
+    setInterval(()=>{
+        if(totalSeconds <= 0){
+            document.getElementById("examForm").submit();
+            return;
+        }
+        totalSeconds--;
+        document.getElementById("totalTime").innerText = formatTime(totalSeconds);
+    },1000);
+}
+
+/* ================= QUESTIONS ================= */
 let currentQ = 0;
 let paletteStatus = []; // 0=not seen, 1=attempted, 2=review
 
@@ -211,10 +221,11 @@ function markReview(){
     updatePalette();
 }
 
-/* INIT */
+/* ================= INIT ================= */
 window.onload = ()=>{
     createPalette();
     showQuestion(0);
+    startTimer();   // ✅ timer yahin start hoga
 };
 </script>
 
