@@ -1,104 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mock Test</title>
 
 <style>
 body{
-    font-family: Arial, sans-serif;
-    margin:0;
-    padding-bottom:90px;
-    background:#f5f6fa;
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#f5f6fa;
+  padding-bottom:90px;
 }
-
-/* HEADER */
 .header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:12px;
-    background:#6c5ce7;
-    color:#fff;
+  display:flex;
+  justify-content:space-between;
+  padding:12px;
+  background:#6c5ce7;
+  color:#fff;
 }
-.header .center{
-    font-size:16px;
-    font-weight:bold;
+.header .center{ font-weight:bold; }
+.timer{ font-weight:bold; }
+
+.tabs{
+  display:flex;
 }
-.timer{
-    font-weight:bold;
+.tabs button{
+  flex:1;
+  padding:10px;
+  border:none;
+  background:#dfe6e9;
+  font-weight:bold;
+}
+.tabs button.active{
+  background:#6c5ce7;
+  color:#fff;
 }
 
-/* PALETTE */
-.palette{
-    display:flex;
-    flex-wrap:wrap;
-    gap:6px;
-    padding:10px;
-    background:#fff;
-}
-.palette button{
-    width:36px;
-    height:36px;
-    border:none;
-    border-radius:50%;
-    font-weight:bold;
-    cursor:pointer;
-}
-.grey{ background:#dfe6e9; }
-.green{ background:#55efc4; }
-.yellow{ background:#ffeaa7; }
-
-/* QUESTION */
-.question-box{
-    display:none;
-    background:#fff;
-    margin:10px;
-    padding:15px;
-    border-radius:10px;
-}
-.question-box p{
-    font-size:15px;
-    margin-bottom:10px;
+.section{
+  display:none;
+  background:#fff;
+  margin:10px;
+  padding:15px;
+  border-radius:10px;
 }
 
-/* OPTIONS */
 label{
-    display:block;
-    padding:8px;
-    border-radius:6px;
-    margin-bottom:6px;
-    background:#f1f2f6;
+  display:block;
+  margin:6px 0;
+  background:#f1f2f6;
+  padding:8px;
+  border-radius:6px;
 }
 
-/* CONTROLS */
 .controls{
-    display:flex;
-    justify-content:space-around;
-    padding:10px;
-}
-.controls button{
-    padding:10px;
-    width:30%;
-    border:none;
-    border-radius:6px;
-    font-size:14px;
+  display:flex;
+  justify-content:space-around;
+  padding:10px;
 }
 
-/* SUBMIT */
 .submit-fixed{
-    position:fixed;
-    right:15px;
-    bottom:15px;
+  position:fixed;
+  right:15px;
+  bottom:15px;
 }
 .submit-fixed button{
-    padding:14px 20px;
-    font-size:16px;
-    background:#e84393;
-    color:#fff;
-    border:none;
-    border-radius:30px;
+  padding:14px 20px;
+  background:#e84393;
+  color:#fff;
+  border:none;
+  border-radius:30px;
 }
 </style>
 </head>
@@ -107,127 +77,35 @@ label{
 
 <!-- HEADER -->
 <div class="header">
-    <div>{{ session['student_name'] }}</div>
-    <div class="center">MOCK TEST</div>
-    <div class="timer" id="totalTime">Loading...</div>
+  <div>{{ session['student_name'] }}</div>
+  <div class="center">MOCK TEST</div>
+  <div class="timer" id="totalTime">Loading…</div>
 </div>
 
-<!-- PALETTE -->
-<div class="palette" id="palette"></div>
+<!-- SECTION TABS -->
+<div class="tabs">
+{% for sec in exam %}
+  <button onclick="openSection('{{ sec }}')" id="tab-{{ sec }}">{{ sec }}</button>
+{% endfor %}
+</div>
 
-<form method="post" id="examForm"
-      onsubmit="return confirm('Are you sure you want to submit the exam?')">
+<form method="post" id="examForm">
 
-{% for q in questions %}
-<div class="question-box" id="q{{ loop.index0 }}">
-    <p><b>Q{{ loop.index }}.</b> {{ q.question }}</p>
+{% for sec in exam %}
+<div class="section" id="{{ sec }}">
+  <h3>{{ sec }}</h3>
 
-    {% for opt in q.options %}
-    <label>
-        <input type="radio"
-               name="{{ q.id }}"
-               value="{{ loop.index0 }}"
-               onclick="markAttempted()">
+  {% for q in exam[sec] %}
+    <p><b>Q{{ loop.index }}.</b> {{ q.q }}</p>
+
+    {% for opt in q.opt %}
+      <label>
+        <input type="radio" name="{{ q.id }}" value="{{ loop.index0 }}">
         {{ opt }}
-    </label>
+      </label>
     {% endfor %}
+  {% endfor %}
 </div>
 {% endfor %}
 
-<div class="controls">
-    <button type="button" onclick="prevQ()">Previous</button>
-    <button type="button" onclick="markReview()">Mark for Review</button>
-    <button type="button" onclick="nextQ()">Next</button>
-</div>
-
-<div class="submit-fixed">
-    <button type="submit">Submit Exam</button>
-</div>
-
-</form>
-
-<script>
-/* ================= TIMER (SAFE) ================= */
-let timerStarted = false;
-const totalQ = document.querySelectorAll(".question-box").length;
-let totalSeconds = totalQ * 30; // 30 sec per question
-
-function formatTime(sec){
-    let m = Math.floor(sec / 60);
-    let s = sec % 60;
-    return m + "m " + s + "s";
-}
-
-function startTimer(){
-    if(timerStarted || totalQ === 0) return;
-    timerStarted = true;
-
-    document.getElementById("totalTime").innerText = formatTime(totalSeconds);
-
-    setInterval(()=>{
-        if(totalSeconds <= 0){
-            document.getElementById("examForm").submit();
-            return;
-        }
-        totalSeconds--;
-        document.getElementById("totalTime").innerText = formatTime(totalSeconds);
-    },1000);
-}
-
-/* ================= QUESTIONS ================= */
-let currentQ = 0;
-let paletteStatus = []; // 0=not seen, 1=attempted, 2=review
-
-function createPalette(){
-    const p = document.getElementById("palette");
-    for(let i=0;i<totalQ;i++){
-        paletteStatus.push(0);
-        let b = document.createElement("button");
-        b.innerText = i+1;
-        b.className = "grey";
-        b.onclick = ()=>showQuestion(i);
-        b.id = "p"+i;
-        p.appendChild(b);
-    }
-}
-
-function updatePalette(){
-    for(let i=0;i<paletteStatus.length;i++){
-        let b = document.getElementById("p"+i);
-        if(paletteStatus[i] === 1) b.className="green";
-        else if(paletteStatus[i] === 2) b.className="yellow";
-        else b.className="grey";
-    }
-}
-
-function showQuestion(i){
-    document.querySelectorAll(".question-box").forEach(q=>q.style.display="none");
-    document.getElementById("q"+i).style.display="block";
-    currentQ = i;
-}
-
-function nextQ(){
-    if(currentQ < totalQ-1) showQuestion(currentQ+1);
-}
-function prevQ(){
-    if(currentQ > 0) showQuestion(currentQ-1);
-}
-function markAttempted(){
-    paletteStatus[currentQ] = 1;
-    updatePalette();
-}
-function markReview(){
-    paletteStatus[currentQ] = 2;
-    updatePalette();
-}
-
-/* ================= INIT ================= */
-window.onload = ()=>{
-    createPalette();
-    showQuestion(0);
-    startTimer();   // ✅ timer yahin start hoga
-};
-</script>
-
-</body>
-</html>
+<div class="controls
