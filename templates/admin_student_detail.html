@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Detail</title>
+<style>
+body{font-family:Arial;background:#f5f6fa;margin:0;padding:20px;}
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+}
+.correct{color:green;}
+.wrong{color:red;}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>{{ student.name }}</h2>
+  <p>Marks: {{ student.score }} / {{ student.total }}</p>
+  <p>Accuracy: {{ student.accuracy }}%</p>
+
+  <hr>
+
+  <h3>Answer Details</h3>
+
+  {% for q in student.questions %}
+    <p><b>{{ q.question }}</b></p>
+
+    {% for opt in q.options %}
+      {% if loop.index0 == q.correct %}
+        <span class="correct">✔ {{ opt }}</span><br>
+      {% elif loop.index0 == q.selected %}
+        <span class="wrong">✖ {{ opt }}</span><br>
+      {% else %}
+        {{ opt }}<br>
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+</div>
+
+</body>
+</html>
