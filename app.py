@@ -1,15 +1,14 @@
 from flask import Flask, render_template, request, redirect, session, abort
-import time
+import ast
 
 app = Flask(__name__)
-app.secret_key = "mock_exam_secret_key"
+app.secret_key = "mock_exam_secret_key_123"
 
 # ================= ADMIN CONFIG =================
 ADMIN_USER = "Manojnehra"
 ADMIN_PASS = "NEHRA@2233"
 
 EXAM_ACTIVE = False
-ANSWER_KEY_OPEN = True   # ab result page se answer key dikhegi
 STUDENT_ATTEMPTS = []
 
 # ================= QUESTIONS =================
@@ -57,7 +56,7 @@ def login():
             return {"status": "blocked"}
 
         session.clear()
-        session["name"] = request.form["name"]
+        session["name"] = request.form.get("name")
         return {"status": "ok"}
 
     return render_template("login.html")
@@ -80,13 +79,15 @@ def exam():
 
         for q in QUESTIONS:
             ans = request.form.get(q["id"])
-            user_answers[q["id"]] = int(ans) if ans is not None else None
-
             if ans is not None:
-                if int(ans) == q["answer"]:
+                ans = int(ans)
+                user_answers[q["id"]] = ans
+                if ans == q["answer"]:
                     correct += 1
                 else:
                     incorrect += 1
+            else:
+                user_answers[q["id"]] = None
 
         attempted = correct + incorrect
         accuracy = round((correct / attempted) * 100, 2) if attempted else 0
@@ -96,28 +97,32 @@ def exam():
             "score": correct
         })
 
-     session.update({
-    "score": correct,
-    "total": len(QUESTIONS),
-    "correct": correct,
-    "incorrect": incorrect,
-    "attempted": attempted,
-    "unattempted": len(QUESTIONS) - attempted,
-    "accuracy": accuracy
-})
+        # ⚠️ session me sirf primitive data
+        session.update({
+            "score": correct,
+            "total": len(QUESTIONS),
+            "correct": correct,
+            "incorrect": incorrect,
+            "attempted": attempted,
+            "unattempted": len(QUESTIONS) - attempted,
+            "accuracy": accuracy,
+            "answers_key": str(user_answers)  # dict ko string bana ke store
+        })
 
-# 🔑 answers ko memory me rakho (not session)
-session["answers_key"] = str(user_answers)
+        return redirect("/result")
 
     return render_template("exam.html", questions=QUESTIONS)
 
 # ================= RESULT =================
 @app.route("/result")
 def result():
+    # string ko wapas dict banao
+    user_answers = ast.literal_eval(session.get("answers_key", "{}"))
+
     return render_template(
         "result.html",
         questions=QUESTIONS,
-        user_answers=session.get("user_answers", {}),
+        user_answers=user_answers,
         **session
     )
 
@@ -125,7 +130,10 @@ def result():
 @app.route("/admin", methods=["GET", "POST"])
 def admin_login():
     if request.method == "POST":
-        if request.form["username"] == ADMIN_USER and request.form["password"] == ADMIN_PASS:
+        if (
+            request.form.get("username") == ADMIN_USER
+            and request.form.get("password") == ADMIN_PASS
+        ):
             session["admin"] = True
             return redirect("/admin/dashboard")
         return "Invalid admin login"
@@ -138,8 +146,7 @@ def admin_dashboard():
         return redirect("/admin")
     return render_template(
         "admin_dashboard.html",
-        exam_active=EXAM_ACTIVE,
-        answer_key=ANSWER_KEY_OPEN
+        exam_active=EXAM_ACTIVE
     )
 
 # ================= TOGGLE EXAM =================
