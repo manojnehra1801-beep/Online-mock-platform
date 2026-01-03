@@ -1,11 +1,14 @@
-from flask import Flask, render_template, request, redirect, session, send_from_directory
+from flask import Flask, render_template, request, redirect, session, abort
 import ast
 
 app = Flask(__name__)
 app.secret_key = "mock_exam_secret_key_123"
 
-# ================= FLAGS =================
-EXAM_ACTIVE = True   # admin future me control karega
+# ================= ADMIN CONFIG =================
+ADMIN_USER = "Manojnehra"
+ADMIN_PASS = "NEHRA@2233"
+
+EXAM_ACTIVE = False   # admin control karega
 
 # ================= QUESTIONS =================
 QUESTIONS = [
@@ -44,16 +47,7 @@ QUESTIONS = [
     }
 ]
 
-# ================= PWA FILES =================
-@app.route("/manifest.json")
-def manifest():
-    return send_from_directory(".", "manifest.json")
-
-@app.route("/service-worker.js")
-def service_worker():
-    return send_from_directory(".", "service-worker.js")
-
-# ================= STEP 1 : LOGIN =================
+# ================= STUDENT LOGIN =================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -66,7 +60,7 @@ def login():
 
     return render_template("login.html", exam_active=EXAM_ACTIVE)
 
-# ================= STEP 2 : EXAM =================
+# ================= EXAM =================
 @app.route("/exam", methods=["GET", "POST"])
 def exam():
     if not EXAM_ACTIVE:
@@ -128,6 +122,43 @@ def result():
         questions=QUESTIONS,
         user_answers=user_answers
     )
+
+# ================= ADMIN LOGIN =================
+@app.route("/admin", methods=["GET", "POST"])
+def admin_login():
+    if request.method == "POST":
+        if (
+            request.form.get("username") == ADMIN_USER
+            and request.form.get("password") == ADMIN_PASS
+        ):
+            session["admin"] = True
+            return redirect("/admin/dashboard")
+        return "Invalid admin login"
+
+    return render_template("admin_login.html")
+
+# ================= ADMIN DASHBOARD =================
+@app.route("/admin/dashboard")
+def admin_dashboard():
+    if not session.get("admin"):
+        return redirect("/admin")
+    return render_template("admin_dashboard.html", exam_active=EXAM_ACTIVE)
+
+# ================= TOGGLE EXAM =================
+@app.route("/admin/toggle-exam")
+def toggle_exam():
+    global EXAM_ACTIVE
+    if not session.get("admin"):
+        abort(403)
+
+    EXAM_ACTIVE = not EXAM_ACTIVE
+    return redirect("/admin/dashboard")
+
+# ================= ADMIN LOGOUT =================
+@app.route("/admin/logout")
+def admin_logout():
+    session.clear()
+    return redirect("/admin")
 
 # ================= RUN =================
 if __name__ == "__main__":
