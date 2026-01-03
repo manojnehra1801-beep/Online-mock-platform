@@ -55,6 +55,11 @@ def login():
         return redirect("/exam")
     return render_template("login.html")
 
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    # Abhi sirf signup page dikhayenge (demo)
+    return render_template("signup.html")
+
 # ================= EXAM =================
 @app.route("/exam", methods=["GET", "POST"])
 def exam():
