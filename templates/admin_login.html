@@ -1,21 +1,122 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login</title>
+
+<style>
+*{ box-sizing:border-box; }
+
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#4b7bec,#6c5ce7);
+    font-family:Arial, sans-serif;
+}
+
+/* Card */
+.card{
+    background:#fff;
+    width:92%;
+    max-width:380px;
+    padding:28px 22px;
+    border-radius:18px;
+    box-shadow:0 15px 30px rgba(0,0,0,0.25);
+    text-align:center;
+}
+
+/* Title */
+.card h1{
+    margin:0;
+    font-size:24px;
+    color:#2d3436;
+}
+.card h2{
+    margin:6px 0 18px;
+    font-size:16px;
+    font-weight:normal;
+    color:#636e72;
+}
+
+/* Inputs */
+input{
+    width:100%;
+    padding:14px;
+    font-size:16px;
+    border-radius:10px;
+    border:1px solid #dcdde1;
+    margin-bottom:14px;
+    outline:none;
+}
+input:focus{
+    border-color:#6c5ce7;
+}
+
+/* Button */
+button{
+    width:100%;
+    padding:14px;
+    font-size:17px;
+    border:none;
+    border-radius:30px;
+    background:#6c5ce7;
+    color:#fff;
+    cursor:pointer;
+}
+button:active{
+    transform:scale(0.98);
+}
+
+/* Error */
+.error{
+    margin-top:14px;
+    font-size:14px;
+    color:#d63031;
+}
+
+/* Footer */
+.footer{
+    margin-top:18px;
+    font-size:12px;
+    color:#b2bec3;
+}
+</style>
 </head>
+
 <body>
 
-<h2>Admin Login</h2>
+<div class="card">
+    <h1>Admin Panel</h1>
+    <h2>Secure Login</h2>
 
-{% if error %}
-<p style="color:red;">{{ error }}</p>
-{% endif %}
+    <form method="post">
+        <input 
+            type="text" 
+            name="username" 
+            placeholder="Admin Username" 
+            required>
 
-<form method="post">
-    <input type="text" name="username" placeholder="Username" required><br><br>
-    <input type="password" name="password" placeholder="Password" required><br><br>
-    <button type="submit">Login</button>
-</form>
+        <input 
+            type="password" 
+            name="password" 
+            placeholder="Admin Password" 
+            required>
+
+        <button type="submit">Login</button>
+    </form>
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <div class="footer">
+        Authorized access only
+    </div>
+</div>
 
 </body>
 </html>
