@@ -6,142 +6,156 @@
 
 <style>
 body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#f5f7fb;
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#f5f6fa;
 }
+
+/* HEADER */
 .header{
-  background:#6c5ce7;
-  color:#fff;
-  padding:16px;
-  text-align:center;
+    background:#6c5ce7;
+    color:#fff;
+    padding:25px 15px;
+    text-align:center;
 }
-.container{
-  max-width:600px;
-  margin:-20px auto 30px;
-  padding:0 12px;
+.header h1{
+    margin:0;
+    font-size:22px;
 }
+.header p{
+    margin:6px 0 0;
+    font-size:14px;
+    opacity:0.9;
+}
+
+/* CARD */
 .card{
-  background:#fff;
-  border-radius:14px;
-  padding:16px;
-  box-shadow:0 10px 25px rgba(0,0,0,.08);
+    background:#fff;
+    margin:20px;
+    padding:20px;
+    border-radius:16px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+    text-align:center;
 }
 
-/* STATS */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-}
-.stat{
-  background:#f1f2f6;
-  border-radius:12px;
-  padding:10px;
-}
-.stat b{font-size:18px}
-
-/* ANSWER KEY */
-#answerKey{
-  display:none;
-  margin-top:15px;
-}
-.q{
-  border-top:1px solid #eee;
-  padding:10px 0;
-}
-.opt{
-  padding:6px 8px;
-  border-radius:8px;
-  margin:4px 0;
-}
-.correct{
-  background:#e9fbf3;
-  border-left:4px solid #00b894;
-}
-.wrong{
-  background:#fdeceb;
-  border-left:4px solid #d63031;
-}
-.neutral{
-  background:#f1f2f6;
+/* SCORE */
+.score{
+    font-size:32px;
+    font-weight:bold;
+    margin-bottom:15px;
 }
 
+/* STATS GRID */
+.stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:15px;
+}
+.stat-box{
+    background:#f1f2f6;
+    padding:12px;
+    border-radius:12px;
+    font-size:14px;
+}
+.stat-box span{
+    display:block;
+    font-size:18px;
+    font-weight:bold;
+    margin-top:4px;
+}
+
+/* PROGRESS */
+.progress{
+    margin:20px 0;
+}
+.progress-bar{
+    width:100%;
+    height:12px;
+    background:#dcdde1;
+    border-radius:10px;
+    overflow:hidden;
+}
+.progress-fill{
+    height:100%;
+    background:#00b894;
+}
+
+/* BUTTONS */
 .btn{
-  width:100%;
-  padding:12px;
-  margin-top:14px;
-  border:none;
-  border-radius:12px;
-  background:#0984e3;
-  color:#fff;
-  font-size:15px;
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:30px;
+    font-size:16px;
+    cursor:pointer;
+    margin-top:12px;
 }
-.exit{
-  background:#dfe6e9;
-  color:#2d3436;
+.btn-primary{
+    background:#0984e3;
+    color:#fff;
+}
+.btn-exit{
+    background:#dfe6e9;
+    color:#2d3436;
 }
 </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
 <div class="header">
-  <h2>Performance</h2>
-  <p>{{ name }} • Mock Test</p>
+    <h1>Performance</h1>
+    <p>{{ session['name'] }} · Mock Test</p>
 </div>
 
-<div class="container">
-  <div class="card">
+<!-- RESULT CARD -->
+<div class="card">
 
-    <h3 style="text-align:center">
-      {{ score }}/{{ total }}
-    </h3>
-
-    <div class="grid">
-      <div class="stat">Correct<br><b>{{ correct }}</b></div>
-      <div class="stat">Incorrect<br><b>{{ incorrect }}</b></div>
-      <div class="stat">Attempted<br><b>{{ attempted }}</b></div>
-      <div class="stat">Accuracy<br><b>{{ accuracy }}%</b></div>
+    <!-- SCORE -->
+    <div class="score">
+        {{ score }} / {{ total }}
     </div>
 
-    <!-- VIEW ANSWER KEY BUTTON -->
-    <button class="btn" onclick="toggleAnswerKey()">
-      View Answer Key
-    </button>
-
-    <!-- ANSWER KEY SECTION (HIDDEN INITIALLY) -->
-    <div id="answerKey">
-      {% for q in questions %}
-      <div class="q">
-        <b>Q{{ loop.index }}. {{ q.question }}</b>
-
-        {% for opt in q.options %}
-          {% if loop.index0 == q.answer %}
-            <div class="opt correct">✔ {{ opt }}</div>
-          {% elif user_answers[q.id] is not none and loop.index0 == user_answers[q.id] %}
-            <div class="opt wrong">✖ {{ opt }}</div>
-          {% else %}
-            <div class="opt neutral">{{ opt }}</div>
-          {% endif %}
-        {% endfor %}
-      </div>
-      {% endfor %}
+    <!-- STATS -->
+    <div class="stats">
+        <div class="stat-box">
+            Correct
+            <span>{{ correct }}</span>
+        </div>
+        <div class="stat-box">
+            Incorrect
+            <span>{{ incorrect }}</span>
+        </div>
+        <div class="stat-box">
+            Attempted
+            <span>{{ attempted }} / {{ total }}</span>
+        </div>
+        <div class="stat-box">
+            Accuracy %
+            <span>{{ accuracy }}%</span>
+        </div>
     </div>
 
-    <button class="btn exit" onclick="window.location.href='/'">
-      Exit
+    <!-- PROGRESS -->
+    <div class="progress">
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: {{ accuracy }}%;"></div>
+        </div>
+        <small>Accuracy Progress</small>
+    </div>
+
+    <!-- ACTIONS -->
+    <button class="btn btn-primary" onclick="window.location.href='/answer-key'">
+        View Answer Key
     </button>
 
-  </div>
+    <button class="btn btn-exit" onclick="window.location.href='/logout'">
+        Exit Test
+    </button>
+
 </div>
-
-<script>
-function toggleAnswerKey(){
-  const ak = document.getElementById("answerKey");
-  ak.style.display = ak.style.display === "none" ? "block" : "none";
-}
-</script>
 
 </body>
 </html>
