@@ -1,19 +1,11 @@
-# ================= FULL app.py (COPY–PASTE READY) =================
-# Purpose: Login (no blank screen) → Exam with questions → Submit → Result
-# Notes:
-# - Uses in-memory flags (simple & stable for now)
-# - Templates required: login.html, exam.html, result.html
-# - PWA files optional: manifest.json, service-worker.js (served below)
-
-from flask import Flask, render_template, request, redirect, session, abort, send_from_directory
+from flask import Flask, render_template, request, redirect, session, send_from_directory
 import ast
 
 app = Flask(__name__)
 app.secret_key = "mock_exam_secret_key_123"
 
-# ================= ADMIN FLAGS =================
-EXAM_ACTIVE = True        # set False to block exam
-ANSWER_KEY_ACTIVE = True # set False to hide answers
+# ================= FLAGS =================
+EXAM_ACTIVE = True   # admin future me control karega
 
 # ================= QUESTIONS =================
 QUESTIONS = [
@@ -61,7 +53,7 @@ def manifest():
 def service_worker():
     return send_from_directory(".", "service-worker.js")
 
-# ================= LOGIN =================
+# ================= STEP 1 : LOGIN =================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -74,7 +66,7 @@ def login():
 
     return render_template("login.html", exam_active=EXAM_ACTIVE)
 
-# ================= EXAM =================
+# ================= STEP 2 : EXAM =================
 @app.route("/exam", methods=["GET", "POST"])
 def exam():
     if not EXAM_ACTIVE:
@@ -134,8 +126,7 @@ def result():
         unattempted=session.get("unattempted"),
         accuracy=session.get("accuracy"),
         questions=QUESTIONS,
-        user_answers=user_answers,
-        show_answer_key=ANSWER_KEY_ACTIVE
+        user_answers=user_answers
     )
 
 # ================= RUN =================
