@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Abhyas App | Dashboard</title>
 
-<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
@@ -44,7 +43,7 @@ body{
   cursor:pointer;
 }
 
-/* DROPDOWN MENU */
+/* DROPDOWN */
 .dropdown{
   position:absolute;
   top:60px;
@@ -54,7 +53,6 @@ body{
   border-radius:12px;
   box-shadow:0 10px 30px rgba(0,0,0,0.15);
   display:none;
-  overflow:hidden;
   z-index:10;
 }
 
@@ -86,7 +84,7 @@ body{
 }
 
 .dropdown .social i{
-  font-size:22px;
+  font-size:20px;
   color:#555;
 }
 
@@ -107,6 +105,7 @@ body{
   gap:14px;
 }
 
+/* CARD */
 .card{
   background:#fff;
   border-radius:16px;
@@ -131,8 +130,8 @@ body{
   color:#666;
 }
 
-/* REMOVE LINK STYLE */
-a.card-link{
+/* LINK FIX */
+.card-link{
   text-decoration:none;
   color:inherit;
   display:block;
@@ -159,7 +158,7 @@ a.card-link{
   <div class="menu-btn" onclick="toggleMenu()">⋮</div>
 </div>
 
-<!-- DROPDOWN -->
+<!-- MENU -->
 <div class="dropdown" id="menu">
   <div class="username">abc</div>
   <a href="/dashboard"><i class="fa fa-house"></i> Home</a>
@@ -184,7 +183,7 @@ a.card-link{
 
   <div class="grid">
 
-    <!-- ✅ SSC LINKED CARD -->
+    <!-- SSC -->
     <a href="/ssc" class="card-link">
       <div class="card">
         <i class="fa fa-book"></i>
@@ -193,30 +192,37 @@ a.card-link{
       </div>
     </a>
 
-    <div class="card">
-      <i class="fa fa-train"></i>
-      <h4>Railway Exams</h4>
-      <p>RRB NTPC • Group D</p>
-    </div>
+    <!-- RAILWAY -->
+    <a href="/railway" class="card-link">
+      <div class="card">
+        <i class="fa fa-train"></i>
+        <h4>Railway Exams</h4>
+        <p>NTPC • Group D • RPF</p>
+      </div>
+    </a>
 
+    <!-- SSC PYQ -->
     <div class="card">
       <i class="fa fa-file-lines"></i>
       <h4>SSC PYQ</h4>
       <p>Previous Year Questions</p>
     </div>
 
+    <!-- RAILWAY PYQ -->
     <div class="card">
       <i class="fa fa-file-circle-check"></i>
       <h4>Railway PYQ</h4>
       <p>Solved Papers</p>
     </div>
 
+    <!-- NEW MOCK -->
     <div class="card">
       <i class="fa fa-flask"></i>
       <h4>New Mock</h4>
       <p>Latest Tests</p>
     </div>
 
+    <!-- PRACTICE -->
     <div class="card">
       <i class="fa fa-pen-to-square"></i>
       <h4>Practice</h4>
