@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SSC CGL Mock Test</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
     margin:0;
-    font-family: Arial, sans-serif;
+    font-family:Arial, sans-serif;
     background:#f4f6fb;
 }
 
-/* ===== HEADER ===== */
+/* HEADER */
 .header{
     background:#1f2937;
     color:#fff;
@@ -21,33 +21,31 @@ body{
     justify-content:space-between;
     align-items:center;
 }
-.header h3{
-    margin:0;
-    font-size:16px;
-}
-.timer{
-    font-size:14px;
+.header .dots{
+    font-size:22px;
+    cursor:pointer;
 }
 
-/* ===== MAIN ===== */
+/* TIMER */
+.timer{font-size:14px;}
+
+/* MAIN */
 .main{
-    display:flex;
-    padding:10px;
+    padding:12px;
 }
 
-/* ===== QUESTION AREA ===== */
-.question-area{
-    flex:3;
+/* QUESTION */
+.question-box{
     background:#fff;
     padding:15px;
     border-radius:8px;
 }
-
-.question-area h4{
+.question-box h4{
     margin-top:0;
 }
 
-.options label{
+/* OPTIONS */
+.option{
     display:block;
     padding:10px;
     border:1px solid #ddd;
@@ -55,12 +53,12 @@ body{
     margin-bottom:8px;
     cursor:pointer;
 }
-.options input{
+.option input{
     margin-right:8px;
 }
 
-/* ===== BUTTONS ===== */
-.actions{
+/* CONTROLS */
+.controls{
     margin-top:15px;
     display:flex;
     gap:10px;
@@ -69,49 +67,54 @@ body{
     padding:10px 14px;
     border:none;
     border-radius:6px;
+    color:#fff;
     cursor:pointer;
 }
-.prev{ background:#3b82f6; color:#fff;}
-.review{ background:#f59e0b; color:#fff;}
-.next{ background:#2563eb; color:#fff;}
+.prev{background:#2563eb;}
+.review{background:#f59e0b;}
+.next{background:#1d4ed8;}
+
+/* SUBMIT */
 .submit{
+    position:fixed;
+    right:15px;
+    bottom:15px;
     background:#dc2626;
     color:#fff;
-    position:fixed;
-    bottom:15px;
-    right:15px;
-}
-
-/* ===== PALETTE ===== */
-.palette{
-    flex:1;
-    margin-left:10px;
-    background:#fff;
+    padding:14px 18px;
+    border:none;
     border-radius:8px;
-    padding:10px;
-}
-.palette h4{
-    margin-top:0;
-    text-align:center;
-}
-.pal-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:8px;
-}
-.pal{
-    padding:10px;
-    border-radius:50%;
-    background:#e5e7eb;
-    text-align:center;
     cursor:pointer;
 }
 
-/* ===== MOBILE ===== */
-@media(max-width:768px){
-    .main{flex-direction:column;}
-    .palette{margin-left:0;margin-top:10px;}
+/* QUESTION LIST OVERLAY */
+#qListBox{
+    display:none;
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:#fff;
+    z-index:999;
+    overflow:auto;
+    padding:15px;
 }
+.qItem{
+    padding:12px;
+    border-bottom:1px solid #ddd;
+    cursor:pointer;
+}
+.qItem span{
+    display:inline-block;
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    text-align:center;
+    line-height:30px;
+    margin-right:10px;
+    background:#e5e7eb;
+}
+.qItem.green span{background:#16a34a;color:#fff;}
+.qItem.orange span{background:#f59e0b;color:#fff;}
 </style>
 </head>
 
@@ -119,94 +122,119 @@ body{
 
 <!-- HEADER -->
 <div class="header">
-    <h3>SSC CGL Mock-1</h3>
+    <div>SSC CGL Mock</div>
     <div class="timer" id="timer">60:00</div>
+    <div class="dots" onclick="toggleList()">⋮</div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
-
-    <!-- QUESTION -->
-    <div class="question-area">
+    <div class="question-box">
         <h4 id="qText"></h4>
 
-        <div class="options">
-            <label><input type="radio" name="opt"><span id="o0"></span></label>
-            <label><input type="radio" name="opt"><span id="o1"></span></label>
-            <label><input type="radio" name="opt"><span id="o2"></span></label>
-            <label><input type="radio" name="opt"><span id="o3"></span></label>
-        </div>
+        <label class="option">
+            <input type="radio" name="opt" value="0"> <span id="o0"></span>
+        </label>
+        <label class="option">
+            <input type="radio" name="opt" value="1"> <span id="o1"></span>
+        </label>
+        <label class="option">
+            <input type="radio" name="opt" value="2"> <span id="o2"></span>
+        </label>
+        <label class="option">
+            <input type="radio" name="opt" value="3"> <span id="o3"></span>
+        </label>
 
-        <div class="actions">
+        <div class="controls">
             <button class="btn prev" onclick="prevQ()">Previous</button>
-            <button class="btn review">Mark for Review</button>
+            <button class="btn review" onclick="markReview()">Mark for Review</button>
             <button class="btn next" onclick="nextQ()">Next</button>
         </div>
     </div>
-
-    <!-- PALETTE -->
-    <div class="palette">
-        <h4>Question Palette</h4>
-        <div class="pal-grid" id="palette"></div>
-    </div>
-
 </div>
 
-<button class="btn submit">Submit Test</button>
+<button class="submit">Submit Test</button>
+
+<!-- QUESTION LIST -->
+<div id="qListBox">
+    <h3>All Questions</h3>
+    <div id="qList"></div>
+    <button class="btn next" style="margin-top:15px;width:100%;" onclick="toggleList()">Close</button>
+</div>
 
 <script>
-/* ===== QUESTIONS ===== */
+/* QUESTIONS */
 const questions = [
- {q:"What is the capital of India?", o:["Mumbai","Delhi","Kolkata","Chennai"]},
- {q:"2 + 2 = ?", o:["1","2","4","6"]},
- {q:"Largest planet?", o:["Earth","Mars","Jupiter","Venus"]},
- {q:"Taj Mahal is in?", o:["Delhi","Agra","Jaipur","Lucknow"]}
+ {q:"Capital of India?",o:["Mumbai","Delhi","Kolkata","Chennai"]},
+ {q:"2 + 2 = ?",o:["1","2","4","6"]},
+ {q:"Largest planet?",o:["Earth","Mars","Jupiter","Venus"]},
+ {q:"Taj Mahal is in?",o:["Delhi","Agra","Jaipur","Lucknow"]}
 ];
 
 let index = 0;
+let answers = {};
+let reviewMarked = {};
 
-/* ===== LOAD QUESTION ===== */
+/* LOAD QUESTION */
 function loadQ(){
     const q = questions[index];
     document.getElementById("qText").innerText = `Q${index+1}. ${q.q}`;
-    q.o.forEach((opt,i)=>{
-        document.getElementById("o"+i).innerText = opt;
+    q.o.forEach((op,i)=>{
+        document.getElementById("o"+i).innerText = op;
     });
+
+    document.querySelectorAll('input[name="opt"]').forEach(o=>o.checked=false);
+    if(answers[index] !== undefined){
+        document.querySelector(`input[value="${answers[index]}"]`).checked=true;
+    }
+    updateList();
 }
 loadQ();
 
-/* ===== NEXT / PREV ===== */
-function nextQ(){
-    if(index < questions.length-1){
-        index++;
-        loadQ();
+/* OPTION CLICK */
+document.querySelectorAll('input[name="opt"]').forEach(opt=>{
+    opt.onclick = ()=>{
+        answers[index] = parseInt(opt.value);
+        updateList();
     }
-}
-function prevQ(){
-    if(index > 0){
-        index--;
-        loadQ();
-    }
-}
-
-/* ===== PALETTE ===== */
-const pal = document.getElementById("palette");
-questions.forEach((_,i)=>{
-    const d = document.createElement("div");
-    d.className="pal";
-    d.innerText=i+1;
-    d.onclick=()=>{ index=i; loadQ(); };
-    pal.appendChild(d);
 });
 
-/* ===== TIMER ===== */
-let t = 3600;
+/* NAVIGATION */
+function nextQ(){ if(index < questions.length-1){ index++; loadQ(); }}
+function prevQ(){ if(index > 0){ index--; loadQ(); }}
+
+/* REVIEW */
+function markReview(){
+    reviewMarked[index] = true;
+    updateList();
+}
+
+/* QUESTION LIST */
+function toggleList(){
+    const b = document.getElementById("qListBox");
+    b.style.display = b.style.display==="none"?"block":"none";
+}
+
+function updateList(){
+    const list = document.getElementById("qList");
+    list.innerHTML="";
+    questions.forEach((_,i)=>{
+        const d = document.createElement("div");
+        d.className="qItem";
+        if(reviewMarked[i]) d.classList.add("orange");
+        else if(answers[i]!==undefined) d.classList.add("green");
+
+        d.innerHTML = `<span>${i+1}</span> Question ${i+1}`;
+        d.onclick = ()=>{ index=i; loadQ(); toggleList(); };
+        list.appendChild(d);
+    });
+}
+
+/* TIMER */
+let t=3600;
 setInterval(()=>{
-    let m = Math.floor(t/60);
-    let s = t%60;
-    document.getElementById("timer").innerText =
-        `${m}:${s<10?"0"+s:s}`;
-    if(t>0) t--;
+    let m=Math.floor(t/60),s=t%60;
+    document.getElementById("timer").innerText=`${m}:${s<10?"0"+s:s}`;
+    if(t>0)t--;
 },1000);
 </script>
 
