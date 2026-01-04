@@ -3,16 +3,25 @@ from flask import Flask, render_template, request, redirect, session
 app = Flask(__name__)
 app.secret_key = "abhyas_app_secret_key_2026"
 
+# ================= TEST LOGIN CREDENTIAL =================
+TEST_USERNAME = "abc"
+TEST_PASSWORD = "abc1"
+
 # ================= LOGIN =================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        # Demo login (no validation yet)
         username = request.form.get("username")
+        password = request.form.get("password")
 
-        if username:
+        if username == TEST_USERNAME and password == TEST_PASSWORD:
             session["name"] = username
             return redirect("/dashboard")
+        else:
+            return render_template(
+                "login.html",
+                error="Invalid username or password"
+            )
 
     return render_template("login.html")
 
@@ -21,7 +30,7 @@ def login():
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        # Abhi signup ke baad direct login page
+        # demo signup – baad me database aayega
         return redirect("/")
 
     return render_template("signup.html")
@@ -30,14 +39,18 @@ def signup():
 # ================= STUDENT DASHBOARD =================
 @app.route("/dashboard")
 def dashboard():
-    # Agar user login nahi hai to login page par bhej do
     if "name" not in session:
         return redirect("/")
 
     return render_template("student_dashboard.html")
 
+
+# ================= SSC EXAMS FOLDER =================
 @app.route("/ssc")
 def ssc_dashboard():
+    if "name" not in session:
+        return redirect("/")
+
     return render_template("ssc_exams.html")
 
 
