@@ -1,88 +1,111 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>SSC CGL Full Mock Tests</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>SSC CGL Full Mock Tests</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body{
-            margin:0;
-            font-family: Arial, sans-serif;
-            background:#f5f7fb;
-        }
-        .header{
-            background:#ffffff;
-            padding:16px;
-            font-size:20px;
-            font-weight:bold;
-            border-bottom:1px solid #eee;
-        }
-        .list{
-            background:#ffffff;
-            margin-top:10px;
-        }
-        .item{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            padding:14px 16px;
-            border-bottom:1px solid #eee;
-            font-size:16px;
-        }
-        .free{
-            color:green;
-            font-weight:bold;
-        }
-        .lock{
-            color:#999;
-            font-size:18px;
-        }
-    </style>
+<style>
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#f5f7fb;
+}
+
+.header{
+    padding:16px;
+    background:#ffffff;
+    font-size:20px;
+    font-weight:600;
+    border-bottom:1px solid #ddd;
+}
+
+.container{
+    padding:12px;
+}
+
+.test-card{
+    background:#ffffff;
+    border-radius:12px;
+    padding:14px;
+    margin-bottom:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+
+.test-info h3{
+    margin:0;
+    font-size:16px;
+    font-weight:600;
+}
+
+.test-info p{
+    margin:5px 0 0;
+    font-size:13px;
+    color:#666;
+}
+
+.lang{
+    margin-top:8px;
+    font-size:13px;
+    color:#2563eb;
+}
+
+.start{
+    color:#2563eb;
+    font-weight:600;
+    text-decoration:none;
+}
+
+.lock{
+    color:#999;
+    font-size:18px;
+}
+
+.free{
+    color:#16a34a;
+    font-size:13px;
+    font-weight:600;
+    margin-left:6px;
+}
+</style>
 </head>
 
 <body>
 
 <div class="header">SSC CGL – Full Mock Tests</div>
 
-<div class="list">
-    <div class="item">
-        <span>Mock Test 1</span>
-        <span class="free">Free</span>
+<div class="container">
+
+<!-- MOCK 1 (FREE) -->
+<div class="test-card">
+    <div class="test-info">
+        <h3>SSC CGL Full Test - 1 <span class="free">FREE</span></h3>
+        <p>100 Questions • 60 Minutes • 200 Marks</p>
+        <div class="lang">English, Hindi</div>
     </div>
+    <!-- ✅ CORRECT LINK -->
+    <a href="/ssc/cgl/mock/1" class="start">Start Test →</a>
+</div>
 
-    <div class="item"><span>Mock Test 2</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 3</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 4</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 5</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 6</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 7</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 8</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 9</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 10</span><span class="lock">🔒</span></div>
+<!-- MOCK 2–30 (LOCKED) -->
+<script>
+for(let i=2;i<=30;i++){
+    document.write(`
+        <div class="test-card">
+            <div class="test-info">
+                <h3>SSC CGL Full Test - ${i}</h3>
+                <p>100 Questions • 60 Minutes • 200 Marks</p>
+                <div class="lang">English, Hindi</div>
+            </div>
+            <div class="lock">🔒</div>
+        </div>
+    `);
+}
+</script>
 
-    <div class="item"><span>Mock Test 11</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 12</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 13</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 14</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 15</span><span class="lock">🔒</span></div>
-
-    <div class="item"><span>Mock Test 16</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 17</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 18</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 19</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 20</span><span class="lock">🔒</span></div>
-
-    <div class="item"><span>Mock Test 21</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 22</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 23</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 24</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 25</span><span class="lock">🔒</span></div>
-
-    <div class="item"><span>Mock Test 26</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 27</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 28</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 29</span><span class="lock">🔒</span></div>
-    <div class="item"><span>Mock Test 30</span><span class="lock">🔒</span></div>
 </div>
 
 </body>
