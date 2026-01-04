@@ -1,197 +1,134 @@
 from flask import Flask, render_template, request, redirect, session
-import sqlite3
 import os
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
 app = Flask(__name__)
 app.secret_key = "abhyas_secret_key_123"
 
-# ======================================================
-# DATABASE PATH (FIXED & SAFE)
-# ======================================================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "users.db")
+# ===================== DATABASE =====================
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
-# ======================================================
-# DATABASE INIT (AUTO CREATE)
-# ======================================================
+def get_db_connection():
+    return psycopg2.connect(
+        DATABASE_URL,
+        cursor_factory=RealDictCursor
+    )
+
+# ===================== CREATE TABLE (AUTO) =====================
 def init_db():
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        cur = conn.cursor()
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS students (
+            id SERIAL PRIMARY KEY,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        );
+    """)
+    conn.commit()
+    cur.close()
+    conn.close()
 
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT UNIQUE,
-                password TEXT
-            )
-        """)
-
-        conn.commit()
-        conn.close()
-        print("✅ Database initialized at:", DB_PATH)
-
-    except Exception as e:
-        print("❌ DB init error:", e)
-
-# ⚠️ VERY IMPORTANT: DB init call
 init_db()
 
-# ======================================================
-# LOGIN
-# ======================================================
+# ===================== LOGIN =====================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
 
-        conn = sqlite3.connect(DB_PATH)
+        conn = get_db_connection()
         cur = conn.cursor()
-
         cur.execute(
-            "SELECT * FROM users WHERE username=? AND password=?",
+            "SELECT * FROM students WHERE username=%s AND password=%s",
             (username, password)
         )
-
         user = cur.fetchone()
+        cur.close()
         conn.close()
 
         if user:
             session["name"] = username
             return redirect("/dashboard")
         else:
-            return render_template(
-                "login.html",
-                error="Invalid username or password"
-            )
+            return render_template("login.html", error="Invalid username or password")
 
     return render_template("login.html")
 
-
-# ======================================================
-# SIGNUP (CREATE ACCOUNT)
-# ======================================================
+# ===================== SIGNUP =====================
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
 
-        if not username or not password:
-            return render_template(
-                "signup.html",
-                error="All fields are required"
-            )
+        conn = get_db_connection()
+        cur = conn.cursor()
 
         try:
-            conn = sqlite3.connect(DB_PATH)
-            cur = conn.cursor()
-
             cur.execute(
-                "INSERT INTO users (username, password) VALUES (?, ?)",
+                "INSERT INTO students (username, password) VALUES (%s, %s)",
                 (username, password)
             )
-
             conn.commit()
+        except Exception:
+            conn.rollback()
+            cur.close()
             conn.close()
+            return render_template("signup.html", error="Username already exists")
 
-            return redirect("/")
-
-        except sqlite3.IntegrityError:
-            return render_template(
-                "signup.html",
-                error="Username already exists"
-            )
+        cur.close()
+        conn.close()
+        return redirect("/")
 
     return render_template("signup.html")
 
-
-# ======================================================
-# STUDENT DASHBOARD
-# ======================================================
+# ===================== STUDENT DASHBOARD =====================
 @app.route("/dashboard")
 def dashboard():
     if "name" not in session:
         return redirect("/")
     return render_template("student_dashboard.html")
 
-
-# ======================================================
-# SSC DASHBOARD
-# ======================================================
+# ===================== SSC DASHBOARD =====================
 @app.route("/ssc")
 def ssc_dashboard():
     if "name" not in session:
         return redirect("/")
     return render_template("ssc_dashboard.html")
 
-
-# ======================================================
-# SSC CGL HOME
-# ======================================================
+# ===================== SSC CGL =====================
 @app.route("/ssc/cgl")
 def ssc_cgl():
     if "name" not in session:
         return redirect("/")
     return render_template("ssc_cgl_tests.html")
 
-
-# ======================================================
-# SSC CGL FULL MOCK LIST
-# ======================================================
+# ===================== SSC CGL FULL MOCK LIST =====================
 @app.route("/ssc/cgl/full-mocks")
 def ssc_cgl_full_mocks():
     if "name" not in session:
         return redirect("/")
     return render_template("ssc_cgl_full_mocks.html")
 
-
-# ======================================================
-# SSC CGL MOCK INSTRUCTIONS
-# ======================================================
+# ===================== MOCK INSTRUCTIONS (1–30) =====================
 @app.route("/ssc/cgl/mock/<int:mock_no>")
 def ssc_cgl_mock(mock_no):
     if "name" not in session:
         return redirect("/")
 
-    if mock_no < 1 or mock_no > 30:
-        return "Invalid Mock Number", 404
+    # अभी सभी mocks के लिए same instruction page
+    # ताकि TemplateNotFound error न आए
+    return render_template("ssc_cgl_mock_1_instructions.html", mock_no=mock_no)
 
-    return render_template(
-        "ssc_cgl_mock_1_instructions.html",
-        mock_no=mock_no
-    )
-
-
-# ======================================================
-# SSC CGL EXAM PAGE
-# ======================================================
-@app.route("/ssc/cgl/mock/<int:mock_no>/exam")
-def ssc_cgl_exam(mock_no):
-    if "name" not in session:
-        return redirect("/")
-
-    if mock_no < 1 or mock_no > 30:
-        return "Invalid Mock Number", 404
-
-    return render_template(
-        "exam.html",
-        mock_no=mock_no
-    )
-
-
-# ======================================================
-# LOGOUT
-# ======================================================
+# ===================== LOGOUT =====================
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
-
-# ======================================================
-# RUN APP
-# ======================================================
+# ===================== RUN =====================
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
