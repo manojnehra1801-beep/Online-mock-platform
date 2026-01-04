@@ -1,206 +1,228 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>SSC CGL Mock Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SSC CGL Mock Test 1</title>
 
 <style>
 body{
     margin:0;
     font-family: Arial, sans-serif;
-    background:#f4f6fb;
+    background:#f5f7fb;
 }
-.header{
+
+/* HEADER */
+.top-bar{
     background:#1f2937;
     color:#fff;
-    padding:12px;
+    padding:12px 15px;
     display:flex;
     justify-content:space-between;
     align-items:center;
+    position:fixed;
+    top:0;
+    width:100%;
+    z-index:10;
 }
+
 .timer{
     font-weight:bold;
 }
+
+.palette-toggle{
+    background:#374151;
+    color:#fff;
+    border:none;
+    padding:6px 10px;
+    border-radius:6px;
+    font-size:13px;
+    cursor:pointer;
+}
+
+/* MAIN */
 .main{
     display:flex;
-}
-.left{
-    flex:3;
+    margin-top:65px;
     padding:15px;
 }
-.right{
-    flex:1;
+
+.question-area{
+    flex:3;
     background:#fff;
-    padding:10px;
-    border-left:1px solid #ddd;
-}
-.question{
-    font-size:16px;
-    font-weight:600;
-    margin-bottom:10px;
-}
-.option{
-    background:#fff;
-    padding:10px;
-    margin-bottom:8px;
+    padding:15px;
     border-radius:8px;
-    border:1px solid #ddd;
 }
-.controls{
+
+.question-area h3{
+    margin-top:0;
+}
+
+/* OPTIONS */
+.option{
     display:flex;
-    justify-content:space-between;
-    margin-top:15px;
+    align-items:center;
+    gap:10px;
+    padding:10px;
+    border:1px solid #ddd;
+    border-radius:6px;
+    margin-bottom:10px;
+    cursor:pointer;
 }
-button{
+
+.option:hover{
+    background:#eef2ff;
+}
+
+.option input{
+    transform:scale(1.1);
+}
+
+/* CONTROLS */
+.btn-group{
+    margin-top:15px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.btn{
     padding:10px 14px;
     border:none;
     border-radius:6px;
-    background:#2563eb;
     color:#fff;
+    cursor:pointer;
     font-size:14px;
 }
-.review{
-    background:#f59e0b;
-}
-.submit{
-    background:#dc2626;
-}
+
+.prev,.next{background:#2563eb;}
+.review{background:#f59e0b;}
+
+/* PALETTE */
 .palette{
-    display:flex;
-    flex-wrap:wrap;
-    gap:6px;
+    flex:1;
+    margin-left:15px;
+    background:#fff;
+    border-radius:8px;
+    padding:10px;
+    max-height:70vh;
+    overflow-y:auto;
 }
+
+.palette h4{
+    margin-top:0;
+    text-align:center;
+}
+
 .palette button{
-    width:36px;
-    height:36px;
+    width:40px;
+    height:40px;
+    margin:5px;
     border:none;
     border-radius:50%;
-    font-weight:bold;
+    background:#e5e7eb;
+    cursor:pointer;
 }
-.grey{background:#d1d5db;}
-.green{background:#22c55e;color:#fff;}
-.yellow{background:#facc15;}
+
+/* SUBMIT BUTTON */
+.submit-fixed{
+    position:fixed;
+    bottom:15px;
+    right:15px;
+    background:#dc2626;
+    color:#fff;
+    padding:14px 18px;
+    border:none;
+    border-radius:8px;
+    font-size:15px;
+    cursor:pointer;
+    z-index:20;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+    .main{
+        flex-direction:column;
+    }
+    .palette{
+        margin-left:0;
+        margin-top:15px;
+    }
+}
 </style>
 </head>
 
 <body>
 
-<div class="header">
+<!-- HEADER -->
+<div class="top-bar">
+    <button class="palette-toggle" onclick="togglePalette()">☰ Palette</button>
     <div>SSC CGL Mock-1</div>
-    <div class="timer" id="timer">60:00</div>
+    <div class="timer" id="timer">59:59</div>
 </div>
 
-<form method="post" id="examForm">
+<!-- MAIN -->
 <div class="main">
 
-<!-- LEFT (QUESTIONS) -->
-<div class="left">
-{% for q in questions %}
-<div class="qbox" style="display:none;">
-    <div class="question">Q{{ loop.index }}. {{ q.q }}</div>
+    <!-- QUESTION -->
+    <div class="question-area">
+        <h3>Q1. What is the capital of India?</h3>
 
-    {% for opt in q.options %}
-    <label class="option">
-        <input type="radio" name="q{{ loop.index }}" onclick="markAnswered()">
-        {{ opt }}
-    </label>
-    {% endfor %}
-</div>
-{% endfor %}
+        <label class="option">
+            <input type="radio" name="q1"> Mumbai
+        </label>
+        <label class="option">
+            <input type="radio" name="q1"> Delhi
+        </label>
+        <label class="option">
+            <input type="radio" name="q1"> Kolkata
+        </label>
+        <label class="option">
+            <input type="radio" name="q1"> Chennai
+        </label>
 
-<div class="controls">
-    <button type="button" onclick="prevQ()">Previous</button>
-    <button type="button" class="review" onclick="markReview()">Mark for Review</button>
-    <button type="button" onclick="nextQ()">Next</button>
+        <div class="btn-group">
+            <button class="btn prev">Previous</button>
+            <button class="btn review">Mark for Review</button>
+            <button class="btn next">Next</button>
+        </div>
+    </div>
+
+    <!-- PALETTE -->
+    <div class="palette" id="palette">
+        <h4>Questions</h4>
+        <button>1</button>
+        <button>2</button>
+        <button>3</button>
+        <button>4</button>
+        <button>5</button>
+        <button>6</button>
+        <button>7</button>
+        <button>8</button>
+        <button>9</button>
+        <button>10</button>
+    </div>
+
 </div>
 
-<div style="margin-top:15px;">
-    <button type="submit" class="submit">Submit Test</button>
-</div>
-</div>
+<!-- SUBMIT -->
+<button class="submit-fixed">Submit Test</button>
 
-<!-- RIGHT (PALETTE) -->
-<div class="right">
-    <h4>Question Palette</h4>
-    <div class="palette" id="palette"></div>
-</div>
-
-</div>
-</form>
-
+<!-- JS -->
 <script>
-let current = 0;
-let boxes = document.querySelectorAll(".qbox");
-let status = []; // 0=not visited, 1=answered, 2=review
-
-// INIT
-for(let i=0;i<boxes.length;i++){
-    status.push(0);
-}
-boxes[0].style.display="block";
-
-// CREATE PALETTE
-const pal = document.getElementById("palette");
-for(let i=0;i<boxes.length;i++){
-    let b = document.createElement("button");
-    b.innerText = i+1;
-    b.className = "grey";
-    b.onclick = ()=>jump(i);
-    b.id = "p"+i;
-    pal.appendChild(b);
+function togglePalette(){
+    const p = document.getElementById("palette");
+    p.style.display = (p.style.display === "none") ? "block" : "none";
 }
 
-function updatePalette(){
-    for(let i=0;i<status.length;i++){
-        let b = document.getElementById("p"+i);
-        if(status[i]==1) b.className="green";
-        else if(status[i]==2) b.className="yellow";
-        else b.className="grey";
-    }
-}
-
-function jump(i){
-    boxes[current].style.display="none";
-    current=i;
-    boxes[current].style.display="block";
-}
-
-function nextQ(){
-    if(current<boxes.length-1){
-        boxes[current].style.display="none";
-        current++;
-        boxes[current].style.display="block";
-    }
-}
-
-function prevQ(){
-    if(current>0){
-        boxes[current].style.display="none";
-        current--;
-        boxes[current].style.display="block";
-    }
-}
-
-function markAnswered(){
-    status[current]=1;
-    updatePalette();
-}
-
-function markReview(){
-    status[current]=2;
-    updatePalette();
-}
-
-// TIMER (60 min)
-let time = 60*60;
+// TIMER
+let time = 60*60 - 1;
 setInterval(()=>{
-    time--;
     let m = Math.floor(time/60);
     let s = time%60;
     document.getElementById("timer").innerText =
-        m+":"+(s<10?"0"+s:s);
-    if(time<=0) document.getElementById("examForm").submit();
+        m + ":" + (s<10?"0":"") + s;
+    time--;
 },1000);
 </script>
 
