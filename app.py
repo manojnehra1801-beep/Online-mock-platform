@@ -56,20 +56,59 @@ def ssc_cgl_full_mocks():
     return render_template("ssc_cgl_full_mocks.html")
 
 
-# ======================================================
-# ✅ STEP-1 : DYNAMIC MOCK INSTRUCTION ROUTE (1–30)
-# ======================================================
+# ===================== MOCK INSTRUCTIONS (1–30) =====================
 @app.route("/ssc/cgl/mock/<int:mock_no>")
 def ssc_cgl_mock(mock_no):
     if "name" not in session:
         return redirect("/")
 
-    # Only Mock 1 is available
+    # only mock 1 is open now
     if mock_no == 1:
         return render_template("ssc_cgl_mock_1_instructions.html")
 
-    # Other mocks locked for now
-    return "<h2 style='text-align:center;margin-top:40px;'>🔒 This mock will be available soon</h2>"
+    return "<h2 style='text-align:center;margin-top:50px;'>🔒 This mock is locked. Please unlock to continue.</h2>"
+
+
+# ===================== MOCK 1 EXAM =====================
+@app.route("/ssc/cgl/exam/1", methods=["GET", "POST"])
+def ssc_cgl_exam_1():
+    if "name" not in session:
+        return redirect("/")
+
+    questions = [
+        {
+            "q": "What is the capital of India?",
+            "options": ["Mumbai", "Delhi", "Kolkata", "Chennai"]
+        },
+        {
+            "q": "Who wrote the Indian National Anthem?",
+            "options": [
+                "Bankim Chandra Chattopadhyay",
+                "Rabindranath Tagore",
+                "Jawaharlal Nehru",
+                "Mahatma Gandhi"
+            ]
+        },
+        {
+            "q": "2 + 2 × 2 = ?",
+            "options": ["6", "8", "4", "10"]
+        }
+    ]
+
+    if request.method == "POST":
+        return redirect("/thank-you")
+
+    return render_template("ssc_cgl_exam_1.html", questions=questions)
+
+
+# ===================== THANK YOU =====================
+@app.route("/thank-you")
+def thank_you():
+    return """
+    <h2 style='text-align:center;margin-top:60px;'>
+        Thank you for attempting the test
+    </h2>
+    """
 
 
 # ===================== LOGOUT =====================
