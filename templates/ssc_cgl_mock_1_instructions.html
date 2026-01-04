@@ -1,31 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Exam Instructions</title>
+<title>Mock Test Instructions</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
+    margin:0;
     font-family:Arial, sans-serif;
     background:#f4f6fb;
 }
 .box{
-    max-width:700px;
+    max-width:720px;
     margin:40px auto;
-    background:#fff;
+    background:#ffffff;
     padding:20px;
     border-radius:8px;
 }
-button{
+h2{
+    margin-top:0;
+}
+ul{
+    padding-left:18px;
+}
+li{
+    margin-bottom:8px;
+}
+.start-btn{
+    margin-top:20px;
     width:100%;
     padding:14px;
+    font-size:16px;
     background:#2563eb;
     color:#fff;
     border:none;
     border-radius:6px;
-    font-size:16px;
     cursor:pointer;
+}
+.start-btn:hover{
+    background:#1e40af;
+}
+.note{
+    margin-top:12px;
+    font-size:13px;
+    color:#555;
 }
 </style>
 </head>
@@ -33,44 +52,56 @@ button{
 <body>
 
 <div class="box">
-    <h2>Mock Test Instructions</h2>
+    <h2>SSC CGL – Mock Test 1</h2>
 
     <ul>
         <li>Total Questions: 20</li>
-        <li>Total Time: 60 Minutes</li>
-        <li>Do not refresh during exam</li>
-        <li>Exam will resume if refreshed</li>
+        <li>Total Time: 60 minutes</li>
+        <li>Each question carries 1 mark</li>
+        <li>No negative marking</li>
+        <li>Do not refresh the page during exam</li>
+        <li>Exam will resume automatically if refreshed</li>
     </ul>
 
     <label>
         <input type="checkbox" id="agree">
-        I have read and understood instructions
+        I have read and understood all instructions
     </label>
 
-    <br><br>
-    <button onclick="startExam()">I Agree & Start Test</button>
+    <button class="start-btn" onclick="startExam()">I Agree & Start Test</button>
+
+    <div class="note">
+        Instructions page will not appear again once exam starts.
+    </div>
 </div>
 
 <script>
-/* ---- AUTO BYPASS IF EXAM ALREADY STARTED ---- */
-if(localStorage.getItem("examStarted") === "true"){
-    window.location.href = "/exam";
+/*
+IMPORTANT LOGIC
+---------------
+1. Instructions page WILL NOT auto-redirect
+2. Redirect happens ONLY on button click
+3. Redirect URL EXACTLY matches app.py route
+*/
+
+// if exam already started, go directly to exam
+if(localStorage.getItem("mock1_started") === "yes"){
+    window.location.href = "/ssc/cgl/mock/1/start";
 }
 
-/* ---- START EXAM ---- */
 function startExam(){
-    if(!document.getElementById("agree").checked){
-        alert("Please accept instructions");
+    const agree = document.getElementById("agree");
+
+    if(!agree.checked){
+        alert("Please accept the instructions to continue.");
         return;
     }
 
-    localStorage.setItem("examStarted","true");
-    localStorage.setItem("currentIndex","0");
-    localStorage.setItem("answers","{}");
-    localStorage.setItem("reviewMarked","{}");
-    localStorage.setItem("timeLeft","3600");
+    // mark exam as started
+    localStorage.setItem("mock1_started","yes");
 
-    window.location.href = "/exam";
+    // redirect to backend-controlled route
+    window.location.href = "/ssc/cgl/mock/1/start";
 }
 </script>
 
