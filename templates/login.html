@@ -1,141 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
+<title>Login – Abhyas App</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Abhyas App | Login</title>
 
 <style>
-*{
-    box-sizing:border-box;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-}
-
 body{
-    margin:0;
-    height:100vh;
-    background:linear-gradient(135deg,#6c5ce7,#5f27cd);
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    font-family:Arial, sans-serif;
+    background:#f4f6fb;
 }
-
-/* CARD */
-.card{
-    width:92%;
-    max-width:380px;
+.box{
+    max-width:400px;
+    margin:80px auto;
     background:#fff;
-    border-radius:16px;
-    padding:28px 22px;
-    box-shadow:0 20px 40px rgba(0,0,0,0.15);
-    text-align:center;
+    padding:20px;
+    border-radius:8px;
 }
-
-/* TEXT */
-h1{
-    margin:0;
-    font-size:24px;
-    color:#2d3436;
-}
-.tagline{
-    margin-top:6px;
-    font-size:14px;
-    font-weight:600;
-    color:#6c5ce7;
-}
-.sub{
-    margin-top:12px;
-    font-size:14px;
-    color:#636e72;
-}
-
-/* INPUTS */
-input{
+input,button{
     width:100%;
-    padding:14px;
-    margin-top:14px;
-    border-radius:10px;
-    border:1px solid #dcdde1;
-    font-size:15px;
-    outline:none;
+    padding:12px;
+    margin-top:10px;
 }
-input:focus{
-    border-color:#6c5ce7;
-}
-
-/* BUTTON */
 button{
-    width:100%;
-    margin-top:18px;
-    padding:14px;
-    background:#6c5ce7;
+    background:#2563eb;
     color:#fff;
     border:none;
-    border-radius:12px;
-    font-size:16px;
-    font-weight:bold;
     cursor:pointer;
 }
-button:hover{
-    background:#5f27cd;
-}
-
-/* LINKS */
-.signup{
-    margin-top:16px;
-    font-size:14px;
-    color:#636e72;
-}
-.signup a{
-    color:#6c5ce7;
-    font-weight:600;
-    text-decoration:none;
-}
-
-/* FOOTER */
-.footer{
-    margin-top:14px;
-    font-size:12px;
-    color:#b2bec3;
-}
-.powered{
-    position:fixed;
-    bottom:12px;
-    width:100%;
+.link{
+    margin-top:15px;
     text-align:center;
-    font-size:12px;
-    color:#ffffffcc;
+}
+.error{
+    color:red;
+    margin-top:10px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="card">
-    <h1>Welcome to Abhyas App</h1>
-    <div class="tagline">Practice smart. Perform better</div>
-    <div class="sub">Login to your account ↓</div>
+<div class="box">
+    <h2>Login</h2>
 
-    <!-- LOGIN FORM -->
-    <form method="POST">
-        <input type="text" name="username" placeholder="Student Username" required>
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post">
+        <input type="text" name="username" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
         <button type="submit">Login</button>
     </form>
 
-    <!-- CREATE ACCOUNT (OUTSIDE FORM) -->
-    <div class="signup">
-        New student?
-        <a href="/signup">Create account</a>
+    <div class="link">
+        <a href="/signup">Create Account</a>
     </div>
-
-    <div class="footer">
-        Best viewed on mobile • Secure exam
-    </div>
-</div>
-
-<div class="powered">
-    Powered by <b>Nehra Infotech Pvt. Ltd.</b>
 </div>
 
 </body>
