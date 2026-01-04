@@ -51,7 +51,7 @@ def ssc_dashboard():
     if "name" not in session:
         return redirect("/")
 
-    return render_template("ssc_exams.html")
+    return render_template("ssc_dashboard.html")
 
 
 # ================= LOGOUT =================
