@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Abhyas App | Dashboard</title>
 
+<!-- Font Awesome for real icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
 body{
     margin:0;
@@ -36,7 +39,7 @@ body{
     position:relative;
 }
 .menu-btn{
-    font-size:22px;
+    font-size:24px;
     cursor:pointer;
     user-select:none;
 }
@@ -86,12 +89,16 @@ body{
 .follow-title{
     font-size:12px;
     color:#777;
-    margin-bottom:6px;
+    margin-bottom:8px;
 }
-.icons span{
-    font-size:18px;
+.icons a{
     margin:0 6px;
-    cursor:pointer;
+    font-size:18px;
+    color:#555;
+    text-decoration:none;
+}
+.icons a:hover{
+    color:#6c5ce7;
 }
 
 /* SECTION TITLE */
@@ -157,28 +164,28 @@ body{
 
     <!-- MENU -->
     <div class="menu-container">
-        <div class="menu-btn" onclick="toggleMenu()">⋮</div>
+        <div class="menu-btn" onclick="toggleMenu()">&#8942;</div>
         <div class="menu" id="menu">
             <div class="username">{{ session['name'] if session.get('name') else 'Student' }}</div>
             <div class="line"></div>
 
-            <a href="/dashboard">🏠 Home</a>
-            <a href="#">💳 My Purchase</a>
-            <a href="#">⚙️ Settings</a>
-            <a href="#">⭐ Rate</a>
-            <a href="#">📤 Share</a>
-            <a href="/logout">🚪 Log out</a>
+            <a href="/dashboard"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="#"><i class="fa-solid fa-credit-card"></i> My Purchase</a>
+            <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+            <a href="#"><i class="fa-solid fa-star"></i> Rate</a>
+            <a href="#"><i class="fa-solid fa-share-nodes"></i> Share</a>
+            <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Log out</a>
 
             <div class="line"></div>
 
             <div class="follow">
                 <div class="follow-title">Follow us</div>
                 <div class="icons">
-                    <span>📱</span>
-                    <span>📢</span>
-                    <span>📸</span>
-                    <span>✉️</span>
-                    <span>▶️</span>
+                    <a href="#" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="#" title="Telegram"><i class="fa-brands fa-telegram"></i></a>
+                    <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" title="Gmail"><i class="fa-solid fa-envelope"></i></a>
+                    <a href="#" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
                 </div>
             </div>
         </div>
