@@ -70,6 +70,7 @@ def ssc_cgl_mock(mock_no):
 
 
 # ===================== MOCK 1 EXAM =====================
+# ===================== MOCK 1 EXAM =====================
 @app.route("/ssc/cgl/exam/1", methods=["GET", "POST"])
 def ssc_cgl_exam_1():
     if "name" not in session:
@@ -78,7 +79,8 @@ def ssc_cgl_exam_1():
     questions = [
         {
             "q": "What is the capital of India?",
-            "options": ["Mumbai", "Delhi", "Kolkata", "Chennai"]
+            "options": ["Mumbai", "Delhi", "Kolkata", "Chennai"],
+            "answer": 1
         },
         {
             "q": "Who wrote the Indian National Anthem?",
@@ -87,19 +89,43 @@ def ssc_cgl_exam_1():
                 "Rabindranath Tagore",
                 "Jawaharlal Nehru",
                 "Mahatma Gandhi"
-            ]
+            ],
+            "answer": 1
         },
         {
             "q": "2 + 2 × 2 = ?",
-            "options": ["6", "8", "4", "10"]
+            "options": ["6", "8", "4", "10"],
+            "answer": 0
         }
     ]
 
     if request.method == "POST":
-        return redirect("/thank-you")
+        correct = 0
+        attempted = 0
+
+        for i, q in enumerate(questions, start=1):
+            ans = request.form.get(f"q{i}")
+            if ans is not None:
+                attempted += 1
+                if int(ans) == q["answer"]:
+                    correct += 1
+
+        total = len(questions)
+        incorrect = attempted - correct
+        unattempted = total - attempted
+        accuracy = round((correct / attempted) * 100, 2) if attempted else 0
+
+        return render_template(
+            "ssc_cgl_result.html",
+            total=total,
+            correct=correct,
+            incorrect=incorrect,
+            attempted=attempted,
+            unattempted=unattempted,
+            accuracy=accuracy
+        )
 
     return render_template("ssc_cgl_exam_1.html", questions=questions)
-
 
 # ===================== THANK YOU =====================
 @app.route("/thank-you")
