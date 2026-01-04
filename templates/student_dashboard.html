@@ -3,131 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard | Abhyas App</title>
+<title>Abhyas App – Dashboard</title>
 
 <style>
-*{
-    box-sizing:border-box;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-}
-
 body{
     margin:0;
-    background:#f4f6fb;
+    font-family: Arial, sans-serif;
+    background:#eef2ff;
 }
 
-/* HEADER */
 .header{
-    background:linear-gradient(135deg,#6c5ce7,#5f27cd);
-    color:#fff;
-    padding:18px;
-}
-.header h2{
-    margin:0;
+    padding:16px;
     font-size:20px;
-}
-.header p{
-    margin:4px 0 0;
-    font-size:14px;
-    opacity:0.9;
+    font-weight:600;
 }
 
-/* CONTAINER */
-.container{
+.grid{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:14px;
     padding:16px;
 }
 
-/* SECTION TITLE */
-.section-title{
+.card{
+    background:#f9faff;
+    border-radius:18px;
+    padding:18px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    min-height:90px;
+}
+
+.card-title{
     font-size:16px;
     font-weight:600;
-    color:#2d3436;
-    margin-bottom:10px;
+    margin-bottom:6px;
 }
 
-/* EXAM CARD */
-.exam-card{
-    background:#fff;
-    border-radius:16px;
-    padding:16px;
-    margin-bottom:14px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+.card-sub{
+    font-size:13px;
+    color:#666;
 }
 
-.exam-card h3{
-    margin:0;
-    font-size:17px;
-    color:#2d3436;
-}
-.exam-card p{
-    margin:6px 0 12px;
-    font-size:14px;
-    color:#636e72;
-}
-
-/* BUTTON */
-.start-btn{
-    display:block;
-    width:100%;
-    padding:14px;
-    border:none;
-    border-radius:12px;
-    background:#6c5ce7;
-    color:#fff;
-    font-size:15px;
-    font-weight:600;
-    cursor:pointer;
-}
-.start-btn:active{
-    transform:scale(0.98);
-}
-
-/* FOOTER */
-.powered{
-    margin-top:20px;
-    text-align:center;
-    font-size:12px;
-    color:#999;
+.icon{
+    font-size:26px;
+    margin-bottom:8px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header">
-    <h2>Welcome, Student 👋</h2>
-    <p>Select an exam to start your practice</p>
-</div>
+<div class="header">📁 My Exam Folders</div>
 
-<!-- CONTENT -->
-<div class="container">
+<div class="grid">
 
-    <div class="section-title">Available Exams</div>
-
-    <!-- EXAM 1 -->
-    <div class="exam-card">
-        <h3>SSC Mock Test</h3>
-        <p>Practice full-length mock test based on latest pattern</p>
-        <button class="start-btn">Start Test</button>
+    <div class="card">
+        <div class="icon">📘</div>
+        <div class="card-title">SSC Exams</div>
+        <div class="card-sub">CGL • CHSL • MTS</div>
     </div>
 
-    <!-- EXAM 2 -->
-    <div class="exam-card">
-        <h3>Practice Test</h3>
-        <p>Topic-wise practice for daily improvement</p>
-        <button class="start-btn">Start Test</button>
+    <div class="card">
+        <div class="icon">🚆</div>
+        <div class="card-title">Railway Exams</div>
+        <div class="card-sub">RRB NTPC • Group D</div>
     </div>
 
-    <!-- EXAM 3 -->
-    <div class="exam-card">
-        <h3>Previous Year Questions</h3>
-        <p>Attempt real exam questions with timer</p>
-        <button class="start-btn">Start Test</button>
+    <div class="card">
+        <div class="icon">📄</div>
+        <div class="card-title">SSC PYQ</div>
+        <div class="card-sub">Previous Year Questions</div>
     </div>
 
-    <div class="powered">
-        Powered by <b>Nehra Infotech Pvt. Ltd.</b>
+    <div class="card">
+        <div class="icon">📄</div>
+        <div class="card-title">Railway PYQ</div>
+        <div class="card-sub">Solved Papers</div>
+    </div>
+
+    <div class="card">
+        <div class="icon">🧪</div>
+        <div class="card-title">New Mock</div>
+        <div class="card-sub">Latest Tests</div>
+    </div>
+
+    <div class="card">
+        <div class="icon">✍️</div>
+        <div class="card-title">Practice</div>
+        <div class="card-sub">Topic-wise Practice</div>
     </div>
 
 </div>
