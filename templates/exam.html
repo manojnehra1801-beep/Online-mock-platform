@@ -1,228 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Online Exam</title>
+    <meta charset="UTF-8">
+    <title>SSC CGL Mock-1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-*{box-sizing:border-box}
-body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#f5f6fa;
-    padding-bottom:90px;
-}
+    <style>
+        body{
+            margin:0;
+            font-family: Arial, sans-serif;
+            background:#f5f7fb;
+        }
 
-/* HEADER */
-.header{
-    position:sticky;
-    top:0;
-    z-index:10;
-    background:#6c5ce7;
-    color:#fff;
-    padding:10px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    font-size:14px;
-}
-.header .center{
-    font-weight:bold;
-}
+        /* HEADER */
+        .top-bar{
+            background:#1f2937;
+            color:#fff;
+            padding:12px 15px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            position:fixed;
+            top:0;
+            width:100%;
+            z-index:10;
+        }
 
-/* QUESTION CARD */
-.card{
-    background:#fff;
-    margin:12px;
-    padding:16px;
-    border-radius:14px;
-    box-shadow:0 6px 15px rgba(0,0,0,0.12);
-    display:none;
-}
-.card.active{ display:block; }
+        .timer{
+            font-weight:bold;
+        }
 
-.question{
-    font-size:16px;
-    font-weight:bold;
-    margin-bottom:14px;
-}
+        /* MAIN LAYOUT */
+        .main{
+            display:flex;
+            margin-top:60px;
+            padding:15px;
+        }
 
-/* OPTIONS */
-.option{
-    display:block;
-    border:1px solid #dcdde1;
-    border-radius:10px;
-    padding:12px;
-    margin-bottom:10px;
-    font-size:15px;
-}
-.option input{ margin-right:8px; }
+        .question-area{
+            flex:3;
+            background:#fff;
+            padding:15px;
+            border-radius:8px;
+        }
 
-/* CONTROLS */
-.controls{
-    display:flex;
-    justify-content:space-between;
-    margin:12px;
-}
-.controls button{
-    flex:1;
-    margin:0 4px;
-    padding:10px;
-    border:none;
-    border-radius:10px;
-    background:#0984e3;
-    color:#fff;
-    font-size:14px;
-}
+        .question-area h3{
+            margin-top:0;
+        }
 
-/* PALETTE */
-.palette{
-    display:flex;
-    flex-wrap:wrap;
-    gap:6px;
-    padding:10px;
-}
-.palette button{
-    width:36px;
-    height:36px;
-    border:none;
-    border-radius:50%;
-    font-weight:bold;
-}
-.grey{background:#dfe6e9;}
-.green{background:#55efc4;}
-.yellow{background:#ffeaa7;}
+        /* OPTIONS */
+        .option{
+            display:block;
+            padding:10px;
+            border:1px solid #ddd;
+            border-radius:6px;
+            margin-bottom:10px;
+            cursor:pointer;
+        }
 
-/* SUBMIT */
-.submit-fixed{
-    position:fixed;
-    bottom:12px;
-    left:50%;
-    transform:translateX(-50%);
-    width:92%;
-}
-.submit-fixed button{
-    width:100%;
-    padding:15px;
-    font-size:17px;
-    border:none;
-    border-radius:30px;
-    background:#e84393;
-    color:#fff;
-}
-</style>
+        .option input{
+            margin-right:10px;
+        }
+
+        .option:hover{
+            background:#eef2ff;
+        }
+
+        /* BUTTONS */
+        .btn-group{
+            margin-top:15px;
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+        }
+
+        .btn{
+            padding:10px 14px;
+            border:none;
+            border-radius:6px;
+            color:#fff;
+            cursor:pointer;
+            font-size:14px;
+        }
+
+        .prev{ background:#2563eb; }
+        .review{ background:#f59e0b; }
+        .next{ background:#2563eb; }
+
+        /* QUESTION PALETTE */
+        .palette{
+            flex:1;
+            margin-left:15px;
+            background:#fff;
+            border-radius:8px;
+            padding:10px;
+            max-height:70vh;
+            overflow-y:auto;
+        }
+
+        .palette h4{
+            margin-top:0;
+            text-align:center;
+        }
+
+        .palette button{
+            width:40px;
+            height:40px;
+            margin:5px;
+            border:none;
+            border-radius:50%;
+            background:#e5e7eb;
+            cursor:pointer;
+        }
+
+        /* SUBMIT BUTTON FIXED */
+        .submit-fixed{
+            position:fixed;
+            bottom:15px;
+            right:15px;
+            background:#dc2626;
+            color:#fff;
+            padding:14px 18px;
+            border:none;
+            border-radius:8px;
+            font-size:15px;
+            cursor:pointer;
+            z-index:20;
+        }
+
+        /* MOBILE */
+        @media(max-width:768px){
+            .main{
+                flex-direction:column;
+            }
+            .palette{
+                margin-left:0;
+                margin-top:15px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
 <!-- HEADER -->
-<div class="header">
-    <div>{{ session.get('name') }}</div>
-    <div class="center">MOCK TEST</div>
-    <div id="timer">00:00</div>
+<div class="top-bar">
+    <div>SSC CGL Mock-1</div>
+    <div class="timer" id="timer">59:59</div>
 </div>
 
-<!-- PALETTE -->
-<div class="palette" id="palette"></div>
+<!-- MAIN CONTENT -->
+<div class="main">
 
-<form method="post" id="examForm">
+    <!-- QUESTION -->
+    <div class="question-area">
+        <h3>Q1. What is the capital of India?</h3>
 
-{% for q in questions %}
-<div class="card" id="q{{ loop.index0 }}">
-    <div class="question">
-        Q{{ loop.index }}. {{ q.question }}
+        <label class="option">
+            <input type="radio" name="q1"> Mumbai
+        </label>
+
+        <label class="option">
+            <input type="radio" name="q1"> Delhi
+        </label>
+
+        <label class="option">
+            <input type="radio" name="q1"> Kolkata
+        </label>
+
+        <label class="option">
+            <input type="radio" name="q1"> Chennai
+        </label>
+
+        <div class="btn-group">
+            <button class="btn prev">Previous</button>
+            <button class="btn review">Mark for Review</button>
+            <button class="btn next">Next</button>
+        </div>
     </div>
 
-    {% for opt in q.options %}
-    <label class="option">
-        <input type="radio"
-               name="{{ q.id }}"
-               value="{{ loop.index0 }}"
-               onclick="markAnswered({{ loop.index0 }})">
-        {{ opt }}
-    </label>
-    {% endfor %}
-</div>
-{% endfor %}
+    <!-- QUESTION PALETTE -->
+    <div class="palette">
+        <h4>Question Palette</h4>
+        <button>1</button>
+        <button>2</button>
+        <button>3</button>
+        <button>4</button>
+        <button>5</button>
+        <button>6</button>
+        <button>7</button>
+        <button>8</button>
+        <button>9</button>
+        <button>10</button>
+    </div>
 
-<!-- CONTROLS -->
-<div class="controls">
-    <button type="button" onclick="prevQ()">Previous</button>
-    <button type="button" onclick="markReview()">Mark for Review</button>
-    <button type="button" onclick="nextQ()">Next</button>
 </div>
 
-<!-- SUBMIT -->
-<div class="submit-fixed">
-    <button type="submit">Submit Test</button>
-</div>
+<!-- SUBMIT BUTTON -->
+<button class="submit-fixed">Submit Test</button>
 
-</form>
-
+<!-- TIMER SCRIPT -->
 <script>
-/* TIMER */
-let totalSeconds = {{ questions|length }} * 60;
-function updateTimer(){
-    let m = Math.floor(totalSeconds/60);
-    let s = totalSeconds % 60;
-    document.getElementById("timer").innerText =
-        (m<10?"0":"")+m+":"+(s<10?"0":"")+s;
-    if(totalSeconds<=0){
-        document.getElementById("examForm").submit();
-    }
-    totalSeconds--;
-}
-setInterval(updateTimer,1000);
-updateTimer();
-
-/* QUESTIONS */
-let current = 0;
-const totalQ = {{ questions|length }};
-let status = Array(totalQ).fill(0); // 0=not seen,1=answered,2=review
-
-function showQ(i){
-    document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
-    document.getElementById("q"+i).classList.add("active");
-    current=i;
-    updatePalette();
-}
-function nextQ(){ if(current<totalQ-1) showQ(current+1); }
-function prevQ(){ if(current>0) showQ(current-1); }
-
-function markAnswered(){
-    status[current]=1;
-    updatePalette();
-}
-function markReview(){
-    status[current]=2;
-    updatePalette();
-}
-
-/* PALETTE */
-function createPalette(){
-    const p=document.getElementById("palette");
-    for(let i=0;i<totalQ;i++){
-        let b=document.createElement("button");
-        b.innerText=i+1;
-        b.className="grey";
-        b.onclick=()=>showQ(i);
-        b.id="p"+i;
-        p.appendChild(b);
-    }
-}
-function updatePalette(){
-    for(let i=0;i<totalQ;i++){
-        let b=document.getElementById("p"+i);
-        if(status[i]==1) b.className="green";
-        else if(status[i]==2) b.className="yellow";
-        else b.className="grey";
-    }
-}
-
-/* INIT */
-createPalette();
-showQ(0);
+    let time = 60 * 60 - 1;
+    setInterval(() => {
+        let min = Math.floor(time / 60);
+        let sec = time % 60;
+        document.getElementById("timer").innerText =
+            min + ":" + (sec < 10 ? "0" : "") + sec;
+        time--;
+    }, 1000);
 </script>
 
 </body>
