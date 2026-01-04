@@ -56,12 +56,22 @@ def ssc_cgl_full_mocks():
     return render_template("ssc_cgl_full_mocks.html")
 
 
-# ===================== MOCK 1 INSTRUCTIONS =====================
-@app.route("/ssc/cgl/mock/1")
-def ssc_cgl_mock_1():
+# ======================================================
+# ✅ STEP-1 : DYNAMIC MOCK INSTRUCTION ROUTE (1–30)
+# ======================================================
+@app.route("/ssc/cgl/mock/<int:mock_no>")
+def ssc_cgl_mock(mock_no):
     if "name" not in session:
         return redirect("/")
-    return render_template("ssc_cgl_mock_1_instructions.html")
+
+    # safety: only allow 1–30
+    if mock_no < 1 or mock_no > 30:
+        return "Invalid Mock Number", 404
+
+    return render_template(
+        "ssc_cgl_mock_instructions.html",
+        mock_no=mock_no
+    )
 
 
 # ===================== LOGOUT =====================
