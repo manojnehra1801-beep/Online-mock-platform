@@ -1,11 +1,8 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, url_for
 
 app = Flask(__name__)
 app.secret_key = "abhyas_secret_key"
 
-# ===================== DEMO USER =====================
-DEMO_USERNAME = "abc"
-DEMO_PASSWORD = "abc1"
 
 # ===================== LOGIN =====================
 @app.route("/", methods=["GET", "POST"])
@@ -14,7 +11,8 @@ def login():
         username = request.form.get("username")
         password = request.form.get("password")
 
-        if username == DEMO_USERNAME and password == DEMO_PASSWORD:
+        # DEMO LOGIN
+        if username == "abc" and password == "abc1":
             session["name"] = username
             return redirect("/dashboard")
         else:
@@ -26,11 +24,11 @@ def login():
     return render_template("login.html")
 
 
-# ===================== SIGNUP =====================
+# ===================== SIGN UP =====================
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        # future me database add hoga
+        # Future DB logic
         return redirect("/")
     return render_template("signup.html")
 
@@ -42,11 +40,11 @@ def dashboard():
         return redirect("/")
     return render_template(
         "student_dashboard.html",
-        username=session["name"]
+        name=session["name"]
     )
 
 
-# ===================== SSC FOLDER =====================
+# ===================== SSC DASHBOARD =====================
 @app.route("/ssc")
 def ssc_dashboard():
     if "name" not in session:
@@ -61,7 +59,8 @@ def ssc_cgl():
         return redirect("/")
     return render_template("ssc_cgl_tests.html")
 
-# ================= SSC CGL → FULL MOCK LIST =================
+
+# ===================== SSC → CGL → FULL MOCK LIST =====================
 @app.route("/ssc/cgl/full-mocks")
 def ssc_cgl_full_mocks():
     if "name" not in session:
