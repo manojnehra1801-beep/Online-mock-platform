@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Railway Exams | Abhyas App</title>
+
+<style>
+body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+    background:#f4f6fb;
+}
+
+/* HEADER */
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 16px;
+    background:#ffffff;
+    box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+
+.header h2{
+    margin:0;
+    font-size:18px;
+}
+
+.back{
+    font-size:20px;
+    text-decoration:none;
+    color:#333;
+}
+
+/* PAGE TITLE */
+.page-title{
+    padding:16px;
+}
+
+.page-title h3{
+    margin:0;
+    font-size:20px;
+}
+
+.page-title p{
+    margin:6px 0 0;
+    color:#666;
+    font-size:14px;
+}
+
+/* GRID */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+    padding:16px;
+}
+
+/* CARD */
+.card{
+    background:#fff;
+    border-radius:14px;
+    padding:16px;
+    box-shadow:0 6px 16px rgba(0,0,0,0.05);
+    text-decoration:none;
+    color:#000;
+}
+
+.card-icon{
+    font-size:26px;
+}
+
+.card h4{
+    margin:10px 0 4px;
+    font-size:16px;
+}
+
+.card p{
+    margin:0;
+    font-size:13px;
+    color:#666;
+}
+
+/* MOBILE */
+@media(max-width:400px){
+    .grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <a href="/dashboard" class="back">←</a>
+    <h2>Railway Exams</h2>
+    <span></span>
+</div>
+
+<!-- TITLE -->
+<div class="page-title">
+    <h3>Select Railway Exam</h3>
+    <p>Choose exam to start preparation</p>
+</div>
+
+<!-- RAILWAY FOLDERS -->
+<div class="grid">
+
+    <a href="#" class="card">
+        <div class="card-icon">🚆</div>
+        <h4>NTPC (10+2)</h4>
+        <p>Under Graduate Level</p>
+    </a>
+
+    <a href="#" class="card">
+        <div class="card-icon">🎓</div>
+        <h4>NTPC (Graduate)</h4>
+        <p>Graduate Level</p>
+    </a>
+
+    <a href="#" class="card">
+        <div class="card-icon">🛠️</div>
+        <h4>Railway Group D</h4>
+        <p>Level-1 Posts</p>
+    </a>
+
+    <a href="#" class="card">
+        <div class="card-icon">🛡️</div>
+        <h4>RPF</h4>
+        <p>Constable & SI</p>
+    </a>
+
+    <a href="#" class="card">
+        <div class="card-icon">📋</div>
+        <h4>Ministerial & Isolated</h4>
+        <p>Special Posts</p>
+    </a>
+
+</div>
+
+</body>
+</html>
