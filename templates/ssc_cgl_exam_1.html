@@ -2,51 +2,40 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>SSC CGL Mock Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSC CGL Mock Test</title>
 
 <style>
 body{
     margin:0;
     font-family: Arial, sans-serif;
-    background:#f5f7fb;
+    background:#f4f6fb;
 }
 
-/* HEADER */
-.top-bar{
+/* ===== HEADER ===== */
+.header{
     background:#1f2937;
     color:#fff;
-    padding:12px 15px;
+    padding:12px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    position:fixed;
-    top:0;
-    width:100%;
-    z-index:10;
 }
-
+.header h3{
+    margin:0;
+    font-size:16px;
+}
 .timer{
-    font-weight:bold;
+    font-size:14px;
 }
 
-.palette-toggle{
-    background:#374151;
-    color:#fff;
-    border:none;
-    padding:6px 10px;
-    border-radius:6px;
-    font-size:13px;
-    cursor:pointer;
-}
-
-/* MAIN */
+/* ===== MAIN ===== */
 .main{
     display:flex;
-    margin-top:65px;
-    padding:15px;
+    padding:10px;
 }
 
+/* ===== QUESTION AREA ===== */
 .question-area{
     flex:3;
     background:#fff;
@@ -54,100 +43,74 @@ body{
     border-radius:8px;
 }
 
-.question-area h3{
+.question-area h4{
     margin-top:0;
 }
 
-/* OPTIONS */
-.option{
-    display:flex;
-    align-items:center;
-    gap:10px;
+.options label{
+    display:block;
     padding:10px;
     border:1px solid #ddd;
     border-radius:6px;
-    margin-bottom:10px;
+    margin-bottom:8px;
     cursor:pointer;
 }
-
-.option:hover{
-    background:#eef2ff;
+.options input{
+    margin-right:8px;
 }
 
-.option input{
-    transform:scale(1.1);
-}
-
-/* CONTROLS */
-.btn-group{
+/* ===== BUTTONS ===== */
+.actions{
     margin-top:15px;
     display:flex;
     gap:10px;
-    flex-wrap:wrap;
 }
-
 .btn{
     padding:10px 14px;
     border:none;
     border-radius:6px;
-    color:#fff;
     cursor:pointer;
-    font-size:14px;
+}
+.prev{ background:#3b82f6; color:#fff;}
+.review{ background:#f59e0b; color:#fff;}
+.next{ background:#2563eb; color:#fff;}
+.submit{
+    background:#dc2626;
+    color:#fff;
+    position:fixed;
+    bottom:15px;
+    right:15px;
 }
 
-.prev,.next{background:#2563eb;}
-.review{background:#f59e0b;}
-
-/* PALETTE */
+/* ===== PALETTE ===== */
 .palette{
     flex:1;
-    margin-left:15px;
+    margin-left:10px;
     background:#fff;
     border-radius:8px;
     padding:10px;
-    max-height:70vh;
-    overflow-y:auto;
 }
-
 .palette h4{
     margin-top:0;
     text-align:center;
 }
-
-.palette button{
-    width:40px;
-    height:40px;
-    margin:5px;
-    border:none;
+.pal-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+}
+.pal{
+    padding:10px;
     border-radius:50%;
     background:#e5e7eb;
+    text-align:center;
     cursor:pointer;
 }
 
-/* SUBMIT BUTTON */
-.submit-fixed{
-    position:fixed;
-    bottom:15px;
-    right:15px;
-    background:#dc2626;
-    color:#fff;
-    padding:14px 18px;
-    border:none;
-    border-radius:8px;
-    font-size:15px;
-    cursor:pointer;
-    z-index:20;
-}
-
-/* MOBILE */
+/* ===== MOBILE ===== */
 @media(max-width:768px){
-    .main{
-        flex-direction:column;
-    }
-    .palette{
-        margin-left:0;
-        margin-top:15px;
-    }
+    .main{flex-direction:column;}
+    .palette{margin-left:0;margin-top:10px;}
 }
 </style>
 </head>
@@ -155,10 +118,9 @@ body{
 <body>
 
 <!-- HEADER -->
-<div class="top-bar">
-    <button class="palette-toggle" onclick="togglePalette()">☰ Palette</button>
-    <div>SSC CGL Mock-1</div>
-    <div class="timer" id="timer">59:59</div>
+<div class="header">
+    <h3>SSC CGL Mock-1</h3>
+    <div class="timer" id="timer">60:00</div>
 </div>
 
 <!-- MAIN -->
@@ -166,63 +128,85 @@ body{
 
     <!-- QUESTION -->
     <div class="question-area">
-        <h3>Q1. What is the capital of India?</h3>
+        <h4 id="qText"></h4>
 
-        <label class="option">
-            <input type="radio" name="q1"> Mumbai
-        </label>
-        <label class="option">
-            <input type="radio" name="q1"> Delhi
-        </label>
-        <label class="option">
-            <input type="radio" name="q1"> Kolkata
-        </label>
-        <label class="option">
-            <input type="radio" name="q1"> Chennai
-        </label>
+        <div class="options">
+            <label><input type="radio" name="opt"><span id="o0"></span></label>
+            <label><input type="radio" name="opt"><span id="o1"></span></label>
+            <label><input type="radio" name="opt"><span id="o2"></span></label>
+            <label><input type="radio" name="opt"><span id="o3"></span></label>
+        </div>
 
-        <div class="btn-group">
-            <button class="btn prev">Previous</button>
+        <div class="actions">
+            <button class="btn prev" onclick="prevQ()">Previous</button>
             <button class="btn review">Mark for Review</button>
-            <button class="btn next">Next</button>
+            <button class="btn next" onclick="nextQ()">Next</button>
         </div>
     </div>
 
     <!-- PALETTE -->
-    <div class="palette" id="palette">
-        <h4>Questions</h4>
-        <button>1</button>
-        <button>2</button>
-        <button>3</button>
-        <button>4</button>
-        <button>5</button>
-        <button>6</button>
-        <button>7</button>
-        <button>8</button>
-        <button>9</button>
-        <button>10</button>
+    <div class="palette">
+        <h4>Question Palette</h4>
+        <div class="pal-grid" id="palette"></div>
     </div>
 
 </div>
 
-<!-- SUBMIT -->
-<button class="submit-fixed">Submit Test</button>
+<button class="btn submit">Submit Test</button>
 
-<!-- JS -->
 <script>
-function togglePalette(){
-    const p = document.getElementById("palette");
-    p.style.display = (p.style.display === "none") ? "block" : "none";
+/* ===== QUESTIONS ===== */
+const questions = [
+ {q:"What is the capital of India?", o:["Mumbai","Delhi","Kolkata","Chennai"]},
+ {q:"2 + 2 = ?", o:["1","2","4","6"]},
+ {q:"Largest planet?", o:["Earth","Mars","Jupiter","Venus"]},
+ {q:"Taj Mahal is in?", o:["Delhi","Agra","Jaipur","Lucknow"]}
+];
+
+let index = 0;
+
+/* ===== LOAD QUESTION ===== */
+function loadQ(){
+    const q = questions[index];
+    document.getElementById("qText").innerText = `Q${index+1}. ${q.q}`;
+    q.o.forEach((opt,i)=>{
+        document.getElementById("o"+i).innerText = opt;
+    });
+}
+loadQ();
+
+/* ===== NEXT / PREV ===== */
+function nextQ(){
+    if(index < questions.length-1){
+        index++;
+        loadQ();
+    }
+}
+function prevQ(){
+    if(index > 0){
+        index--;
+        loadQ();
+    }
 }
 
-// TIMER
-let time = 60*60 - 1;
+/* ===== PALETTE ===== */
+const pal = document.getElementById("palette");
+questions.forEach((_,i)=>{
+    const d = document.createElement("div");
+    d.className="pal";
+    d.innerText=i+1;
+    d.onclick=()=>{ index=i; loadQ(); };
+    pal.appendChild(d);
+});
+
+/* ===== TIMER ===== */
+let t = 3600;
 setInterval(()=>{
-    let m = Math.floor(time/60);
-    let s = time%60;
+    let m = Math.floor(t/60);
+    let s = t%60;
     document.getElementById("timer").innerText =
-        m + ":" + (s<10?"0":"") + s;
-    time--;
+        `${m}:${s<10?"0"+s:s}`;
+    if(t>0) t--;
 },1000);
 </script>
 
