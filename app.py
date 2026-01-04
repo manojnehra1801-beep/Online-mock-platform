@@ -48,7 +48,7 @@ def ssc_cgl():
     return render_template("ssc_cgl_tests.html")
 
 
-# ===================== SSC CGL FULL MOCK LIST (1–30) =====================
+# ===================== SSC CGL FULL MOCK LIST =====================
 @app.route("/ssc/cgl/full-mocks")
 def ssc_cgl_full_mocks():
     if "name" not in session:
@@ -56,28 +56,27 @@ def ssc_cgl_full_mocks():
     return render_template("ssc_cgl_full_mocks.html")
 
 
-# ===================== SSC CGL MOCK INSTRUCTIONS (DYNAMIC) =====================
+# ===================== MOCK INSTRUCTIONS =====================
 @app.route("/ssc/cgl/mock/<int:mock_no>")
 def ssc_cgl_mock_instructions(mock_no):
     if "name" not in session:
         return redirect(url_for("login"))
 
-    # अभी सिर्फ Mock-1 open है
+    # अभी सिर्फ Mock-1 open
     if mock_no != 1:
         return redirect(url_for("ssc_cgl_full_mocks"))
 
-    # ✅ EXACT file name (जो तुम्हारे templates में है)
-    return render_template("ssc_cgl_mock_1_instructions.html")
+    return render_template("ssc_cgl_mock_1_instructions.html", mock_no=mock_no)
 
 
-# ===================== START EXAM (AFTER AGREE) =====================
-@app.route("/ssc/cgl/mock/1/start")
-def start_mock_1_exam():
+# ===================== STEP-1: START EXAM ROUTE (FIX) =====================
+@app.route("/ssc/cgl/mock/<int:mock_no>/start")
+def start_exam(mock_no):
     if "name" not in session:
         return redirect(url_for("login"))
 
-    # exam.html already exists in your templates
-    return render_template("exam.html")
+    # Exam page (same for now)
+    return render_template("exam.html", mock_no=mock_no)
 
 
 # ===================== LOGOUT =====================
