@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SSC CGL Tests | Abhyas App</title>
+    <title>SSC CGL Full Mock Tests</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
@@ -10,69 +10,102 @@
             margin:0;
             font-family: Arial, sans-serif;
             background:#f5f7fb;
+            color:#222;
         }
 
         .header{
             background:#ffffff;
             padding:16px;
             font-size:20px;
-            font-weight:bold;
-            border-bottom:1px solid #e5e5e5;
+            font-weight:700;
+            border-bottom:1px solid #ddd;
         }
 
         .container{
-            padding:16px;
+            padding:12px;
         }
 
-        .card{
+        .mock-card{
             background:#ffffff;
-            border-radius:12px;
-            padding:16px;
-            margin-bottom:14px;
-            box-shadow:0 4px 10px rgba(0,0,0,0.08);
+            padding:14px;
+            border-radius:10px;
+            margin-bottom:10px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            box-shadow:0 2px 6px rgba(0,0,0,0.05);
         }
 
-        .card h3{
-            margin:0;
+        .mock-title{
+            font-weight:700;
             font-size:16px;
         }
 
-        .card p{
-            margin:6px 0 0;
+        .mock-info{
             font-size:13px;
             color:#666;
+            margin-top:4px;
         }
 
-        .link{
+        .attempt-btn{
+            color:#1a73e8;
+            font-weight:700;
             text-decoration:none;
-            color:inherit;
+            font-size:14px;
+        }
+
+        .lock{
+            font-size:18px;
+            color:#999;
+        }
+
+        .free{
+            color:#1aa260;
+            font-size:13px;
+            font-weight:700;
         }
     </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <div class="header">
-    SSC CGL – Test Series
+    SSC CGL – Full Mock Tests (Tier-I)
 </div>
 
-<!-- CONTENT -->
 <div class="container">
 
-    <!-- FULL MOCK TESTS -->
-    <a href="/ssc/cgl/full-mocks" class="link">
-        <div class="card">
-            <h3>30 Full Mock Tests (Tier-I)</h3>
-            <p>Latest SSC CGL exam pattern</p>
+    <!-- MOCK TEST 1 (FREE) -->
+    <div class="mock-card">
+        <div>
+            <div class="mock-title">CGL Full Mock Test 1</div>
+            <div class="mock-info">
+                100 Questions • 60 Minutes • 200 Marks
+                <span class="free"> • FREE</span>
+            </div>
         </div>
-    </a>
-
-    <!-- SECTIONAL TESTS -->
-    <div class="card">
-        <h3>Sectional Tests</h3>
-        <p>Quant • Reasoning • English • GK</p>
+        <a href="/exam" class="attempt-btn">Attempt →</a>
     </div>
+
+    <!-- MOCK TESTS 2–30 (LOCKED) -->
+    <!-- You can later unlock via admin -->
+
+    <!-- Loop style manual list -->
+    <script>
+        for(let i=2;i<=30;i++){
+            document.write(`
+                <div class="mock-card">
+                    <div>
+                        <div class="mock-title">CGL Full Mock Test ${i}</div>
+                        <div class="mock-info">
+                            100 Questions • 60 Minutes • 200 Marks
+                        </div>
+                    </div>
+                    <div class="lock">🔒</div>
+                </div>
+            `);
+        }
+    </script>
 
 </div>
 
