@@ -24,8 +24,7 @@ body{
     padding:12px;
 }
 
-/* MAKE WHOLE CARD CLICKABLE */
-.card-link{
+a{
     text-decoration:none;
     color:inherit;
     display:block;
@@ -62,7 +61,6 @@ body{
     color:#2563eb;
 }
 
-/* RIGHT ACTION TEXT */
 .action{
     color:#2563eb;
     font-weight:600;
@@ -88,8 +86,8 @@ body{
 
 <div class="container">
 
-<!-- MOCK TEST 1 (FREE) -->
-<a href="/ssc/cgl/mock/1" class="card-link">
+<!-- MOCK 1 (FREE) -->
+<a href="/ssc/cgl/mock/1">
     <div class="test-card">
         <div class="test-info">
             <h3>SSC CGL Full Test - 1 <span class="free">FREE</span></h3>
@@ -100,21 +98,45 @@ body{
     </div>
 </a>
 
-<!-- MOCK TESTS 2–30 (LOCKED) -->
-<script>
-for(let i=2;i<=30;i++){
-    document.write(`
-        <div class="test-card">
-            <div class="test-info">
-                <h3>SSC CGL Full Test - ${i}</h3>
-                <p>100 Questions • 60 Minutes • 200 Marks</p>
-                <div class="lang">English, Hindi</div>
-            </div>
-            <div class="lock">🔒</div>
-        </div>
-    `);
-}
-</script>
+<!-- MOCK 2 -->
+<div class="test-card">
+    <div class="test-info">
+        <h3>SSC CGL Full Test - 2</h3>
+        <p>100 Questions • 60 Minutes • 200 Marks</p>
+        <div class="lang">English, Hindi</div>
+    </div>
+    <div class="lock">🔒</div>
+</div>
+
+<!-- MOCK 3 -->
+<div class="test-card">
+    <div class="test-info">
+        <h3>SSC CGL Full Test - 3</h3>
+        <p>100 Questions • 60 Minutes • 200 Marks</p>
+        <div class="lang">English, Hindi</div>
+    </div>
+    <div class="lock">🔒</div>
+</div>
+
+<!-- MOCK 4 -->
+<div class="test-card">
+    <div class="test-info">
+        <h3>SSC CGL Full Test - 4</h3>
+        <p>100 Questions • 60 Minutes • 200 Marks</p>
+        <div class="lang">English, Hindi</div>
+    </div>
+    <div class="lock">🔒</div>
+</div>
+
+<!-- MOCK 5 -->
+<div class="test-card">
+    <div class="test-info">
+        <h3>SSC CGL Full Test - 5</h3>
+        <p>100 Questions • 60 Minutes • 200 Marks</p>
+        <div class="lang">English, Hindi</div>
+    </div>
+    <div class="lock">🔒</div>
+</div>
 
 </div>
 
