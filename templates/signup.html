@@ -2,126 +2,95 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Abhyas App - Create Account</title>
+    <title>Create Account | Abhyas App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
-        *{
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-        }
-
         body{
-            margin: 0;
-            min-height: 100vh;
-            background: linear-gradient(180deg, #6C63FF, #7C73FF);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-family: Arial, sans-serif;
+            background:#f5f6fa;
+            margin:0;
+            padding:0;
         }
-
-        .card{
-            width: 92%;
-            max-width: 380px;
-            background: #fff;
-            border-radius: 18px;
-            padding: 28px 22px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            text-align: center;
+        .container{
+            max-width:360px;
+            margin:80px auto;
+            background:#fff;
+            padding:25px;
+            border-radius:10px;
+            box-shadow:0 4px 10px rgba(0,0,0,0.1);
         }
-
-        .card h1{
-            margin: 0;
-            font-size: 22px;
-            font-weight: 700;
-            color: #222;
+        h2{
+            text-align:center;
+            margin-bottom:10px;
         }
-
-        .card p{
-            margin: 6px 0 22px;
-            font-size: 14px;
-            color: #666;
+        p{
+            text-align:center;
+            color:#555;
+            font-size:14px;
         }
-
-        .input-box{
-            width: 100%;
-            margin-bottom: 14px;
+        input{
+            width:100%;
+            padding:12px;
+            margin-top:12px;
+            border:1px solid #ccc;
+            border-radius:6px;
+            font-size:15px;
         }
-
-        .input-box input{
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: 1px solid #ddd;
-            font-size: 15px;
-            outline: none;
+        button{
+            width:100%;
+            padding:12px;
+            margin-top:18px;
+            background:#6c5ce7;
+            color:#fff;
+            border:none;
+            border-radius:6px;
+            font-size:16px;
+            cursor:pointer;
         }
-
-        .input-box input:focus{
-            border-color: #6C63FF;
+        button:hover{
+            background:#5a4cd1;
         }
-
-        .btn{
-            width: 100%;
-            margin-top: 6px;
-            padding: 14px;
-            border-radius: 14px;
-            border: none;
-            background: #6C63FF;
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
         .error{
-            background: #ffe6e6;
-            color: #d60000;
-            font-size: 13px;
-            padding: 8px;
-            border-radius: 8px;
-            margin-bottom: 12px;
+            color:red;
+            text-align:center;
+            margin-top:10px;
+            font-size:14px;
         }
-
-        .bottom-text{
-            margin-top: 16px;
-            font-size: 14px;
-            color: #555;
+        .link{
+            text-align:center;
+            margin-top:15px;
+            font-size:14px;
         }
-
-        .bottom-text a{
-            color: #6C63FF;
-            font-weight: 600;
-            text-decoration: none;
+        .link a{
+            color:#6c5ce7;
+            text-decoration:none;
         }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h1>Create Account</h1>
-        <p>Register to start your mock tests</p>
+<div class="container">
+    <h2>Create Account</h2>
+    <p>Join Abhyas App to start your preparation</p>
 
-        {% if error %}
-            <div class="error">{{ error }}</div>
-        {% endif %}
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
 
-        <form method="POST">
-            <div class="input-box">
-                <input type="text" name="username" placeholder="Student Username" required>
-            </div>
+    <!-- IMPORTANT: action must be /signup -->
+    <form action="/signup" method="post">
+        <input type="text" name="username" placeholder="Create Username" required>
+        <input type="password" name="password" placeholder="Create Password" required>
 
-            <div class="input-box">
-                <input type="password" name="password" placeholder="Password" required>
-            </div>
+        <button type="submit">Create Account</button>
+    </form>
 
-            <button type="submit" class="btn">Create Account</button>
-        </form>
-
-        <div class="bottom-text">
-            Already have an account? <a href="/">Login</a>
-        </div>
+    <div class="link">
+        Already have an account?  
+        <a href="/">Login</a>
     </div>
+</div>
 
 </body>
 </html>
