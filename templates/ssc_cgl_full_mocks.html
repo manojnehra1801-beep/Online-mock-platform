@@ -24,6 +24,7 @@ body{
     padding:12px;
 }
 
+/* CARD */
 .test-card{
     background:#ffffff;
     border-radius:12px;
@@ -35,6 +36,7 @@ body{
     box-shadow:0 2px 6px rgba(0,0,0,0.05);
 }
 
+/* LEFT INFO */
 .test-info h3{
     margin:0;
     font-size:16px;
@@ -53,17 +55,23 @@ body{
     color:#2563eb;
 }
 
+/* START BUTTON – IMPORTANT FIX */
 .start{
     color:#2563eb;
     font-weight:600;
     text-decoration:none;
+    pointer-events:auto;      /* CLICK ENABLE */
+    position:relative;
+    z-index:10;
 }
 
+/* LOCK */
 .lock{
     color:#999;
     font-size:18px;
 }
 
+/* FREE BADGE */
 .free{
     color:#16a34a;
     font-size:13px;
@@ -79,18 +87,18 @@ body{
 
 <div class="container">
 
-<!-- MOCK 1 (FREE) -->
+<!-- MOCK TEST 1 (FREE & CLICKABLE) -->
 <div class="test-card">
     <div class="test-info">
         <h3>SSC CGL Full Test - 1 <span class="free">FREE</span></h3>
         <p>100 Questions • 60 Minutes • 200 Marks</p>
         <div class="lang">English, Hindi</div>
     </div>
-    <!-- ✅ CORRECT LINK -->
+    <!-- ✅ ABSOLUTE PATH (IMPORTANT) -->
     <a href="/ssc/cgl/mock/1" class="start">Start Test →</a>
 </div>
 
-<!-- MOCK 2–30 (LOCKED) -->
+<!-- MOCK TESTS 2–30 (LOCKED) -->
 <script>
 for(let i=2;i<=30;i++){
     document.write(`
