@@ -1,127 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SSC CGL Full Test - 01</title>
+<title>SSC CGL Mock Test 1 – Instructions</title>
 
 <style>
 body{
     margin:0;
     font-family: Arial, sans-serif;
-    background:#f5f6f8;
+    background:#f4f6fb;
 }
-
-.top-bar{
-    background:#111;
-    color:#fff;
-    padding:14px;
-    display:flex;
-    align-items:center;
-    font-size:16px;
-}
-
-.top-bar span{
-    margin-left:10px;
-}
-
-.content{
+.container{
+    max-width:700px;
+    margin:30px auto;
+    background:#fff;
     padding:20px;
-    padding-bottom:120px;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
 }
-
-.test-title{
-    text-align:center;
-    font-size:20px;
-    font-weight:700;
-    margin-bottom:10px;
+h2{
+    margin-top:0;
 }
-
-.meta{
-    display:flex;
-    justify-content:space-between;
-    font-size:14px;
-    color:#666;
-    margin-bottom:20px;
-}
-
 ul{
     padding-left:18px;
+}
+li{
+    margin-bottom:8px;
     font-size:14px;
-    color:#555;
-    line-height:1.6;
 }
-
-ul li{
-    margin-bottom:10px;
-}
-
-select{
-    width:100%;
-    padding:12px;
-    font-size:15px;
+.actions{
     margin-top:20px;
-    border-radius:6px;
-    border:1px solid #ccc;
+    text-align:center;
 }
-
-.bottom-bar{
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    background:#fff;
-    padding:15px;
-    box-shadow:0 -2px 8px rgba(0,0,0,0.1);
-}
-
-.btn{
-    width:100%;
-    background:#2f6df6;
-    color:#fff;
+button{
+    padding:12px 20px;
+    font-size:15px;
     border:none;
-    padding:14px;
-    font-size:16px;
     border-radius:8px;
+    background:#2563eb;
+    color:#fff;
     cursor:pointer;
+}
+button:hover{
+    background:#1e40af;
+}
+.note{
+    font-size:13px;
+    color:#555;
+    margin-top:10px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="top-bar">
-    ← <span>Your Tests</span>
+<div class="container">
+
+<h2>SSC CGL Mock Test – 1</h2>
+
+<h4>General Instructions:</h4>
+<ul>
+    <li>Total Questions: 100</li>
+    <li>Total Time: 60 Minutes</li>
+    <li>Each question carries equal marks</li>
+    <li>No negative marking (demo mock)</li>
+    <li>Once the test starts, timer will not stop</li>
+    <li>Do not refresh or close the browser during the test</li>
+</ul>
+
+<h4>Declaration:</h4>
+<p class="note">
+I have read and understood all the instructions. I agree to proceed with the test.
+</p>
+
+<div class="actions">
+    <!-- ✅ THIS IS THE IMPORTANT PART -->
+    <a href="/ssc/cgl/exam/1">
+        <button>Agree & Continue</button>
+    </a>
 </div>
 
-<div class="content">
-    <div class="test-title">SSC CGL Full Test - 01</div>
-
-    <div class="meta">
-        <div>Duration: 60 Mins</div>
-        <div>Maximum Marks: 200</div>
-    </div>
-
-    <ul>
-        <li>The test contains 4 sections with 100 questions.</li>
-        <li>Each question has 4 options with only one correct.</li>
-        <li>Time duration is 60 minutes.</li>
-        <li>+2 marks for correct, -0.5 for wrong answer.</li>
-        <li>No negative marking for unattempted questions.</li>
-        <li>You can attempt this test only once.</li>
-        <li>I agree to follow all exam rules and not use unfair means.</li>
-    </ul>
-
-    <select>
-        <option selected disabled>Choose your Default Language</option>
-        <option>English</option>
-        <option>Hindi</option>
-    </select>
-</div>
-
-<div class="bottom-bar">
-    <!-- NEXT STEP me is button ko exam page se link karenge -->
-    <button class="btn">Agree and Continue</button>
 </div>
 
 </body>
