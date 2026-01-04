@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +11,6 @@ body{
     font-family: Arial, sans-serif;
     background:#f4f6fb;
 }
-
 .header{
     background:#1f2937;
     color:#fff;
@@ -19,11 +18,9 @@ body{
     font-size:18px;
     font-weight:600;
 }
-
 .container{
     padding:15px;
 }
-
 .test-card{
     background:#fff;
     border-radius:12px;
@@ -34,45 +31,32 @@ body{
     align-items:center;
     box-shadow:0 4px 10px rgba(0,0,0,0.05);
 }
-
 .test-info h3{
     margin:0;
     font-size:15px;
 }
-
 .test-info p{
     margin:4px 0;
     font-size:13px;
     color:#666;
 }
-
 .lang{
     font-size:12px;
     color:#2563eb;
 }
-
 .free{
     color:#16a34a;
     font-weight:600;
     font-size:12px;
 }
-
 .start{
     text-decoration:none;
     color:#2563eb;
     font-weight:600;
-    font-size:14px;
 }
-
-.lock{
-    font-size:18px;
-    color:#999;
-}
-
 .unlock{
     text-decoration:none;
     color:#dc2626;
-    font-size:13px;
     font-weight:600;
 }
 </style>
@@ -84,7 +68,7 @@ body{
 
 <div class="container">
 
-<!-- ✅ MOCK 1 (FREE) -->
+<!-- MOCK 1 (FREE) -->
 <div class="test-card">
     <div class="test-info">
         <h3>SSC CGL Full Test – 1 <span class="free">FREE</span></h3>
@@ -94,21 +78,22 @@ body{
     <a href="/ssc/cgl/mock/1" class="start">Start Test →</a>
 </div>
 
-<!-- 🔒 MOCK 2–30 -->
-<script>
-for(let i=2;i<=30;i++){
-document.write(`
-<div class="test-card">
-    <div class="test-info">
-        <h3>SSC CGL Full Test – ${i}</h3>
-        <p>100 Questions · 60 Minutes · 200 Marks</p>
-        <div class="lang">English, Hindi</div>
-    </div>
-    <a href="/payment" class="unlock">Unlock 🔒</a>
-</div>
-`);
-}
-</script>
+<!-- MOCK 2–30 (UNLOCK) -->
+<!-- Just HTML, no JS -->
+
+<!-- 2 -->
+<div class="test-card"><div class="test-info"><h3>SSC CGL Full Test – 2</h3><p>100 Questions · 60 Minutes · 200 Marks</p><div class="lang">English, Hindi</div></div><a href="/payment" class="unlock">Unlock 🔒</a></div>
+
+<div class="test-card"><div class="test-info"><h3>SSC CGL Full Test – 3</h3><p>100 Questions · 60 Minutes · 200 Marks</p><div class="lang">English, Hindi</div></div><a href="/payment" class="unlock">Unlock 🔒</a></div>
+
+<div class="test-card"><div class="test-info"><h3>SSC CGL Full Test – 4</h3><p>100 Questions · 60 Minutes · 200 Marks</p><div class="lang">English, Hindi</div></div><a href="/payment" class="unlock">Unlock 🔒</a></div>
+
+<div class="test-card"><div class="test-info"><h3>SSC CGL Full Test – 5</h3><p>100 Questions · 60 Minutes · 200 Marks</p><div class="lang">English, Hindi</div></div><a href="/payment" class="unlock">Unlock 🔒</a></div>
+
+<!-- … same pattern -->
+
+<!-- 30 -->
+<div class="test-card"><div class="test-info"><h3>SSC CGL Full Test – 30</h3><p>100 Questions · 60 Minutes · 200 Marks</p><div class="lang">English, Hindi</div></div><a href="/payment" class="unlock">Unlock 🔒</a></div>
 
 </div>
 
