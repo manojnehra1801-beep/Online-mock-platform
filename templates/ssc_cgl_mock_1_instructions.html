@@ -6,144 +6,121 @@
 <title>SSC CGL Full Test - 01</title>
 
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-        background: #f5f6f8;
-        color: #333;
-    }
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#f5f6f8;
+}
 
-    /* Top Bar */
-    .top-bar {
-        background: #111;
-        color: #fff;
-        padding: 14px;
-        display: flex;
-        align-items: center;
-        font-size: 16px;
-    }
+.top-bar{
+    background:#111;
+    color:#fff;
+    padding:14px;
+    display:flex;
+    align-items:center;
+    font-size:16px;
+}
 
-    .top-bar span {
-        margin-left: 10px;
-        font-weight: 500;
-    }
+.top-bar span{
+    margin-left:10px;
+}
 
-    /* Content */
-    .content {
-        padding: 20px;
-        padding-bottom: 120px;
-    }
+.content{
+    padding:20px;
+    padding-bottom:120px;
+}
 
-    .test-title {
-        text-align: center;
-        font-size: 20px;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
+.test-title{
+    text-align:center;
+    font-size:20px;
+    font-weight:700;
+    margin-bottom:10px;
+}
 
-    .meta {
-        display: flex;
-        justify-content: space-between;
-        font-size: 14px;
-        color: #666;
-        margin-bottom: 20px;
-    }
+.meta{
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+    color:#666;
+    margin-bottom:20px;
+}
 
-    ul {
-        padding-left: 18px;
-        line-height: 1.6;
-        font-size: 14px;
-        color: #555;
-    }
+ul{
+    padding-left:18px;
+    font-size:14px;
+    color:#555;
+    line-height:1.6;
+}
 
-    ul li {
-        margin-bottom: 10px;
-    }
+ul li{
+    margin-bottom:10px;
+}
 
-    /* Language */
-    .language-box {
-        margin-top: 20px;
-    }
+select{
+    width:100%;
+    padding:12px;
+    font-size:15px;
+    margin-top:20px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
 
-    select {
-        width: 100%;
-        padding: 12px;
-        font-size: 15px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        background: #fff;
-    }
+.bottom-bar{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    background:#fff;
+    padding:15px;
+    box-shadow:0 -2px 8px rgba(0,0,0,0.1);
+}
 
-    /* Bottom Button */
-    .bottom-bar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: #fff;
-        padding: 15px;
-        box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
-    }
-
-    .btn {
-        width: 100%;
-        background: #2f6df6;
-        color: #fff;
-        border: none;
-        padding: 14px;
-        font-size: 16px;
-        border-radius: 8px;
-        cursor: pointer;
-    }
-
-    .btn:active {
-        opacity: 0.9;
-    }
+.btn{
+    width:100%;
+    background:#2f6df6;
+    color:#fff;
+    border:none;
+    padding:14px;
+    font-size:16px;
+    border-radius:8px;
+    cursor:pointer;
+}
 </style>
 </head>
 
 <body>
 
-<!-- Top Bar -->
 <div class="top-bar">
     ← <span>Your Tests</span>
 </div>
 
-<!-- Main Content -->
 <div class="content">
     <div class="test-title">SSC CGL Full Test - 01</div>
 
     <div class="meta">
-        <div>Duration: 60 Mins.</div>
-        <div>Maximum Marks: 200.0</div>
+        <div>Duration: 60 Mins</div>
+        <div>Maximum Marks: 200</div>
     </div>
 
     <ul>
-        <li>The test contain 4 sections having 100 questions.</li>
-        <li>Each question has 4 options out of which only one is correct.</li>
-        <li>You have to finish the test in 60 minutes.</li>
-        <li>You will be awarded 2 mark for each correct answer and 0.5 will be deducted for each wrong answer.</li>
-        <li>There is no negative marking for the questions that you have not attempted.</li>
-        <li>You can write this test only once. Make sure that you complete the test before you submit the test and/or close the browser.</li>
-        <li>
-            I have read all the instructions carefully and have understood them.
-            I agree not to cheat or use unfair means in this examination.
-            I understand that using unfair means of any sort for my own or someone else’s advantage will lead to my immediate disqualification.
-            The decision will be final in these matters and cannot be appealed.
-        </li>
+        <li>The test contains 4 sections with 100 questions.</li>
+        <li>Each question has 4 options with only one correct.</li>
+        <li>Time duration is 60 minutes.</li>
+        <li>+2 marks for correct, -0.5 for wrong answer.</li>
+        <li>No negative marking for unattempted questions.</li>
+        <li>You can attempt this test only once.</li>
+        <li>I agree to follow all exam rules and not use unfair means.</li>
     </ul>
 
-    <div class="language-box">
-        <select>
-            <option selected disabled>Choose your Default Language</option>
-            <option>English</option>
-            <option>Hindi</option>
-        </select>
-    </div>
+    <select>
+        <option selected disabled>Choose your Default Language</option>
+        <option>English</option>
+        <option>Hindi</option>
+    </select>
 </div>
 
-<!-- Bottom Button -->
 <div class="bottom-bar">
+    <!-- NEXT STEP me is button ko exam page se link karenge -->
     <button class="btn">Agree and Continue</button>
 </div>
 
