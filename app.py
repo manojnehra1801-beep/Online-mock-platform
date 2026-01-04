@@ -2,6 +2,9 @@ from flask import Flask, render_template, request, redirect, session, abort
 
 app = Flask(__name__)
 app.secret_key = "exam_secret_123"
+@app.route("/test")
+def test():
+    return "TEST OK"
 
 # ================= ADMIN =================
 ADMIN_USER = "Manojnehra"
