@@ -1,150 +1,103 @@
-from flask import Flask, render_template, request, redirect, session, url_for
-import os
+from flask import Flask, render_template, request, redirect, session
 import psycopg2
-from psycopg2.extras import DictCursor
+import os
 
 app = Flask(__name__)
 app.secret_key = "abhyas_secret_key_123"
 
-# ================= DATABASE =================
-DATABASE_URL = os.environ.get("DATABASE_URL")
+# ===================== DATABASE CONNECTION =====================
+def get_db_connection():
+    return psycopg2.connect(
+        os.environ.get("DATABASE_URL"),
+        sslmode="require"
+    )
 
-def get_db():
-    return psycopg2.connect(DATABASE_URL, cursor_factory=DictCursor)
-
-# ================= LOGIN =================
+# ===================== LOGIN =====================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
 
-        conn = get_db()
+        conn = get_db_connection()
         cur = conn.cursor()
+
         cur.execute(
-            "SELECT * FROM students WHERE username=%s AND password=%s",
+            "SELECT id FROM students WHERE username=%s AND password=%s",
             (username, password)
         )
         user = cur.fetchone()
+
         cur.close()
         conn.close()
 
         if user:
-            session["name"] = user["username"]
-            session["student_id"] = user["id"]
+            session["student_id"] = user[0]
+            session["username"] = username
             return redirect("/dashboard")
         else:
-            return render_template("login.html", error="Invalid username or password")
+            return render_template(
+                "login.html",
+                error="Invalid username or password"
+            )
 
     return render_template("login.html")
 
-# ================= SIGNUP =================
+# ===================== SIGNUP =====================
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
 
-        try:
-            conn = get_db()
-            cur = conn.cursor()
-            cur.execute(
-                "INSERT INTO students (username, password) VALUES (%s, %s)",
-                (username, password)
-            )
-            conn.commit()
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # ✅ check only username
+        cur.execute(
+            "SELECT id FROM students WHERE username=%s",
+            (username,)
+        )
+        existing_user = cur.fetchone()
+
+        if existing_user:
             cur.close()
             conn.close()
+            return render_template(
+                "signup.html",
+                error="Username already exists"
+            )
 
-            return redirect("/")
+        # ✅ insert new user
+        cur.execute(
+            "INSERT INTO students (username, password) VALUES (%s, %s)",
+            (username, password)
+        )
+        conn.commit()
 
-        except Exception as e:
-            return render_template("signup.html", error="Username already exists")
+        cur.close()
+        conn.close()
+
+        return redirect("/")
 
     return render_template("signup.html")
 
-# ================= DASHBOARD =================
+# ===================== DASHBOARD =====================
 @app.route("/dashboard")
 def dashboard():
-    if "name" not in session:
+    if "student_id" not in session:
         return redirect("/")
-    return render_template("student_dashboard.html")
-
-# ================= SSC DASHBOARD =================
-@app.route("/ssc")
-def ssc_dashboard():
-    if "name" not in session:
-        return redirect("/")
-    return render_template("ssc_dashboard.html")
-
-# ================= SSC CGL =================
-@app.route("/ssc/cgl")
-def ssc_cgl():
-    if "name" not in session:
-        return redirect("/")
-    return render_template("ssc_cgl_tests.html")
-
-# ================= SSC CGL FULL MOCK LIST =================
-@app.route("/ssc/cgl/full-mocks")
-def ssc_cgl_full_mocks():
-    if "name" not in session:
-        return redirect("/")
-    return render_template("ssc_cgl_full_mocks.html")
-
-# ================= MOCK INSTRUCTIONS (1–30) =================
-@app.route("/ssc/cgl/mock/<int:mock_no>")
-def ssc_cgl_mock_instructions(mock_no):
-    if "name" not in session:
-        return redirect("/")
-
-    # अभी सभी mock same instructions page use करेंगे
     return render_template(
-        "ssc_cgl_mock_1_instructions.html",
-        mock_no=mock_no
+        "student_dashboard.html",
+        username=session["username"]
     )
 
-# ================= EXAM PAGE =================
-@app.route("/exam/<int:mock_no>")
-def exam(mock_no):
-    if "name" not in session:
-        return redirect("/")
-    return render_template("exam.html", mock_no=mock_no)
-
-# ================= SUBMIT RESULT =================
-@app.route("/submit", methods=["POST"])
-def submit():
-    if "name" not in session:
-        return redirect("/")
-
-    score = request.form.get("score", 0)
-    total = request.form.get("total", 0)
-    exam_name = request.form.get("exam_name", "SSC CGL Mock")
-
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute(
-        "INSERT INTO attempts (student_id, exam_name, score, total) VALUES (%s,%s,%s,%s)",
-        (session["student_id"], exam_name, score, total)
-    )
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    return redirect("/result")
-
-# ================= RESULT =================
-@app.route("/result")
-def result():
-    if "name" not in session:
-        return redirect("/")
-    return render_template("result.html")
-
-# ================= LOGOUT =================
+# ===================== LOGOUT =====================
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
-# ================= RUN =================
+# ===================== RUN =====================
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
