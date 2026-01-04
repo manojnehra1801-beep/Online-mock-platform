@@ -1,151 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SSC Exams | Abhyas App</title>
+    <meta charset="UTF-8">
+    <title>SSC Exams | Abhyas App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body{
-    margin:0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
-    background:#f4f6fb;
-}
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-/* HEADER */
-.header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:14px 16px;
-    background:#ffffff;
-    box-shadow:0 2px 6px rgba(0,0,0,0.05);
-}
+    <style>
+        body{
+            margin:0;
+            font-family: Arial, sans-serif;
+            background:#f4f7ff;
+        }
 
-.header h2{
-    margin:0;
-    font-size:18px;
-}
+        .header{
+            padding:18px;
+            background:#ffffff;
+            box-shadow:0 2px 6px rgba(0,0,0,0.08);
+        }
 
-.back{
-    font-size:20px;
-    text-decoration:none;
-    color:#333;
-}
+        .header h2{
+            margin:0;
+            font-size:20px;
+        }
 
-/* PAGE TITLE */
-.page-title{
-    padding:16px;
-}
+        .header p{
+            margin:6px 0 0;
+            color:#666;
+            font-size:14px;
+        }
 
-.page-title h3{
-    margin:0;
-    font-size:20px;
-}
+        .container{
+            padding:16px;
+        }
 
-.page-title p{
-    margin:6px 0 0;
-    color:#666;
-    font-size:14px;
-}
+        .section-title{
+            font-weight:bold;
+            margin-bottom:12px;
+            font-size:16px;
+        }
 
-/* GRID */
-.grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:14px;
-    padding:16px;
-}
+        .grid{
+            display:grid;
+            grid-template-columns:repeat(2, 1fr);
+            gap:14px;
+        }
 
-/* CARD */
-.card{
-    background:#fff;
-    border-radius:14px;
-    padding:16px;
-    box-shadow:0 6px 16px rgba(0,0,0,0.05);
-    text-decoration:none;
-    color:#000;
-}
+        .card-link{
+            text-decoration:none;
+            color:inherit;
+        }
 
-.card-icon{
-    font-size:26px;
-}
+        .card{
+            background:#fff;
+            border-radius:14px;
+            padding:16px;
+            box-shadow:0 4px 10px rgba(0,0,0,0.08);
+            transition:0.2s;
+        }
 
-.card h4{
-    margin:10px 0 4px;
-    font-size:16px;
-}
+        .card:hover{
+            transform:translateY(-2px);
+        }
 
-.card p{
-    margin:0;
-    font-size:13px;
-    color:#666;
-}
+        .icon{
+            font-size:26px;
+            color:#6c63ff;
+            margin-bottom:10px;
+        }
 
-/* MOBILE */
-@media(max-width:400px){
-    .grid{
-        grid-template-columns:1fr;
-    }
-}
-</style>
+        .card h4{
+            margin:0;
+            font-size:15px;
+        }
+
+        .card p{
+            margin:6px 0 0;
+            font-size:13px;
+            color:#666;
+        }
+
+        .footer{
+            text-align:center;
+            padding:20px 10px;
+            font-size:12px;
+            color:#999;
+        }
+    </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header">
-    <a href="/dashboard" class="back">←</a>
-    <h2>SSC Exams</h2>
-    <span></span>
-</div>
+    <!-- HEADER -->
+    <div class="header">
+        <h2>SSC Exams</h2>
+        <p>Select exam to start practice</p>
+    </div>
 
-<!-- TITLE -->
-<div class="page-title">
-    <h3>Select SSC Exam</h3>
-    <p>Choose exam to start preparation</p>
-</div>
+    <!-- CONTENT -->
+    <div class="container">
 
-<!-- SSC FOLDERS -->
-<div class="grid">
+        <div class="section-title">📂 SSC Categories</div>
 
-    <a href="#" class="card">
-        <div class="card-icon">📘</div>
-        <h4>SSC CGL</h4>
-        <p>Graduate Level</p>
-    </a>
+        <div class="grid">
 
-    <a href="#" class="card">
-        <div class="card-icon">🛡️</div>
-        <h4>SSC CPO</h4>
-        <p>Police Exams</p>
-    </a>
+            <!-- CGL -->
+            <a href="/ssc/cgl" class="card-link">
+                <div class="card">
+                    <div class="icon"><i class="fa-solid fa-book"></i></div>
+                    <h4>SSC CGL</h4>
+                    <p>Full & Sectional Tests</p>
+                </div>
+            </a>
 
-    <a href="#" class="card">
-        <div class="card-icon">📄</div>
-        <h4>SSC CHSL</h4>
-        <p>10+2 Level</p>
-    </a>
+            <!-- CPO -->
+            <div class="card">
+                <div class="icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <h4>SSC CPO</h4>
+                <p>Coming Soon</p>
+            </div>
 
-    <a href="#" class="card">
-        <div class="card-icon">🧾</div>
-        <h4>SSC MTS</h4>
-        <p>Multi Tasking Staff</p>
-    </a>
+            <!-- CHSL -->
+            <div class="card">
+                <div class="icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                <h4>SSC CHSL</h4>
+                <p>Coming Soon</p>
+            </div>
 
-    <a href="#" class="card">
-        <div class="card-icon">🎖️</div>
-        <h4>SSC GD</h4>
-        <p>Constable</p>
-    </a>
+            <!-- MTS -->
+            <div class="card">
+                <div class="icon"><i class="fa-solid fa-briefcase"></i></div>
+                <h4>SSC MTS</h4>
+                <p>Coming Soon</p>
+            </div>
 
-    <a href="#" class="card">
-        <div class="card-icon">🧪</div>
-        <h4>Selection Phase</h4>
-        <p>Phase XI / XII</p>
-    </a>
+            <!-- GD -->
+            <div class="card">
+                <div class="icon"><i class="fa-solid fa-person-military-rifle"></i></div>
+                <h4>SSC GD</h4>
+                <p>Coming Soon</p>
+            </div>
 
-</div>
+            <!-- SELECTION POST -->
+            <div class="card">
+                <div class="icon"><i class="fa-solid fa-list-check"></i></div>
+                <h4>Selection Post</h4>
+                <p>Coming Soon</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        Powered by Nehra Infotech Pvt Ltd
+    </div>
 
 </body>
 </html>
