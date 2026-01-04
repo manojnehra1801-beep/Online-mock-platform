@@ -72,4 +72,21 @@ def ssc_cgl_mock_instructions(mock_no):
 
 # ===================== START EXAM (AFTER AGREE) =====================
 @app.route("/ssc/cgl/mock/1/start")
-def start_mock
+def start_mock_1_exam():
+    if "name" not in session:
+        return redirect(url_for("login"))
+
+    # exam.html already exists in your templates
+    return render_template("exam.html")
+
+
+# ===================== LOGOUT =====================
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
+
+
+# ===================== RUN APP =====================
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000, debug=True)
