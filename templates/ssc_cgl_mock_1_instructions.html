@@ -1,87 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Mock Test Instructions</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SSC CGL Mock Test 1 – Instructions</title>
 
 <style>
 body{
     margin:0;
-    font-family: Arial, sans-serif;
+    font-family:Arial, sans-serif;
     background:#f4f6fb;
 }
-.container{
+.box{
     max-width:700px;
-    margin:30px auto;
+    margin:40px auto;
     background:#fff;
     padding:20px;
-    border-radius:12px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    border-radius:8px;
 }
 h2{
     margin-top:0;
+    color:#1f2937;
 }
 ul{
     padding-left:18px;
 }
 li{
     margin-bottom:8px;
-    font-size:14px;
 }
-.actions{
+.btn{
     margin-top:20px;
-    text-align:center;
-}
-button{
-    padding:12px 20px;
-    font-size:15px;
-    border:none;
-    border-radius:8px;
+    width:100%;
+    padding:14px;
+    font-size:16px;
     background:#2563eb;
     color:#fff;
+    border:none;
+    border-radius:6px;
     cursor:pointer;
 }
-button:hover{
-    background:#1e40af;
-}
 .note{
+    margin-top:15px;
     font-size:13px;
     color:#555;
-    margin-top:10px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="box">
+    <h2>Mock Test Instructions</h2>
 
-<h2>SSC CGL Mock Test – 1</h2>
+    <ul>
+        <li>Total Questions: 20</li>
+        <li>Total Time: 60 minutes</li>
+        <li>Each question carries 1 mark</li>
+        <li>No negative marking</li>
+        <li>Do not refresh or close the browser during exam</li>
+        <li>Your exam will resume if the page reloads</li>
+    </ul>
 
-<h4>General Instructions:</h4>
-<ul>
-    <li>Total Questions: 100</li>
-    <li>Total Time: 60 Minutes</li>
-    <li>Each question carries equal marks</li>
-    <li>No negative marking (demo mock)</li>
-    <li>Once the test starts, timer will not stop</li>
-    <li>Do not refresh or close the browser during the test</li>
-</ul>
+    <label>
+        <input type="checkbox" id="agree">
+        I have read and understood all instructions
+    </label>
 
-<h4>Declaration:</h4>
-<p class="note">
-I have read and understood all the instructions. I agree to proceed with the test.
-</p>
+    <button class="btn" onclick="startExam()">I Agree & Start Test</button>
 
-<div class="actions">
-    <!-- ✅ THIS IS THE IMPORTANT PART -->
-    <a href="/ssc/cgl/exam/1">
-        <button>Agree & Continue</button>
-    </a>
+    <div class="note">
+        Once the exam starts, instructions page will not appear again.
+    </div>
 </div>
 
-</div>
+<script>
+/* ---------- BYPASS INSTRUCTIONS IF EXAM ALREADY STARTED ---------- */
+if(localStorage.getItem("examStarted") === "true"){
+    window.location.href = "/exam";
+}
+
+/* ---------- START EXAM ---------- */
+function startExam(){
+    const agree = document.getElementById("agree");
+    if(!agree.checked){
+        alert("Please accept instructions to start the test");
+        return;
+    }
+
+    // reset only first time
+    localStorage.setItem("examStarted","true");
+    localStorage.setItem("currentIndex","0");
+    localStorage.setItem("answers","{}");
+    localStorage.setItem("reviewMarked","{}");
+    localStorage.setItem("timeLeft","3600");
+
+    window.location.href = "/exam";
+}
+</script>
 
 </body>
 </html>
