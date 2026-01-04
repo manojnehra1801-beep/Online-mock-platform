@@ -61,6 +61,13 @@ def ssc_cgl():
         return redirect("/")
     return render_template("ssc_cgl_tests.html")
 
+# ================= SSC CGL → FULL MOCK LIST =================
+@app.route("/ssc/cgl/full-mocks")
+def ssc_cgl_full_mocks():
+    if "name" not in session:
+        return redirect("/")
+    return render_template("ssc_cgl_full_mocks.html")
+
 
 # ===================== LOGOUT =====================
 @app.route("/logout")
