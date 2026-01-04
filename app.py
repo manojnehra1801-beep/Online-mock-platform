@@ -36,6 +36,10 @@ def dashboard():
 
     return render_template("student_dashboard.html")
 
+@app.route("/ssc")
+def ssc_dashboard():
+    return render_template("ssc_exams.html")
+
 
 # ================= LOGOUT =================
 @app.route("/logout")
