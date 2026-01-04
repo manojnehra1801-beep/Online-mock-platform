@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Mock Test Instructions</title>
+<title>Exam Instructions</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
-    margin:0;
     font-family:Arial, sans-serif;
     background:#f4f6fb;
 }
@@ -18,31 +17,15 @@ body{
     padding:20px;
     border-radius:8px;
 }
-h2{
-    margin-top:0;
-    color:#1f2937;
-}
-ul{
-    padding-left:18px;
-}
-li{
-    margin-bottom:8px;
-}
-.btn{
-    margin-top:20px;
+button{
     width:100%;
     padding:14px;
-    font-size:16px;
     background:#2563eb;
     color:#fff;
     border:none;
     border-radius:6px;
+    font-size:16px;
     cursor:pointer;
-}
-.note{
-    margin-top:15px;
-    font-size:13px;
-    color:#555;
 }
 </style>
 </head>
@@ -54,40 +37,33 @@ li{
 
     <ul>
         <li>Total Questions: 20</li>
-        <li>Total Time: 60 minutes</li>
-        <li>Each question carries 1 mark</li>
-        <li>No negative marking</li>
-        <li>Do not refresh or close the browser during exam</li>
-        <li>Your exam will resume if the page reloads</li>
+        <li>Total Time: 60 Minutes</li>
+        <li>Do not refresh during exam</li>
+        <li>Exam will resume if refreshed</li>
     </ul>
 
     <label>
         <input type="checkbox" id="agree">
-        I have read and understood all instructions
+        I have read and understood instructions
     </label>
 
-    <button class="btn" onclick="startExam()">I Agree & Start Test</button>
-
-    <div class="note">
-        Once the exam starts, instructions page will not appear again.
-    </div>
+    <br><br>
+    <button onclick="startExam()">I Agree & Start Test</button>
 </div>
 
 <script>
-/* ---------- BYPASS INSTRUCTIONS IF EXAM ALREADY STARTED ---------- */
+/* ---- AUTO BYPASS IF EXAM ALREADY STARTED ---- */
 if(localStorage.getItem("examStarted") === "true"){
     window.location.href = "/exam";
 }
 
-/* ---------- START EXAM ---------- */
+/* ---- START EXAM ---- */
 function startExam(){
-    const agree = document.getElementById("agree");
-    if(!agree.checked){
-        alert("Please accept instructions to start the test");
+    if(!document.getElementById("agree").checked){
+        alert("Please accept instructions");
         return;
     }
 
-    // reset only first time
     localStorage.setItem("examStarted","true");
     localStorage.setItem("currentIndex","0");
     localStorage.setItem("answers","{}");
