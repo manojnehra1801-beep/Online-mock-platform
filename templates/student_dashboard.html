@@ -3,148 +3,140 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Abhyas App | Dashboard</title>
+<title>Abhyas App – Dashboard</title>
 
-<!-- Font Awesome for real icons -->
+<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
+*{
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
 body{
-    margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-    background:#f3f6ff;
-    color:#222;
+  margin:0;
+  background:#f3f6ff;
+  color:#222;
 }
 
-/* HEADER */
+/* ===== HEADER ===== */
 .header{
-    padding:16px;
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 16px;
 }
 
-.welcome{
-    font-size:22px;
-    font-weight:700;
-}
-.subtext{
-    margin-top:6px;
-    font-size:14px;
-    color:#666;
+.header h2{
+  margin:0;
+  font-size:20px;
 }
 
-/* MENU */
-.menu-container{
-    position:relative;
+.header p{
+  margin:4px 0 0;
+  font-size:13px;
+  color:#666;
 }
+
 .menu-btn{
-    font-size:24px;
-    cursor:pointer;
-    user-select:none;
-}
-.menu{
-    display:none;
-    position:absolute;
-    right:0;
-    top:30px;
-    width:220px;
-    background:#fff;
-    border-radius:14px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.15);
-    padding:10px;
-    z-index:10;
-}
-.menu.active{
-    display:block;
+  font-size:22px;
+  cursor:pointer;
 }
 
-.menu .username{
-    font-weight:600;
-    padding:8px 10px;
-}
-.menu .line{
-    height:1px;
-    background:#eee;
-    margin:6px 0;
-}
-
-.menu a{
-    display:block;
-    padding:10px;
-    font-size:14px;
-    color:#333;
-    text-decoration:none;
-    border-radius:8px;
-}
-.menu a:hover{
-    background:#f0f2ff;
+/* ===== DROPDOWN ===== */
+.dropdown{
+  position:absolute;
+  top:60px;
+  right:12px;
+  width:230px;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.15);
+  display:none;
+  overflow:hidden;
+  z-index:10;
 }
 
-/* FOLLOW */
-.follow{
-    text-align:center;
-    margin-top:10px;
-}
-.follow-title{
-    font-size:12px;
-    color:#777;
-    margin-bottom:8px;
-}
-.icons a{
-    margin:0 6px;
-    font-size:18px;
-    color:#555;
-    text-decoration:none;
-}
-.icons a:hover{
-    color:#6c5ce7;
+.dropdown .username{
+  padding:12px;
+  font-weight:600;
+  border-bottom:1px solid #eee;
 }
 
-/* SECTION TITLE */
+.dropdown a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  text-decoration:none;
+  color:#333;
+  font-size:14px;
+}
+
+.dropdown a:hover{
+  background:#f5f6ff;
+}
+
+.dropdown .social{
+  display:flex;
+  justify-content:space-around;
+  padding:12px;
+  border-top:1px solid #eee;
+}
+
+.dropdown .social i{
+  font-size:22px;
+  color:#555;
+}
+
+/* ===== CONTENT ===== */
+.container{
+  padding:10px 16px 30px;
+}
+
 .section-title{
-    margin:10px 16px;
-    font-size:16px;
-    font-weight:600;
+  font-weight:600;
+  margin:12px 0;
 }
 
-/* GRID */
+/* ===== FOLDERS GRID ===== */
 .grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:14px;
-    padding:0 16px 30px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
 }
 
 .card{
-    background:#fff;
-    border-radius:16px;
-    padding:16px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.05);
-    cursor:pointer;
-}
-.card:active{
-    transform:scale(0.97);
-}
-.icon{
-    font-size:28px;
-    margin-bottom:10px;
-}
-.card-title{
-    font-size:15px;
-    font-weight:600;
-}
-.card-sub{
-    font-size:12px;
-    color:#777;
+  background:#fff;
+  border-radius:16px;
+  padding:16px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.05);
 }
 
-/* FOOTER */
+.card i{
+  font-size:26px;
+  margin-bottom:10px;
+  color:#6c5ce7;
+}
+
+.card h4{
+  margin:6px 0 4px;
+  font-size:15px;
+}
+
+.card p{
+  margin:0;
+  font-size:12px;
+  color:#666;
+}
+
+/* ===== FOOTER ===== */
 .footer{
-    text-align:center;
-    font-size:11px;
-    color:#aaa;
-    padding-bottom:20px;
+  text-align:center;
+  font-size:12px;
+  color:#888;
+  margin-top:30px;
 }
 </style>
 </head>
@@ -153,97 +145,91 @@ body{
 
 <!-- HEADER -->
 <div class="header">
-    <div>
-        <div class="welcome">
-            Welcome, {{ session['name'] if session.get('name') else 'Student' }} 👋
-        </div>
-        <div class="subtext">
-            Select your exam to start preparing
-        </div>
-    </div>
-
-    <!-- MENU -->
-    <div class="menu-container">
-        <div class="menu-btn" onclick="toggleMenu()">&#8942;</div>
-        <div class="menu" id="menu">
-            <div class="username">{{ session['name'] if session.get('name') else 'Student' }}</div>
-            <div class="line"></div>
-
-            <a href="/dashboard"><i class="fa-solid fa-house"></i> Home</a>
-            <a href="#"><i class="fa-solid fa-credit-card"></i> My Purchase</a>
-            <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
-            <a href="#"><i class="fa-solid fa-star"></i> Rate</a>
-            <a href="#"><i class="fa-solid fa-share-nodes"></i> Share</a>
-            <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Log out</a>
-
-            <div class="line"></div>
-
-            <div class="follow">
-                <div class="follow-title">Follow us</div>
-                <div class="icons">
-                    <a href="#" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-                    <a href="#" title="Telegram"><i class="fa-brands fa-telegram"></i></a>
-                    <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" title="Gmail"><i class="fa-solid fa-envelope"></i></a>
-                    <a href="#" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
+  <div>
+    <h2>Welcome, abc 👋</h2>
+    <p>Select your exam to start preparing</p>
+  </div>
+  <div class="menu-btn" onclick="toggleMenu()">⋮</div>
 </div>
 
-<!-- SECTION -->
-<div class="section-title">📁 My Exam Folders</div>
+<!-- DROPDOWN MENU -->
+<div class="dropdown" id="menu">
+  <div class="username">abc</div>
+  <a href="#"><i class="fa fa-house"></i> Home</a>
+  <a href="#"><i class="fa fa-wallet"></i> My Purchase</a>
+  <a href="#"><i class="fa fa-gear"></i> Settings</a>
+  <a href="#"><i class="fa fa-star"></i> Rate</a>
+  <a href="#"><i class="fa fa-share-nodes"></i> Share</a>
+  <a href="#"><i class="fa fa-right-from-bracket"></i> Log out</a>
 
-<!-- GRID -->
-<div class="grid">
-
-    <div class="card">
-        <div class="icon">📘</div>
-        <div class="card-title">SSC Exams</div>
-        <div class="card-sub">CGL • CHSL • MTS</div>
-    </div>
-
-    <div class="card">
-        <div class="icon">🚆</div>
-        <div class="card-title">Railway Exams</div>
-        <div class="card-sub">RRB NTPC • Group D</div>
-    </div>
-
-    <div class="card">
-        <div class="icon">📄</div>
-        <div class="card-title">SSC PYQ</div>
-        <div class="card-sub">Previous Year Questions</div>
-    </div>
-
-    <div class="card">
-        <div class="icon">📄</div>
-        <div class="card-title">Railway PYQ</div>
-        <div class="card-sub">Solved Papers</div>
-    </div>
-
-    <div class="card">
-        <div class="icon">🧪</div>
-        <div class="card-title">New Mock</div>
-        <div class="card-sub">Latest Tests</div>
-    </div>
-
-    <div class="card">
-        <div class="icon">✍️</div>
-        <div class="card-title">Practice</div>
-        <div class="card-sub">Topic-wise Practice</div>
-    </div>
-
+  <div class="social">
+    <i class="fab fa-whatsapp"></i>
+    <i class="fab fa-telegram"></i>
+    <i class="fab fa-instagram"></i>
+    <i class="fas fa-envelope"></i>
+    <i class="fab fa-youtube"></i>
+  </div>
 </div>
 
-<div class="footer">
-    Powered by Nehra Infotech Pvt. Ltd.
+<!-- CONTENT -->
+<div class="container">
+  <div class="section-title">📂 My Exam Folders</div>
+
+  <div class="grid">
+    <div class="card">
+      <i class="fa fa-book"></i>
+      <h4>SSC Exams</h4>
+      <p>CGL • CHSL • MTS</p>
+    </div>
+
+    <div class="card">
+      <i class="fa fa-train"></i>
+      <h4>Railway Exams</h4>
+      <p>RRB NTPC • Group D</p>
+    </div>
+
+    <div class="card">
+      <i class="fa fa-file-lines"></i>
+      <h4>SSC PYQ</h4>
+      <p>Previous Year Questions</p>
+    </div>
+
+    <div class="card">
+      <i class="fa fa-file-circle-check"></i>
+      <h4>Railway PYQ</h4>
+      <p>Solved Papers</p>
+    </div>
+
+    <div class="card">
+      <i class="fa fa-flask"></i>
+      <h4>New Mock</h4>
+      <p>Latest Tests</p>
+    </div>
+
+    <div class="card">
+      <i class="fa fa-pen-to-square"></i>
+      <h4>Practice</h4>
+      <p>Topic-wise Practice</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    Powered by Nehra Infotech Pvt Ltd
+  </div>
 </div>
 
 <script>
 function toggleMenu(){
-    document.getElementById("menu").classList.toggle("active");
+  const menu = document.getElementById("menu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
+
+document.addEventListener("click", function(e){
+  const menu = document.getElementById("menu");
+  if(!e.target.closest(".menu-btn") && !e.target.closest(".dropdown")){
+    menu.style.display = "none";
+  }
+});
 </script>
 
 </body>
