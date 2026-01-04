@@ -1,182 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SSC CGL Tests</title>
+    <meta charset="UTF-8">
+    <title>SSC CGL Tests | Abhyas App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body{
-    margin:0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background:#f6f7fb;
-    color:#222;
-}
+    <style>
+        body{
+            margin:0;
+            font-family: Arial, sans-serif;
+            background:#f5f7fb;
+        }
 
-.header{
-    padding:18px 16px;
-    background:#ffffff;
-    font-size:20px;
-    font-weight:600;
-    border-bottom:1px solid #e6e6e6;
-}
+        .header{
+            background:#ffffff;
+            padding:16px;
+            font-size:20px;
+            font-weight:bold;
+            border-bottom:1px solid #e5e5e5;
+        }
 
-.section{
-    margin-top:14px;
-    background:#ffffff;
-}
+        .container{
+            padding:16px;
+        }
 
-.section-title{
-    padding:14px 16px;
-    font-size:16px;
-    font-weight:600;
-    border-bottom:1px solid #f0f0f0;
-}
+        .card{
+            background:#ffffff;
+            border-radius:12px;
+            padding:16px;
+            margin-bottom:14px;
+            box-shadow:0 4px 10px rgba(0,0,0,0.08);
+        }
 
-.list-item{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:14px 16px;
-    border-bottom:1px solid #f1f1f1;
-}
+        .card h3{
+            margin:0;
+            font-size:16px;
+        }
 
-.list-item:last-child{
-    border-bottom:none;
-}
+        .card p{
+            margin:6px 0 0;
+            font-size:13px;
+            color:#666;
+        }
 
-.left{
-    display:flex;
-    flex-direction:column;
-}
-
-.title{
-    font-size:15px;
-    font-weight:500;
-}
-
-.sub{
-    font-size:12px;
-    color:#777;
-    margin-top:3px;
-}
-
-.right{
-    display:flex;
-    align-items:center;
-    gap:8px;
-}
-
-.free{
-    font-size:12px;
-    color:#1aa260;
-    font-weight:600;
-}
-
-.lock{
-    font-size:14px;
-}
-
-.arrow{
-    font-size:18px;
-    color:#999;
-}
-</style>
+        .link{
+            text-decoration:none;
+            color:inherit;
+        }
+    </style>
 </head>
 
 <body>
 
 <!-- HEADER -->
 <div class="header">
-SSC CGL Test Series
+    SSC CGL – Test Series
 </div>
 
-<!-- FULL MOCK TEST -->
-<div class="section">
-    <div class="section-title">Full Mock Tests</div>
+<!-- CONTENT -->
+<div class="container">
 
-    <div class="list-item">
-        <div class="left">
-            <div class="title">30 Full Mock Tests (Tier-I)</div>
-            <div class="sub">Latest SSC Pattern</div>
+    <!-- FULL MOCK TESTS -->
+    <a href="/ssc/cgl/full-mocks" class="link">
+        <div class="card">
+            <h3>30 Full Mock Tests (Tier-I)</h3>
+            <p>Latest SSC CGL exam pattern</p>
         </div>
-        <div class="right">
-            <span class="free">1 Free</span>
-            <span class="lock">🔒</span>
-            <span class="arrow">›</span>
-        </div>
+    </a>
+
+    <!-- SECTIONAL TESTS -->
+    <div class="card">
+        <h3>Sectional Tests</h3>
+        <p>Quant • Reasoning • English • GK</p>
     </div>
 
-    <div class="list-item">
-        <div class="left">
-            <div class="title">10 Exam Day Special Mocks</div>
-            <div class="sub">Last-minute revision</div>
-        </div>
-        <div class="right">
-            <span class="lock">🔒</span>
-            <span class="arrow">›</span>
-        </div>
-    </div>
-
-    <div class="list-item">
-        <div class="left">
-            <div class="title">5 Marathon Full Tests</div>
-            <div class="sub">Extended practice tests</div>
-        </div>
-        <div class="right">
-            <span class="lock">🔒</span>
-            <span class="arrow">›</span>
-        </div>
-    </div>
-</div>
-
-<!-- SECTIONAL TEST -->
-<div class="section">
-    <div class="section-title">Sectional Tests</div>
-
-    <div class="list-item">
-        <div class="left">
-            <div class="title">Mathematics – 60 Tests</div>
-            <div class="sub">Topic-wise • Time-bound</div>
-        </div>
-        <div class="right">
-            <span class="free">Free</span>
-            <span class="arrow">›</span>
-        </div>
-    </div>
-
-    <div class="list-item">
-        <div class="left">
-            <div class="title">Reasoning – 60 Tests</div>
-            <div class="sub">Concept clarity practice</div>
-        </div>
-        <div class="right">
-            <span class="lock">🔒</span>
-            <span class="arrow">›</span>
-        </div>
-    </div>
-
-    <div class="list-item">
-        <div class="left">
-            <div class="title">English – 50 Tests</div>
-            <div class="sub">Grammar • Vocabulary</div>
-        </div>
-        <div class="right">
-            <span class="lock">🔒</span>
-            <span class="arrow">›</span>
-        </div>
-    </div>
-
-    <div class="list-item">
-        <div class="left">
-            <div class="title">General Awareness – 40 Tests</div>
-            <div class="sub">Static + Current Affairs</div>
-        </div>
-        <div class="right">
-            <span class="lock">🔒</span>
-            <span class="arrow">›</span>
-        </div>
-    </div>
 </div>
 
 </body>
