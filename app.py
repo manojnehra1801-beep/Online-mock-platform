@@ -64,14 +64,12 @@ def ssc_cgl_mock(mock_no):
     if "name" not in session:
         return redirect("/")
 
-    # safety: only allow 1–30
-    if mock_no < 1 or mock_no > 30:
-        return "Invalid Mock Number", 404
+    # Only Mock 1 is available
+    if mock_no == 1:
+        return render_template("ssc_cgl_mock_1_instructions.html")
 
-    return render_template(
-        "ssc_cgl_mock_instructions.html",
-        mock_no=mock_no
-    )
+    # Other mocks locked for now
+    return "<h2 style='text-align:center;margin-top:40px;'>🔒 This mock will be available soon</h2>"
 
 
 # ===================== LOGOUT =====================
