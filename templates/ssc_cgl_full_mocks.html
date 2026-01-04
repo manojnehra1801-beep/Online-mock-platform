@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SSC CGL Full Mock Tests</title>
+<title>SSC CGL Mock Test 1</title>
 
 <style>
 body{
@@ -14,88 +14,195 @@ body{
 .header{
     background:#1f2937;
     color:#fff;
-    padding:15px;
-    font-size:18px;
-    font-weight:600;
-}
-.container{
-    padding:15px;
-}
-.test-card{
-    background:#fff;
-    border-radius:12px;
-    padding:15px;
-    margin-bottom:12px;
+    padding:12px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    box-shadow:0 4px 10px rgba(0,0,0,0.05);
 }
-.test-info h3{
-    margin:0;
-    font-size:15px;
+.timer{
+    font-weight:bold;
 }
-.test-info p{
-    margin:4px 0;
-    font-size:13px;
-    color:#666;
+.main{
+    display:flex;
 }
-.lang{
-    font-size:12px;
-    color:#2563eb;
+.left{
+    flex:3;
+    padding:15px;
 }
-.free{
-    color:#16a34a;
+.right{
+    flex:1;
+    background:#fff;
+    padding:10px;
+    border-left:1px solid #ddd;
+}
+.question{
+    font-size:16px;
     font-weight:600;
-    font-size:12px;
+    margin-bottom:10px;
 }
-.start{
-    text-decoration:none;
-    color:#2563eb;
-    font-weight:600;
+.option{
+    background:#fff;
+    padding:10px;
+    margin-bottom:8px;
+    border-radius:8px;
+    border:1px solid #ddd;
 }
-.unlock{
-    text-decoration:none;
-    color:#dc2626;
-    font-weight:600;
+.controls{
+    display:flex;
+    justify-content:space-between;
+    margin-top:15px;
 }
+button{
+    padding:10px 14px;
+    border:none;
+    border-radius:6px;
+    background:#2563eb;
+    color:#fff;
+    font-size:14px;
+}
+.review{
+    background:#f59e0b;
+}
+.submit{
+    background:#dc2626;
+}
+.palette{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+}
+.palette button{
+    width:36px;
+    height:36px;
+    border:none;
+    border-radius:50%;
+    font-weight:bold;
+}
+.grey{background:#d1d5db;}
+.green{background:#22c55e;color:#fff;}
+.yellow{background:#facc15;}
 </style>
 </head>
 
 <body>
 
-<div class="header">SSC CGL – Full Mock Tests</div>
-
-<div class="container">
-
-<!-- MOCK 1 (FREE) -->
-<div class="test-card">
-    <div class="test-info">
-        <h3>SSC CGL Full Test – 1 <span class="free">FREE</span></h3>
-        <p>100 Questions · 60 Minutes · 200 Marks</p>
-        <div class="lang">English, Hindi</div>
-    </div>
-    <a href="/ssc/cgl/mock/1" class="start">Start Test →</a>
+<div class="header">
+    <div>SSC CGL Mock-1</div>
+    <div class="timer" id="timer">60:00</div>
 </div>
 
-<!-- MOCK 2–30 (UNLOCK) -->
-<!-- Just HTML, no JS -->
+<form method="post" id="examForm">
+<div class="main">
 
-<!-- 2 -->
-<div class="test-card"><div class="test-info"><h3>SSC CGL Full Test – 2</h3><p>100 Questions · 60 Minutes · 200 Marks</p><div class="lang">English, Hindi</div></div><a href="/payment" class="unlock">Unlock 🔒</a></div>
+<!-- LEFT (QUESTIONS) -->
+<div class="left">
+{% for q in questions %}
+<div class="qbox" style="display:none;">
+    <div class="question">Q{{ loop.index }}. {{ q.q }}</div>
 
-<div class="test-card"><div class="test-info"><h3>SSC CGL Full Test – 3</h3><p>100 Questions · 60 Minutes · 200 Marks</p><div class="lang">English, Hindi</div></div><a href="/payment" class="unlock">Unlock 🔒</a></div>
+    {% for opt in q.options %}
+    <label class="option">
+        <input type="radio" name="q{{ loop.index }}" onclick="markAnswered()">
+        {{ opt }}
+    </label>
+    {% endfor %}
+</div>
+{% endfor %}
 
-<div class="test-card"><div class="test-info"><h3>SSC CGL Full Test – 4</h3><p>100 Questions · 60 Minutes · 200 Marks</p><div class="lang">English, Hindi</div></div><a href="/payment" class="unlock">Unlock 🔒</a></div>
+<div class="controls">
+    <button type="button" onclick="prevQ()">Previous</button>
+    <button type="button" class="review" onclick="markReview()">Mark for Review</button>
+    <button type="button" onclick="nextQ()">Next</button>
+</div>
 
-<div class="test-card"><div class="test-info"><h3>SSC CGL Full Test – 5</h3><p>100 Questions · 60 Minutes · 200 Marks</p><div class="lang">English, Hindi</div></div><a href="/payment" class="unlock">Unlock 🔒</a></div>
+<div style="margin-top:15px;">
+    <button type="submit" class="submit">Submit Test</button>
+</div>
+</div>
 
-<!-- … same pattern -->
-
-<!-- 30 -->
-<div class="test-card"><div class="test-info"><h3>SSC CGL Full Test – 30</h3><p>100 Questions · 60 Minutes · 200 Marks</p><div class="lang">English, Hindi</div></div><a href="/payment" class="unlock">Unlock 🔒</a></div>
+<!-- RIGHT (PALETTE) -->
+<div class="right">
+    <h4>Question Palette</h4>
+    <div class="palette" id="palette"></div>
+</div>
 
 </div>
+</form>
+
+<script>
+let current = 0;
+let boxes = document.querySelectorAll(".qbox");
+let status = []; // 0=not visited, 1=answered, 2=review
+
+// INIT
+for(let i=0;i<boxes.length;i++){
+    status.push(0);
+}
+boxes[0].style.display="block";
+
+// CREATE PALETTE
+const pal = document.getElementById("palette");
+for(let i=0;i<boxes.length;i++){
+    let b = document.createElement("button");
+    b.innerText = i+1;
+    b.className = "grey";
+    b.onclick = ()=>jump(i);
+    b.id = "p"+i;
+    pal.appendChild(b);
+}
+
+function updatePalette(){
+    for(let i=0;i<status.length;i++){
+        let b = document.getElementById("p"+i);
+        if(status[i]==1) b.className="green";
+        else if(status[i]==2) b.className="yellow";
+        else b.className="grey";
+    }
+}
+
+function jump(i){
+    boxes[current].style.display="none";
+    current=i;
+    boxes[current].style.display="block";
+}
+
+function nextQ(){
+    if(current<boxes.length-1){
+        boxes[current].style.display="none";
+        current++;
+        boxes[current].style.display="block";
+    }
+}
+
+function prevQ(){
+    if(current>0){
+        boxes[current].style.display="none";
+        current--;
+        boxes[current].style.display="block";
+    }
+}
+
+function markAnswered(){
+    status[current]=1;
+    updatePalette();
+}
+
+function markReview(){
+    status[current]=2;
+    updatePalette();
+}
+
+// TIMER (60 min)
+let time = 60*60;
+setInterval(()=>{
+    time--;
+    let m = Math.floor(time/60);
+    let s = time%60;
+    document.getElementById("timer").innerText =
+        m+":"+(s<10?"0"+s:s);
+    if(time<=0) document.getElementById("examForm").submit();
+},1000);
+</script>
 
 </body>
 </html>
