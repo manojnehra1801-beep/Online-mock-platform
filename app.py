@@ -54,9 +54,9 @@ def ssc_dashboard():
         return redirect("/")
     return render_template("ssc_dashboard.html")
 
-@app.route("/ssc/cgl")
-def ssc_cgl():
-    return render_template("ssc_cgl.html")
+@app.route("/ssc/cgl/tests")
+def ssc_cgl_tests():
+    return render_template("ssc_cgl_tests.html")
 
 
 # ===================== RAILWAY DASHBOARD =====================
