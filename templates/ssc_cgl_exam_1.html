@@ -6,137 +6,125 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#f4f6fb}
-.header{background:#1f2937;color:#fff;padding:12px;display:flex;justify-content:space-between;align-items:center}
-.dots{font-size:22px;cursor:pointer}
-.timer{font-size:14px}
-.main{padding:12px}
-.question-box{background:#fff;padding:15px;border-radius:8px}
-.option{display:block;padding:10px;border:1px solid #ddd;border-radius:6px;margin-bottom:8px;cursor:pointer}
-.controls{margin-top:15px;display:flex;gap:10px}
-.btn{padding:10px 14px;border:none;border-radius:6px;color:#fff;cursor:pointer}
-.prev{background:#2563eb}.review{background:#f59e0b}.next{background:#1d4ed8}
-.submit{position:fixed;right:15px;bottom:15px;background:#dc2626;color:#fff;padding:14px 18px;border:none;border-radius:8px}
-#qListBox{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:999;overflow:auto;padding:15px}
-.qItem{padding:12px;border-bottom:1px solid #ddd;cursor:pointer}
-.qItem span{display:inline-block;width:30px;height:30px;border-radius:50%;text-align:center;line-height:30px;margin-right:10px;background:#e5e7eb}
-.qItem.green span{background:#16a34a;color:#fff}
-.qItem.orange span{background:#f59e0b;color:#fff}
+body{font-family:Arial;margin:0;background:#f4f6fb}
+.header{
+    display:flex;justify-content:space-between;
+    padding:10px;background:#1f2937;color:#fff;
+}
+.timer{color:#facc15;font-weight:bold}
+.qbox{display:none;padding:15px}
+.options label{display:block;margin:8px 0}
+.controls{
+    position:fixed;bottom:10px;left:0;right:0;
+    display:flex;justify-content:space-around;
+}
+button{padding:10px 14px;font-size:14px}
+.submit{
+    position:fixed;right:15px;bottom:70px;
+    background:#dc2626;color:#fff;border:none;
+}
 </style>
 </head>
 
 <body>
 
 <div class="header">
-  <div>SSC CGL Mock</div>
-  <div class="timer" id="timer">60:00</div>
-  <div class="dots" onclick="toggleList()">⋮</div>
+    <div>SSC CGL Mock-1</div>
+    <div class="timer" id="timer"></div>
 </div>
 
-<div class="main">
-  <div class="question-box">
-    <h4 id="qText"></h4>
+<div id="questions"></div>
 
-    <label class="option"><input type="radio" name="opt" value="0"> <span id="o0"></span></label>
-    <label class="option"><input type="radio" name="opt" value="1"> <span id="o1"></span></label>
-    <label class="option"><input type="radio" name="opt" value="2"> <span id="o2"></span></label>
-    <label class="option"><input type="radio" name="opt" value="3"> <span id="o3"></span></label>
-
-    <div class="controls">
-      <button class="btn prev" onclick="prevQ()">Previous</button>
-      <button class="btn review" onclick="markReview()">Mark for Review</button>
-      <button class="btn next" onclick="nextQ()">Next</button>
-    </div>
-  </div>
+<div class="controls">
+    <button onclick="prevQ()">Previous</button>
+    <button onclick="nextQ()">Next</button>
 </div>
 
-<button class="submit">Submit Test</button>
-
-<div id="qListBox">
-  <h3>All Questions</h3>
-  <div id="qList"></div>
-  <button class="btn next" style="margin-top:15px;width:100%" onclick="toggleList()">Close</button>
-</div>
+<button class="submit" onclick="submitExam()">Submit</button>
 
 <script>
-/* ---------- QUESTIONS ---------- */
-const questions = [
- {q:"Capital of India?",o:["Mumbai","Delhi","Kolkata","Chennai"]},
- {q:"2 + 2 = ?",o:["1","2","4","6"]},
- {q:"Largest planet?",o:["Earth","Mars","Jupiter","Venus"]},
- {q:"Taj Mahal is in?",o:["Delhi","Agra","Jaipur","Lucknow"]}
+/* ================= QUESTIONS ================= */
+const QUESTIONS = [
+    {q:"1. भारत की राजधानी क्या है?", o:["Mumbai","Delhi","Chennai","Kolkata"]},
+    {q:"2. 2 + 2 = ?", o:["3","4","5","6"]},
+    {q:"3. SSC का full form क्या है?", o:["Staff Selection Commission","State Service","Sub Staff","None"]}
 ];
 
-/* ---------- LOAD SAVED STATE ---------- */
-let index = parseInt(localStorage.getItem("currentIndex")) || 0;
-let answers = JSON.parse(localStorage.getItem("answers")) || {};
-let reviewMarked = JSON.parse(localStorage.getItem("reviewMarked")) || {};
-let timeLeft = parseInt(localStorage.getItem("timeLeft")) || 3600;
-localStorage.setItem("examStarted","true");
+/* ================= STATE ================= */
+let currentIndex = parseInt(localStorage.getItem("currentIndex")) || 0;
+let timeLeft = parseInt(localStorage.getItem("timeLeft")) || 1800;
+let answers = JSON.parse(localStorage.getItem("answers") || "{}");
 
-/* ---------- LOAD QUESTION ---------- */
-function loadQ(){
-  const q = questions[index];
-  document.getElementById("qText").innerText = `Q${index+1}. ${q.q}`;
-  q.o.forEach((op,i)=>document.getElementById("o"+i).innerText=op);
+/* ================= RENDER ================= */
+const qDiv = document.getElementById("questions");
 
-  document.querySelectorAll('input[name="opt"]').forEach(o=>o.checked=false);
-  if(answers[index]!==undefined){
-    document.querySelector(`input[value="${answers[index]}"]`).checked=true;
-  }
-  updateList();
-  localStorage.setItem("currentIndex",index);
-}
-loadQ();
-
-/* ---------- OPTION SAVE ---------- */
-document.querySelectorAll('input[name="opt"]').forEach(opt=>{
-  opt.onclick=()=>{
-    answers[index]=parseInt(opt.value);
-    localStorage.setItem("answers",JSON.stringify(answers));
-    updateList();
-  };
+QUESTIONS.forEach((q,i)=>{
+    const d=document.createElement("div");
+    d.className="qbox";
+    d.id="q"+i;
+    d.innerHTML=`<b>${q.q}</b><div class="options">${
+        q.o.map((opt,j)=>`
+        <label>
+        <input type="radio" name="q${i}" value="${j}"
+        ${answers[i]==j?"checked":""}
+        onclick="saveAnswer(${i},${j})"> ${opt}
+        </label>`).join("")
+    }</div>`;
+    qDiv.appendChild(d);
 });
 
-/* ---------- NAV ---------- */
-function nextQ(){if(index<questions.length-1){index++;loadQ();}}
-function prevQ(){if(index>0){index--;loadQ();}}
-
-/* ---------- REVIEW ---------- */
-function markReview(){
-  reviewMarked[index]=true;
-  localStorage.setItem("reviewMarked",JSON.stringify(reviewMarked));
-  updateList();
+function showQ(i){
+    document.querySelectorAll(".qbox").forEach(q=>q.style.display="none");
+    document.getElementById("q"+i).style.display="block";
+    localStorage.setItem("currentIndex",i);
 }
 
-/* ---------- QUESTION LIST ---------- */
-function toggleList(){
-  const b=document.getElementById("qListBox");
-  b.style.display=b.style.display==="none"?"block":"none";
+showQ(currentIndex);
+
+/* ================= NAV ================= */
+function nextQ(){
+    if(currentIndex<QUESTIONS.length-1){
+        currentIndex++;
+        showQ(currentIndex);
+    }
 }
-function updateList(){
-  const list=document.getElementById("qList");
-  list.innerHTML="";
-  questions.forEach((_,i)=>{
-    const d=document.createElement("div");
-    d.className="qItem";
-    if(reviewMarked[i]) d.classList.add("orange");
-    else if(answers[i]!==undefined) d.classList.add("green");
-    d.innerHTML=`<span>${i+1}</span> Question ${i+1}`;
-    d.onclick=()=>{index=i;loadQ();toggleList();};
-    list.appendChild(d);
-  });
+function prevQ(){
+    if(currentIndex>0){
+        currentIndex--;
+        showQ(currentIndex);
+    }
 }
 
-/* ---------- TIMER (RESUME SAFE) ---------- */
+/* ================= ANSWERS ================= */
+function saveAnswer(q,a){
+    answers[q]=a;
+    localStorage.setItem("answers",JSON.stringify(answers));
+}
+
+/* ================= TIMER ================= */
+function format(sec){
+    const m=Math.floor(sec/60);
+    const s=sec%60;
+    return `${m}:${s<10?"0":""}${s}`;
+}
+document.getElementById("timer").innerText=format(timeLeft);
+
 setInterval(()=>{
-  let m=Math.floor(timeLeft/60),s=timeLeft%60;
-  document.getElementById("timer").innerText=`${m}:${s<10?"0"+s:s}`;
-  if(timeLeft>0){
     timeLeft--;
     localStorage.setItem("timeLeft",timeLeft);
-  }
+    document.getElementById("timer").innerText=format(timeLeft);
+    if(timeLeft<=0) submitExam();
 },1000);
+
+/* ================= SUBMIT ================= */
+function submitExam(){
+    localStorage.removeItem("currentIndex");
+    localStorage.removeItem("timeLeft");
+    localStorage.removeItem("answers");
+    localStorage.removeItem("mock1_started");
+    alert("Exam submitted");
+    window.location.href="/ssc/cgl/full-mocks";
+}
 </script>
 
 </body>
