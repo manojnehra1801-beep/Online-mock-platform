@@ -6,163 +6,60 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:#f4f6fb;
-}
-
-/* HEADER */
-.header{
-    background:#1f2937;
-    color:#fff;
-    padding:12px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-.header .dots{
-    font-size:22px;
-    cursor:pointer;
-}
-
-/* TIMER */
-.timer{font-size:14px;}
-
-/* MAIN */
-.main{
-    padding:12px;
-}
-
-/* QUESTION */
-.question-box{
-    background:#fff;
-    padding:15px;
-    border-radius:8px;
-}
-.question-box h4{
-    margin-top:0;
-}
-
-/* OPTIONS */
-.option{
-    display:block;
-    padding:10px;
-    border:1px solid #ddd;
-    border-radius:6px;
-    margin-bottom:8px;
-    cursor:pointer;
-}
-.option input{
-    margin-right:8px;
-}
-
-/* CONTROLS */
-.controls{
-    margin-top:15px;
-    display:flex;
-    gap:10px;
-}
-.btn{
-    padding:10px 14px;
-    border:none;
-    border-radius:6px;
-    color:#fff;
-    cursor:pointer;
-}
-.prev{background:#2563eb;}
-.review{background:#f59e0b;}
-.next{background:#1d4ed8;}
-
-/* SUBMIT */
-.submit{
-    position:fixed;
-    right:15px;
-    bottom:15px;
-    background:#dc2626;
-    color:#fff;
-    padding:14px 18px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-/* QUESTION LIST OVERLAY */
-#qListBox{
-    display:none;
-    position:fixed;
-    top:0;left:0;
-    width:100%;height:100%;
-    background:#fff;
-    z-index:999;
-    overflow:auto;
-    padding:15px;
-}
-.qItem{
-    padding:12px;
-    border-bottom:1px solid #ddd;
-    cursor:pointer;
-}
-.qItem span{
-    display:inline-block;
-    width:30px;
-    height:30px;
-    border-radius:50%;
-    text-align:center;
-    line-height:30px;
-    margin-right:10px;
-    background:#e5e7eb;
-}
-.qItem.green span{background:#16a34a;color:#fff;}
-.qItem.orange span{background:#f59e0b;color:#fff;}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f6fb}
+.header{background:#1f2937;color:#fff;padding:12px;display:flex;justify-content:space-between;align-items:center}
+.dots{font-size:22px;cursor:pointer}
+.timer{font-size:14px}
+.main{padding:12px}
+.question-box{background:#fff;padding:15px;border-radius:8px}
+.option{display:block;padding:10px;border:1px solid #ddd;border-radius:6px;margin-bottom:8px;cursor:pointer}
+.controls{margin-top:15px;display:flex;gap:10px}
+.btn{padding:10px 14px;border:none;border-radius:6px;color:#fff;cursor:pointer}
+.prev{background:#2563eb}.review{background:#f59e0b}.next{background:#1d4ed8}
+.submit{position:fixed;right:15px;bottom:15px;background:#dc2626;color:#fff;padding:14px 18px;border:none;border-radius:8px}
+#qListBox{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:999;overflow:auto;padding:15px}
+.qItem{padding:12px;border-bottom:1px solid #ddd;cursor:pointer}
+.qItem span{display:inline-block;width:30px;height:30px;border-radius:50%;text-align:center;line-height:30px;margin-right:10px;background:#e5e7eb}
+.qItem.green span{background:#16a34a;color:#fff}
+.qItem.orange span{background:#f59e0b;color:#fff}
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <div class="header">
-    <div>SSC CGL Mock</div>
-    <div class="timer" id="timer">60:00</div>
-    <div class="dots" onclick="toggleList()">⋮</div>
+  <div>SSC CGL Mock</div>
+  <div class="timer" id="timer">60:00</div>
+  <div class="dots" onclick="toggleList()">⋮</div>
 </div>
 
 <div class="main">
-    <div class="question-box">
-        <h4 id="qText"></h4>
+  <div class="question-box">
+    <h4 id="qText"></h4>
 
-        <label class="option">
-            <input type="radio" name="opt" value="0"> <span id="o0"></span>
-        </label>
-        <label class="option">
-            <input type="radio" name="opt" value="1"> <span id="o1"></span>
-        </label>
-        <label class="option">
-            <input type="radio" name="opt" value="2"> <span id="o2"></span>
-        </label>
-        <label class="option">
-            <input type="radio" name="opt" value="3"> <span id="o3"></span>
-        </label>
+    <label class="option"><input type="radio" name="opt" value="0"> <span id="o0"></span></label>
+    <label class="option"><input type="radio" name="opt" value="1"> <span id="o1"></span></label>
+    <label class="option"><input type="radio" name="opt" value="2"> <span id="o2"></span></label>
+    <label class="option"><input type="radio" name="opt" value="3"> <span id="o3"></span></label>
 
-        <div class="controls">
-            <button class="btn prev" onclick="prevQ()">Previous</button>
-            <button class="btn review" onclick="markReview()">Mark for Review</button>
-            <button class="btn next" onclick="nextQ()">Next</button>
-        </div>
+    <div class="controls">
+      <button class="btn prev" onclick="prevQ()">Previous</button>
+      <button class="btn review" onclick="markReview()">Mark for Review</button>
+      <button class="btn next" onclick="nextQ()">Next</button>
     </div>
+  </div>
 </div>
 
 <button class="submit">Submit Test</button>
 
-<!-- QUESTION LIST -->
 <div id="qListBox">
-    <h3>All Questions</h3>
-    <div id="qList"></div>
-    <button class="btn next" style="margin-top:15px;width:100%;" onclick="toggleList()">Close</button>
+  <h3>All Questions</h3>
+  <div id="qList"></div>
+  <button class="btn next" style="margin-top:15px;width:100%" onclick="toggleList()">Close</button>
 </div>
 
 <script>
-/* QUESTIONS */
+/* ---------- QUESTIONS ---------- */
 const questions = [
  {q:"Capital of India?",o:["Mumbai","Delhi","Kolkata","Chennai"]},
  {q:"2 + 2 = ?",o:["1","2","4","6"]},
@@ -170,71 +67,75 @@ const questions = [
  {q:"Taj Mahal is in?",o:["Delhi","Agra","Jaipur","Lucknow"]}
 ];
 
-let index = 0;
-let answers = {};
-let reviewMarked = {};
+/* ---------- LOAD SAVED STATE ---------- */
+let index = parseInt(localStorage.getItem("currentIndex")) || 0;
+let answers = JSON.parse(localStorage.getItem("answers")) || {};
+let reviewMarked = JSON.parse(localStorage.getItem("reviewMarked")) || {};
+let timeLeft = parseInt(localStorage.getItem("timeLeft")) || 3600;
+localStorage.setItem("examStarted","true");
 
-/* LOAD QUESTION */
+/* ---------- LOAD QUESTION ---------- */
 function loadQ(){
-    const q = questions[index];
-    document.getElementById("qText").innerText = `Q${index+1}. ${q.q}`;
-    q.o.forEach((op,i)=>{
-        document.getElementById("o"+i).innerText = op;
-    });
+  const q = questions[index];
+  document.getElementById("qText").innerText = `Q${index+1}. ${q.q}`;
+  q.o.forEach((op,i)=>document.getElementById("o"+i).innerText=op);
 
-    document.querySelectorAll('input[name="opt"]').forEach(o=>o.checked=false);
-    if(answers[index] !== undefined){
-        document.querySelector(`input[value="${answers[index]}"]`).checked=true;
-    }
-    updateList();
+  document.querySelectorAll('input[name="opt"]').forEach(o=>o.checked=false);
+  if(answers[index]!==undefined){
+    document.querySelector(`input[value="${answers[index]}"]`).checked=true;
+  }
+  updateList();
+  localStorage.setItem("currentIndex",index);
 }
 loadQ();
 
-/* OPTION CLICK */
+/* ---------- OPTION SAVE ---------- */
 document.querySelectorAll('input[name="opt"]').forEach(opt=>{
-    opt.onclick = ()=>{
-        answers[index] = parseInt(opt.value);
-        updateList();
-    }
+  opt.onclick=()=>{
+    answers[index]=parseInt(opt.value);
+    localStorage.setItem("answers",JSON.stringify(answers));
+    updateList();
+  };
 });
 
-/* NAVIGATION */
-function nextQ(){ if(index < questions.length-1){ index++; loadQ(); }}
-function prevQ(){ if(index > 0){ index--; loadQ(); }}
+/* ---------- NAV ---------- */
+function nextQ(){if(index<questions.length-1){index++;loadQ();}}
+function prevQ(){if(index>0){index--;loadQ();}}
 
-/* REVIEW */
+/* ---------- REVIEW ---------- */
 function markReview(){
-    reviewMarked[index] = true;
-    updateList();
+  reviewMarked[index]=true;
+  localStorage.setItem("reviewMarked",JSON.stringify(reviewMarked));
+  updateList();
 }
 
-/* QUESTION LIST */
+/* ---------- QUESTION LIST ---------- */
 function toggleList(){
-    const b = document.getElementById("qListBox");
-    b.style.display = b.style.display==="none"?"block":"none";
+  const b=document.getElementById("qListBox");
+  b.style.display=b.style.display==="none"?"block":"none";
 }
-
 function updateList(){
-    const list = document.getElementById("qList");
-    list.innerHTML="";
-    questions.forEach((_,i)=>{
-        const d = document.createElement("div");
-        d.className="qItem";
-        if(reviewMarked[i]) d.classList.add("orange");
-        else if(answers[i]!==undefined) d.classList.add("green");
-
-        d.innerHTML = `<span>${i+1}</span> Question ${i+1}`;
-        d.onclick = ()=>{ index=i; loadQ(); toggleList(); };
-        list.appendChild(d);
-    });
+  const list=document.getElementById("qList");
+  list.innerHTML="";
+  questions.forEach((_,i)=>{
+    const d=document.createElement("div");
+    d.className="qItem";
+    if(reviewMarked[i]) d.classList.add("orange");
+    else if(answers[i]!==undefined) d.classList.add("green");
+    d.innerHTML=`<span>${i+1}</span> Question ${i+1}`;
+    d.onclick=()=>{index=i;loadQ();toggleList();};
+    list.appendChild(d);
+  });
 }
 
-/* TIMER */
-let t=3600;
+/* ---------- TIMER (RESUME SAFE) ---------- */
 setInterval(()=>{
-    let m=Math.floor(t/60),s=t%60;
-    document.getElementById("timer").innerText=`${m}:${s<10?"0"+s:s}`;
-    if(t>0)t--;
+  let m=Math.floor(timeLeft/60),s=timeLeft%60;
+  document.getElementById("timer").innerText=`${m}:${s<10?"0"+s:s}`;
+  if(timeLeft>0){
+    timeLeft--;
+    localStorage.setItem("timeLeft",timeLeft);
+  }
 },1000);
 </script>
 
