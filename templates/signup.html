@@ -1,35 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Signup | Abhyas</title>
-<style>
-body{font-family:Arial;background:#f5f6fa}
-.box{max-width:360px;margin:80px auto;background:#fff;padding:25px;border-radius:10px}
-input,button{width:100%;padding:12px;margin-top:12px}
-button{background:#6c5ce7;color:#fff;border:none}
-.error{color:red;text-align:center;margin-top:10px}
-.link{text-align:center;margin-top:15px}
-</style>
+    <meta charset="UTF-8">
+    <title>Create Account | Abhyas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background:#f5f6fa;
+            margin:0;
+            padding:0;
+        }
+        .box{
+            max-width:360px;
+            margin:80px auto;
+            background:#fff;
+            padding:25px;
+            border-radius:10px;
+            box-shadow:0 4px 10px rgba(0,0,0,0.1);
+        }
+        h2{
+            text-align:center;
+            margin-bottom:10px;
+        }
+        p{
+            text-align:center;
+            color:#555;
+            font-size:14px;
+        }
+        input{
+            width:100%;
+            padding:12px;
+            margin-top:12px;
+            border:1px solid #ccc;
+            border-radius:6px;
+            font-size:15px;
+        }
+        button{
+            width:100%;
+            padding:12px;
+            margin-top:18px;
+            background:#6c5ce7;
+            color:#fff;
+            border:none;
+            border-radius:6px;
+            font-size:16px;
+            cursor:pointer;
+        }
+        button:hover{
+            background:#5a4cd1;
+        }
+        .error{
+            color:red;
+            text-align:center;
+            margin-top:10px;
+            font-size:14px;
+        }
+        .link{
+            text-align:center;
+            margin-top:15px;
+            font-size:14px;
+        }
+        .link a{
+            color:#6c5ce7;
+            text-decoration:none;
+        }
+    </style>
 </head>
 <body>
 
 <div class="box">
-<h2>Create Account</h2>
+    <h2>Create Account</h2>
+    <p>Join Abhyas to start your preparation</p>
 
-{% if error %}
-<div class="error">{{ error }}</div>
-{% endif %}
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
 
-<form action="/signup" method="post">
-    <input type="text" name="username" placeholder="Create Username" required>
-    <input type="password" name="password" placeholder="Create Password" required>
-    <button type="submit">Create Account</button>
-</form>
+    <!-- IMPORTANT: action must be /signup -->
+    <form action="/signup" method="post">
+        <input type="text" name="username" placeholder="Create Username" required>
+        <input type="password" name="password" placeholder="Create Password" required>
+        <button type="submit">Create Account</button>
+    </form>
 
-<div class="link">
-    Already have account? <a href="/">Login</a>
-</div>
+    <div class="link">
+        Already have an account? <a href="/">Login</a>
+    </div>
 </div>
 
 </body>
