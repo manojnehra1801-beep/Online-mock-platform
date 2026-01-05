@@ -1,6 +1,5 @@
 import os
 import sqlite3
-import traceback
 from flask import Flask, render_template, request, redirect, session
 
 app = Flask(__name__)
@@ -18,7 +17,7 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
-# Create table (run once automatically)
+# Create table once
 with get_db() as conn:
     conn.execute("""
         CREATE TABLE IF NOT EXISTS students (
@@ -33,28 +32,23 @@ with get_db() as conn:
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        try:
-            username = request.form.get("username")
-            password = request.form.get("password")
+        username = request.form.get("username")
+        password = request.form.get("password")
 
-            conn = get_db()
-            cur = conn.cursor()
-            cur.execute(
-                "SELECT * FROM students WHERE username=? AND password=?",
-                (username, password)
-            )
-            user = cur.fetchone()
-            conn.close()
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT * FROM students WHERE username=? AND password=?",
+            (username, password)
+        )
+        user = cur.fetchone()
+        conn.close()
 
-            if user:
-                session["username"] = user["username"]
-                return redirect("/dashboard")
-            else:
-                return "LOGIN ERROR: Invalid username or password"
-
-        except Exception as e:
-            traceback.print_exc()
-            return f"LOGIN ERROR: {e}"
+        if user:
+            session["username"] = user["username"]
+            return redirect("/dashboard")
+        else:
+            return "LOGIN ERROR: Invalid username or password"
 
     return render_template("login.html")
 
@@ -62,10 +56,10 @@ def login():
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        try:
-            username = request.form.get("username")
-            password = request.form.get("password")
+        username = request.form.get("username")
+        password = request.form.get("password")
 
+        try:
             conn = get_db()
             cur = conn.cursor()
             cur.execute(
@@ -74,14 +68,12 @@ def signup():
             )
             conn.commit()
             conn.close()
-
             return redirect("/")
 
         except sqlite3.IntegrityError:
-            return "SIGNUP ERROR: Username already exists"
+            return "Username already exists. Try another one."
 
         except Exception as e:
-            traceback.print_exc()
             return f"SIGNUP ERROR: {e}"
 
     return render_template("signup.html")
@@ -91,7 +83,10 @@ def signup():
 def dashboard():
     if "username" not in session:
         return redirect("/")
-    return render_template("student_dashboard.html", username=session["username"])
+    return render_template(
+        "student_dashboard.html",
+        username=session["username"]
+    )
 
 # ================= LOGOUT =================
 @app.route("/logout")
