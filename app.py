@@ -1,64 +1,34 @@
 from flask import Flask, render_template, request, redirect, session
-import sqlite3
+from supabase import create_client
 import os
 
 app = Flask(__name__)
-app.secret_key = "abhyas_secret_key_123"
+app.secret_key = "abhyas_secret_key"
 
-DB_NAME = "users.db"
+# ================= SUPABASE CONFIG =================
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_ANON_KEY")
 
-# ================= DATABASE =================
-def get_db():
-    conn = sqlite3.connect(DB_NAME, check_same_thread=False)
-    conn.row_factory = sqlite3.Row
-    return conn
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-def init_db():
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS students (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            student_name TEXT,
-            username TEXT UNIQUE,
-            password TEXT,
-            mobile TEXT,
-            email TEXT
-        )
-    """)
-    conn.commit()
-    conn.close()
-
-init_db()
-
-# ================= LOGIN (LOCKED) =================
+# ================= LOGIN =================
 @app.route("/", methods=["GET", "POST"])
 def login():
-    # already logged in → dashboard
-    if "username" in session:
-        return redirect("/dashboard")
-
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
 
-        conn = get_db()
-        cur = conn.cursor()
-        cur.execute(
-            "SELECT * FROM students WHERE username=? AND password=?",
-            (username, password)
-        )
-        user = cur.fetchone()
-        conn.close()
+        res = supabase.table("students") \
+            .select("*") \
+            .eq("username", username) \
+            .eq("password", password) \
+            .execute()
 
-        if user:
-            session["username"] = username
+        if res.data:
+            session["user"] = username
             return redirect("/dashboard")
         else:
-            return render_template(
-                "login.html",
-                error="Invalid username or password"
-            )
+            return render_template("login.html", error="Invalid username or password")
 
     return render_template("login.html")
 
@@ -66,48 +36,39 @@ def login():
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        student_name = request.form.get("student_name")
+        name = request.form.get("name")
         username = request.form.get("username")
         password = request.form.get("password")
-        mobile = request.form.get("mobile")
         email = request.form.get("email")
+        mobile = request.form.get("mobile")
 
-        try:
-            conn = get_db()
-            cur = conn.cursor()
-            cur.execute(
-                """
-                INSERT INTO students
-                (student_name, username, password, mobile, email)
-                VALUES (?, ?, ?, ?, ?)
-                """,
-                (student_name, username, password, mobile, email)
-            )
-            conn.commit()
-            conn.close()
+        # Check username exists
+        check = supabase.table("students") \
+            .select("id") \
+            .eq("username", username) \
+            .execute()
 
-            # popup trigger
-            return redirect("/signup?success=1")
+        if check.data:
+            return render_template("signup.html", error="Username already exists")
 
-        except sqlite3.IntegrityError:
-            return render_template(
-                "signup.html",
-                error="Account could not be created. Please try again."
-            )
-        except Exception as e:
-            return f"SIGNUP ERROR: {e}"
+        supabase.table("students").insert({
+            "name": name,
+            "username": username,
+            "password": password,
+            "email": email,
+            "mobile": mobile
+        }).execute()
+
+        return render_template("login.html", success="Account created successfully. Login now.")
 
     return render_template("signup.html")
 
-# ================= DASHBOARD (PROTECTED) =================
+# ================= DASHBOARD =================
 @app.route("/dashboard")
 def dashboard():
-    if "username" not in session:
-        return redirect("/")   # 🔒 login required
-    return render_template(
-        "student_dashboard.html",
-        username=session["username"]
-    )
+    if "user" not in session:
+        return redirect("/")
+    return render_template("student_dashboard.html")
 
 # ================= LOGOUT =================
 @app.route("/logout")
@@ -117,5 +78,4 @@ def logout():
 
 # ================= RUN =================
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=10000)
