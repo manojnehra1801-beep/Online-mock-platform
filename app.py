@@ -3,13 +3,13 @@ import sqlite3
 import os
 
 app = Flask(__name__)
-app.secret_key = "abhyas_secret_key_123"
+app.secret_key = "abhyas_secret_key"
 
-DB_NAME = "users.db"
+DB = "users.db"
 
-# ================= DATABASE =================
+# ---------- DB ----------
 def get_db():
-    conn = sqlite3.connect(DB_NAME, check_same_thread=False)
+    conn = sqlite3.connect(DB)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -19,8 +19,8 @@ def init_db():
     cur.execute("""
         CREATE TABLE IF NOT EXISTS students (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
+            username TEXT UNIQUE,
+            password TEXT
         )
     """)
     conn.commit()
@@ -28,78 +28,65 @@ def init_db():
 
 init_db()
 
-# ================= LOGIN =================
+# ---------- LOGIN ----------
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+        u = request.form["username"]
+        p = request.form["password"]
 
         conn = get_db()
         cur = conn.cursor()
         cur.execute(
             "SELECT * FROM students WHERE username=? AND password=?",
-            (username, password)
+            (u, p)
         )
         user = cur.fetchone()
         conn.close()
 
         if user:
-            session["username"] = user["username"]
+            session["user"] = u
             return redirect("/dashboard")
         else:
-            return render_template(
-                "login.html",
-                error="Invalid username or password"
-            )
+            return render_template("login.html", error="Invalid login")
 
     return render_template("login.html")
 
-# ================= SIGNUP =================
+# ---------- SIGNUP ----------
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+        u = request.form["username"]
+        p = request.form["password"]
 
         try:
             conn = get_db()
             cur = conn.cursor()
             cur.execute(
                 "INSERT INTO students (username, password) VALUES (?, ?)",
-                (username, password)
+                (u, p)
             )
             conn.commit()
             conn.close()
             return redirect("/")
-        except sqlite3.IntegrityError:
-            return render_template(
-                "signup.html",
-                error="Username already exists"
-            )
-        except Exception as e:
-            return f"SIGNUP ERROR: {e}"
+        except:
+            return render_template("signup.html", error="Username exists")
 
-    # ⬅️ यही line HTML code issue fix करती है
     return render_template("signup.html")
 
-# ================= DASHBOARD =================
+# ---------- DASHBOARD ----------
 @app.route("/dashboard")
 def dashboard():
-    if "username" not in session:
+    if "user" not in session:
         return redirect("/")
-    return render_template(
-        "student_dashboard.html",
-        username=session["username"]
-    )
+    return render_template("dashboard.html", user=session["user"])
 
-# ================= LOGOUT =================
+# ---------- LOGOUT ----------
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
-# ================= RUN =================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
