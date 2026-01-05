@@ -1,32 +1,35 @@
-from flask import Flask, render_template, request, redirect, session
+import os
 import sqlite3
 import traceback
-import os
+from flask import Flask, render_template, request, redirect, session
 
 app = Flask(__name__)
-app.secret_key = "debug_secret_key"
+app.secret_key = "abhyas_secret_key_123"
 
-# ----------------------
-# DATABASE (SQLite)
-# ----------------------
+# ================= DATABASE =================
+DB_NAME = "users.db"
+
 def get_db():
-    conn = sqlite3.connect("users.db")
+    conn = sqlite3.connect(
+        DB_NAME,
+        timeout=10,
+        check_same_thread=False
+    )
     conn.row_factory = sqlite3.Row
     return conn
 
-# Table create
+# Create table (run once automatically)
 with get_db() as conn:
     conn.execute("""
         CREATE TABLE IF NOT EXISTS students (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE,
-            password TEXT
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
         )
     """)
+    conn.commit()
 
-# ----------------------
-# LOGIN
-# ----------------------
+# ================= LOGIN =================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -55,10 +58,7 @@ def login():
 
     return render_template("login.html")
 
-
-# ----------------------
-# SIGNUP
-# ----------------------
+# ================= SIGNUP =================
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
@@ -67,7 +67,8 @@ def signup():
             password = request.form.get("password")
 
             conn = get_db()
-            conn.execute(
+            cur = conn.cursor()
+            cur.execute(
                 "INSERT INTO students (username, password) VALUES (?, ?)",
                 (username, password)
             )
@@ -76,26 +77,29 @@ def signup():
 
             return redirect("/")
 
+        except sqlite3.IntegrityError:
+            return "SIGNUP ERROR: Username already exists"
+
         except Exception as e:
             traceback.print_exc()
             return f"SIGNUP ERROR: {e}"
 
     return render_template("signup.html")
 
-
-# ----------------------
-# DASHBOARD
-# ----------------------
+# ================= DASHBOARD =================
 @app.route("/dashboard")
 def dashboard():
     if "username" not in session:
         return redirect("/")
-    return render_template("student_dashboard.html")
+    return render_template("student_dashboard.html", username=session["username"])
 
+# ================= LOGOUT =================
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
 
-# ----------------------
-# RUN
-# ----------------------
+# ================= RUN =================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
