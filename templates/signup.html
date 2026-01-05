@@ -1,24 +1,105 @@
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Account | Abhyas App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        try:
-            conn = get_db()
-            cur = conn.cursor()
-            cur.execute(
-                "INSERT INTO students (username, password) VALUES (?, ?)",
-                (username, password)
-            )
-            conn.commit()
-            conn.close()
-            return redirect("/")
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background:#f1f2f6;
+            margin:0;
+            padding:0;
+        }
+        .box{
+            max-width:360px;
+            margin:80px auto;
+            background:#fff;
+            padding:25px;
+            border-radius:10px;
+            box-shadow:0 4px 12px rgba(0,0,0,0.15);
+        }
+        h2{
+            text-align:center;
+            margin-bottom:5px;
+        }
+        .tagline{
+            text-align:center;
+            font-size:14px;
+            color:#555;
+            margin-bottom:20px;
+        }
+        input{
+            width:100%;
+            padding:12px;
+            margin-top:12px;
+            border:1px solid #ccc;
+            border-radius:6px;
+            font-size:15px;
+        }
+        button{
+            width:100%;
+            padding:12px;
+            margin-top:18px;
+            background:#00b894;
+            color:#fff;
+            border:none;
+            border-radius:6px;
+            font-size:16px;
+            cursor:pointer;
+        }
+        button:hover{
+            background:#019875;
+        }
+        .error{
+            color:red;
+            text-align:center;
+            margin-top:10px;
+            font-size:14px;
+        }
+        .link{
+            text-align:center;
+            margin-top:15px;
+            font-size:14px;
+        }
+        .link a{
+            color:#6c5ce7;
+            text-decoration:none;
+            font-weight:bold;
+        }
+        .footer{
+            text-align:center;
+            margin-top:20px;
+            font-size:12px;
+            color:#777;
+        }
+    </style>
+</head>
+<body>
 
-        except sqlite3.IntegrityError:
-            return "Username already exists. Try another one."
+<div class="box">
+    <h2>Create Account</h2>
+    <div class="tagline">Start your preparation with Abhyas</div>
 
-        except Exception as e:
-            return f"SIGNUP ERROR: {e}"
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
 
-    return render_template("signup.html")
+    <form method="post">
+        <input type="text" name="username" placeholder="Create Username" required>
+        <input type="password" name="password" placeholder="Create Password" required>
+        <button type="submit">Create Account</button>
+    </form>
+
+    <div class="link">
+        Already have an account? <a href="/">Login</a>
+    </div>
+
+    <div class="footer">
+        Powered by Nehra Infotech Pvt Ltd
+    </div>
+</div>
+
+</body>
+</html>
