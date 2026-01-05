@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, session
-import psycopg2
+import psycopg
 import os
 import traceback
 
@@ -15,7 +15,7 @@ def get_db_connection():
     if not DATABASE_URL:
         raise Exception("DATABASE_URL not set")
 
-    return psycopg2.connect(DATABASE_URL)
+    return psycopg.connect(DATABASE_URL)
 
 
 # =========================
