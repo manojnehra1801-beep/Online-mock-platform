@@ -1,25 +1,22 @@
-import os
-import sqlite3
 from flask import Flask, render_template, request, redirect, session
+import sqlite3
+import os
 
 app = Flask(__name__)
 app.secret_key = "abhyas_secret_key_123"
 
-# ================= DATABASE =================
 DB_NAME = "users.db"
 
+# ================= DATABASE =================
 def get_db():
-    conn = sqlite3.connect(
-        DB_NAME,
-        timeout=10,
-        check_same_thread=False
-    )
+    conn = sqlite3.connect(DB_NAME, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
 
-# Create table
-with get_db() as conn:
-    conn.execute("""
+def init_db():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS students (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
@@ -27,6 +24,9 @@ with get_db() as conn:
         )
     """)
     conn.commit()
+    conn.close()
+
+init_db()
 
 # ================= LOGIN =================
 @app.route("/", methods=["GET", "POST"])
@@ -48,7 +48,6 @@ def login():
             session["username"] = user["username"]
             return redirect("/dashboard")
         else:
-            # ❗ HTML page ke andar error
             return render_template(
                 "login.html",
                 error="Invalid username or password"
@@ -73,20 +72,15 @@ def signup():
             conn.commit()
             conn.close()
             return redirect("/")
-
         except sqlite3.IntegrityError:
-            # ❗ raw text nahi, HTML me error
             return render_template(
                 "signup.html",
-                error="Username already exists. Try another one."
+                error="Username already exists"
             )
-
         except Exception as e:
-            return render_template(
-                "signup.html",
-                error=f"Signup error: {e}"
-            )
+            return f"SIGNUP ERROR: {e}"
 
+    # ⬅️ यही line HTML code issue fix करती है
     return render_template("signup.html")
 
 # ================= DASHBOARD =================
