@@ -3,13 +3,13 @@ import sqlite3
 import os
 
 app = Flask(__name__)
-app.secret_key = "abhyas_secret_key"
+app.secret_key = "abhyas_secret_key_123"
 
-DB = "users.db"
+DB_NAME = "users.db"
 
-# ---------- DB ----------
+# ================= DATABASE =================
 def get_db():
-    conn = sqlite3.connect(DB)
+    conn = sqlite3.connect(DB_NAME, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -19,8 +19,11 @@ def init_db():
     cur.execute("""
         CREATE TABLE IF NOT EXISTS students (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_name TEXT,
             username TEXT UNIQUE,
-            password TEXT
+            password TEXT,
+            mobile TEXT,
+            email TEXT
         )
     """)
     conn.commit()
@@ -28,65 +31,91 @@ def init_db():
 
 init_db()
 
-# ---------- LOGIN ----------
+# ================= LOGIN (LOCKED) =================
 @app.route("/", methods=["GET", "POST"])
 def login():
+    # already logged in → dashboard
+    if "username" in session:
+        return redirect("/dashboard")
+
     if request.method == "POST":
-        u = request.form["username"]
-        p = request.form["password"]
+        username = request.form.get("username")
+        password = request.form.get("password")
 
         conn = get_db()
         cur = conn.cursor()
         cur.execute(
             "SELECT * FROM students WHERE username=? AND password=?",
-            (u, p)
+            (username, password)
         )
         user = cur.fetchone()
         conn.close()
 
         if user:
-            session["user"] = u
+            session["username"] = username
             return redirect("/dashboard")
         else:
-            return render_template("login.html", error="Invalid login")
+            return render_template(
+                "login.html",
+                error="Invalid username or password"
+            )
 
     return render_template("login.html")
 
-# ---------- SIGNUP ----------
+# ================= SIGNUP =================
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        u = request.form["username"]
-        p = request.form["password"]
+        student_name = request.form.get("student_name")
+        username = request.form.get("username")
+        password = request.form.get("password")
+        mobile = request.form.get("mobile")
+        email = request.form.get("email")
 
         try:
             conn = get_db()
             cur = conn.cursor()
             cur.execute(
-                "INSERT INTO students (username, password) VALUES (?, ?)",
-                (u, p)
+                """
+                INSERT INTO students
+                (student_name, username, password, mobile, email)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (student_name, username, password, mobile, email)
             )
             conn.commit()
             conn.close()
-           return redirect("/signup?success=1")
-        except:
-            return render_template("signup.html", error="Username exists")
+
+            # popup trigger
+            return redirect("/signup?success=1")
+
+        except sqlite3.IntegrityError:
+            return render_template(
+                "signup.html",
+                error="Account could not be created. Please try again."
+            )
+        except Exception as e:
+            return f"SIGNUP ERROR: {e}"
 
     return render_template("signup.html")
 
-# ---------- DASHBOARD ----------
+# ================= DASHBOARD (PROTECTED) =================
 @app.route("/dashboard")
 def dashboard():
-    if "user" not in session:
-        return redirect("/")
-    return render_template("dashboard.html", user=session["user"])
+    if "username" not in session:
+        return redirect("/")   # 🔒 login required
+    return render_template(
+        "student_dashboard.html",
+        username=session["username"]
+    )
 
-# ---------- LOGOUT ----------
+# ================= LOGOUT =================
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
+# ================= RUN =================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
