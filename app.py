@@ -17,7 +17,7 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
-# Create table once
+# Create table
 with get_db() as conn:
     conn.execute("""
         CREATE TABLE IF NOT EXISTS students (
@@ -48,7 +48,11 @@ def login():
             session["username"] = user["username"]
             return redirect("/dashboard")
         else:
-            return "LOGIN ERROR: Invalid username or password"
+            # ❗ HTML page ke andar error
+            return render_template(
+                "login.html",
+                error="Invalid username or password"
+            )
 
     return render_template("login.html")
 
@@ -71,10 +75,17 @@ def signup():
             return redirect("/")
 
         except sqlite3.IntegrityError:
-            return "Username already exists. Try another one."
+            # ❗ raw text nahi, HTML me error
+            return render_template(
+                "signup.html",
+                error="Username already exists. Try another one."
+            )
 
         except Exception as e:
-            return f"SIGNUP ERROR: {e}"
+            return render_template(
+                "signup.html",
+                error=f"Signup error: {e}"
+            )
 
     return render_template("signup.html")
 
