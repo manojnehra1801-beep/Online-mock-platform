@@ -68,7 +68,7 @@ def signup():
             )
             conn.commit()
             conn.close()
-            return redirect("/")
+           return redirect("/signup?success=1")
         except:
             return render_template("signup.html", error="Username exists")
 
