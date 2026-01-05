@@ -1,105 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Create Account | Abhyas App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+import os
+from flask import Flask, render_template, request, redirect, session
+from supabase import create_client
 
-    <style>
-        body{
-            font-family: Arial, sans-serif;
-            background:#f1f2f6;
-            margin:0;
-            padding:0;
-        }
-        .box{
-            max-width:360px;
-            margin:80px auto;
-            background:#fff;
-            padding:25px;
-            border-radius:10px;
-            box-shadow:0 4px 12px rgba(0,0,0,0.15);
-        }
-        h2{
-            text-align:center;
-            margin-bottom:5px;
-        }
-        .tagline{
-            text-align:center;
-            font-size:14px;
-            color:#555;
-            margin-bottom:20px;
-        }
-        input{
-            width:100%;
-            padding:12px;
-            margin-top:12px;
-            border:1px solid #ccc;
-            border-radius:6px;
-            font-size:15px;
-        }
-        button{
-            width:100%;
-            padding:12px;
-            margin-top:18px;
-            background:#00b894;
-            color:#fff;
-            border:none;
-            border-radius:6px;
-            font-size:16px;
-            cursor:pointer;
-        }
-        button:hover{
-            background:#019875;
-        }
-        .error{
-            color:red;
-            text-align:center;
-            margin-top:10px;
-            font-size:14px;
-        }
-        .link{
-            text-align:center;
-            margin-top:15px;
-            font-size:14px;
-        }
-        .link a{
-            color:#6c5ce7;
-            text-decoration:none;
-            font-weight:bold;
-        }
-        .footer{
-            text-align:center;
-            margin-top:20px;
-            font-size:12px;
-            color:#777;
-        }
-    </style>
-</head>
-<body>
+app = Flask(__name__)
+app.secret_key = "abhyas_secret_key_123"
 
-<div class="box">
-    <h2>Create Account</h2>
-    <div class="tagline">Start your preparation with Abhyas</div>
+# ================= SUPABASE CONFIG =================
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
-    {% if error %}
-        <div class="error">{{ error }}</div>
-    {% endif %}
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-    <form method="post">
-        <input type="text" name="username" placeholder="Create Username" required>
-        <input type="password" name="password" placeholder="Create Password" required>
-        <button type="submit">Create Account</button>
-    </form>
+# ================= LOGIN =================
+@app.route("/", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
 
-    <div class="link">
-        Already have an account? <a href="/">Login</a>
-    </div>
+        res = supabase.table("students") \
+            .select("*") \
+            .eq("username", username) \
+            .eq("password", password) \
+            .execute()
 
-    <div class="footer">
-        Powered by Nehra Infotech Pvt Ltd
-    </div>
-</div>
+        if res.data:
+            session["username"] = username
+            return redirect("/dashboard")
+        else:
+            return render_template(
+                "login.html",
+                error="Invalid username or password"
+            )
 
-</body>
-</html>
+    return render_template("login.html")
+
+# ================= SIGNUP =================
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        try:
+            supabase.table("students").insert({
+                "username": username,
+                "password": password
+            }).execute()
+
+            return redirect("/")
+
+        except Exception as e:
+            return render_template(
+                "signup.html",
+                error="Username already exists or invalid data"
+            )
+
+    return render_template("signup.html")
+
+# ================= DASHBOARD =================
+@app.route("/dashboard")
+def dashboard():
+    if "username" not in session:
+        return redirect("/")
+    return render_template(
+        "student_dashboard.html",
+        username=session["username"]
+    )
+
+# ================= LOGOUT =================
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
+# ================= RUN =================
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
