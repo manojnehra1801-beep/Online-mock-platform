@@ -1,21 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abhyas App | Login</title>
+
+<style>
+body{
+    margin:0;
+    padding:0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#6c5ce7,#a29bfe);
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.container{
+    background:#fff;
+    width:90%;
+    max-width:380px;
+    padding:25px;
+    border-radius:14px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.25);
+    text-align:center;
+}
+
+h1{
+    margin:0;
+    font-size:24px;
+    color:#2d3436;
+}
+
+.tagline{
+    font-size:14px;
+    color:#636e72;
+    margin-top:6px;
+}
+
+hr{
+    margin:18px 0;
+    border:none;
+    border-top:1px solid #eee;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:15px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#6c5ce7;
+    color:#fff;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#5a4bdc;
+}
+
+.create{
+    margin-top:15px;
+    font-size:14px;
+}
+
+.create a{
+    color:#6c5ce7;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.error{
+    color:red;
+    font-size:14px;
+    margin-bottom:10px;
+}
+
+.footer{
+    margin-top:18px;
+    font-size:12px;
+    color:#999;
+}
+</style>
 </head>
+
 <body>
-<h2>Login</h2>
 
-{% if error %}
-<p style="color:red">{{ error }}</p>
-{% endif %}
+<div class="container">
+    <h1>Welcome to Abhyas App</h1>
+    <div class="tagline">Practice smart, perform better</div>
 
-<form method="post">
-    <input name="username" placeholder="Username" required><br><br>
-    <input name="password" placeholder="Password" required><br><br>
-    <button type="submit">Login</button>
-</form>
+    <hr>
 
-<a href="/signup">Create Account</a>
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+
+    <div class="create">
+        New here? <a href="/signup">Create Account</a>
+    </div>
+
+    <div class="footer">
+        Made for students and by student 
+    </div>
+</div>
+
 </body>
 </html>
