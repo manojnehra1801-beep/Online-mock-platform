@@ -1,93 +1,21 @@
-from flask import Flask, render_template, request, redirect, session
-import sqlite3
-import os
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup</title>
+</head>
+<body>
+<h2>Create Account</h2>
 
-app = Flask(__name__)
-app.secret_key = "abhyas_secret_key"
+{% if error %}
+<p style="color:red">{{ error }}</p>
+{% endif %}
 
-DB_PATH = "database.db"
+<form method="post">
+    <input name="username" placeholder="Username" required><br><br>
+    <input name="password" placeholder="Password" required><br><br>
+    <button type="submit">Create Account</button>
+</form>
 
-# ---------- DATABASE ----------
-def get_db():
-    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-def init_db():
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS students (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-        )
-    """)
-    conn.commit()
-    conn.close()
-
-init_db()
-
-# ---------- LOGIN ----------
-@app.route("/", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-
-        conn = get_db()
-        cur = conn.cursor()
-        cur.execute(
-            "SELECT * FROM students WHERE username=? AND password=?",
-            (username, password)
-        )
-        user = cur.fetchone()
-        conn.close()
-
-        if user:
-            session["user"] = user["username"]
-            return redirect("/dashboard")
-        else:
-            return "LOGIN ERROR: Invalid username or password"
-
-    return render_template("login.html")
-
-# ---------- SIGNUP ----------
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-
-        try:
-            conn = get_db()
-            cur = conn.cursor()
-            cur.execute(
-                "INSERT INTO students (username, password) VALUES (?, ?)",
-                (username, password)
-            )
-            conn.commit()
-            conn.close()
-            return redirect("/")
-        except sqlite3.IntegrityError:
-            return "SIGNUP ERROR: Username already exists"
-        except Exception as e:
-            return f"SIGNUP ERROR: {e}"
-
-    return render_template("signup.html")
-
-# ---------- DASHBOARD ----------
-@app.route("/dashboard")
-def dashboard():
-    if "user" not in session:
-        return redirect("/")
-    return f"Welcome {session['user']} (Dashboard)"
-
-# ---------- LOGOUT ----------
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect("/")
-
-if __name__ == "__main__":
-    app.run(debug=True)
+<a href="/">Back to login</a>
+</body>
+</html>
