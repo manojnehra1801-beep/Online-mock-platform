@@ -1,76 +1,45 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, url_for
 from supabase import create_client
 import os
 
+# ================= FLASK CONFIG =================
 app = Flask(__name__)
-app.secret_key = "abhyas_secret_key_123"
+app.secret_key = "abhyas_secret_key_change_later"
 
-# ================== SUPABASE CONFIG ==================
+# ================= SUPABASE CONFIG =================
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_KEY = os.environ.get("SUPABASE_ANON_KEY")
-
-# DEBUG (temporary – logs me dikhega)
-print("SUPABASE_URL =", SUPABASE_URL)
-print("SUPABASE_KEY =", SUPABASE_KEY)
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
 if not SUPABASE_URL or not SUPABASE_KEY:
     raise Exception("Supabase ENV vars missing")
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# ================== ROUTES ==================
-
-@app.route("/")
-def home():
-    return redirect("/login")
-
-
-# ---------- SIGNUP ----------
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    if request.method == "POST":
-        name = request.form.get("name")
-        username = request.form.get("username")
-        password = request.form.get("password")
-        mobile = request.form.get("mobile")
-        email = request.form.get("email")
-
-        try:
-            supabase.table("students").insert({
-                "name": name,
-                "username": username,
-                "password": password,
-                "mobile": mobile,
-                "email": email
-            }).execute()
-
-            return redirect("/login")
-
-        except Exception as e:
-            return f"SIGNUP ERROR: {e}"
-
-    return render_template("signup.html")
-
-
-# ---------- LOGIN ----------
-@app.route("/login", methods=["GET", "POST"])
+# ================= LOGIN =================
+@app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
 
         try:
-            res = supabase.table("students") \
-                .select("*") \
-                .eq("username", username) \
-                .eq("password", password) \
+            res = (
+                supabase
+                .table("students")
+                .select("*")
+                .eq("username", username)
+                .eq("password", password)
                 .execute()
+            )
 
             if res.data:
                 session["user"] = username
                 return redirect("/dashboard")
             else:
-                return "Invalid username or password"
+                return render_template(
+                    "login.html",
+                    error="Invalid username or password"
+                )
 
         except Exception as e:
             return f"LOGIN ERROR: {e}"
@@ -78,21 +47,75 @@ def login():
     return render_template("login.html")
 
 
-# ---------- DASHBOARD ----------
+# ================= SIGNUP =================
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        name = request.form.get("name")
+        username = request.form.get("username")
+        password = request.form.get("password")
+        confirm = request.form.get("confirm_password")
+        email = request.form.get("email")
+        mobile = request.form.get("mobile")
+
+        if password != confirm:
+            return render_template(
+                "signup.html",
+                error="Passwords do not match"
+            )
+
+        try:
+            # username already exists check
+            check = (
+                supabase
+                .table("students")
+                .select("id")
+                .eq("username", username)
+                .execute()
+            )
+
+            if check.data:
+                return render_template(
+                    "signup.html",
+                    error="Username already exists"
+                )
+
+            # insert new student
+            supabase.table("students").insert({
+                "name": name,
+                "username": username,
+                "password": password,
+                "email": email,
+                "mobile": mobile
+            }).execute()
+
+            return render_template(
+                "signup.html",
+                success=True
+            )
+
+        except Exception as e:
+            return f"SIGNUP ERROR: {e}"
+
+    return render_template("signup.html")
+
+
+# ================= DASHBOARD =================
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session:
-        return redirect("/login")
-    return f"Welcome {session['user']} – Dashboard working"
+        return redirect("/")
+
+    return render_template("dashboard.html", user=session["user"])
 
 
-# ---------- LOGOUT ----------
+# ================= LOGOUT =================
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect("/login")
+    return redirect("/")
 
 
-# ================== RUN ==================
+# ================= RUN =================
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    app.run(debug=True)
