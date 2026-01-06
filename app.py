@@ -77,8 +77,21 @@ def dashboard():
         user=session["user"]
     )
 
+#----------------sscexam---------------
+@app.route("/ssc-exam")
+def ssc_exam():
+    # login protection (optional but recommended)
+    if "user" not in session:
+        return redirect("/")
+    return render_template("ssc_exam.html")
 
-# ---------------- LOGOUT ----------------
+
+# ---------------- @app.route--------
+def ssc_exam():
+    # login protection (optional but recommended)
+    if "user" not in session:
+        return redirect("/")
+    return render_template("ssc_exam.html") ----------------
 @app.route("/logout")
 def logout():
     session.clear()
