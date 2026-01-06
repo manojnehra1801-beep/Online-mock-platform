@@ -1,121 +1,80 @@
-from flask import Flask, render_template, request, redirect, session, url_for
-from supabase import create_client
-import os
+from flask import Flask, render_template, request, redirect, session
 
-# ================= FLASK CONFIG =================
 app = Flask(__name__)
-app.secret_key = "abhyas_secret_key_change_later"
+app.secret_key = "abhyas_demo_secret_key"
 
-# ================= SUPABASE CONFIG =================
-SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+# ======================
+# TEMP USER STORE (MEMORY)
+# ======================
+# NOTE: Server restart → data reset (demo phase)
+USERS = {
+    "abc": "abc1"   # demo user
+}
 
-if not SUPABASE_URL or not SUPABASE_KEY:
-    raise Exception("Supabase ENV vars missing")
-
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-# ================= LOGIN =================
+# ======================
+# LOGIN
+# ======================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
 
-        try:
-            res = (
-                supabase
-                .table("students")
-                .select("*")
-                .eq("username", username)
-                .eq("password", password)
-                .execute()
-            )
-
-            if res.data:
-                session["user"] = username
-                return redirect("/dashboard")
-            else:
-                return render_template(
-                    "login.html",
-                    error="Invalid username or password"
-                )
-
-        except Exception as e:
-            return f"LOGIN ERROR: {e}"
+        if username in USERS and USERS[username] == password:
+            session["user"] = username
+            return redirect("/dashboard")
+        else:
+            return render_template("login.html", error="Invalid username or password")
 
     return render_template("login.html")
 
 
-# ================= SIGNUP =================
+# ======================
+# SIGNUP
+# ======================
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        name = request.form.get("name")
         username = request.form.get("username")
         password = request.form.get("password")
-        confirm = request.form.get("confirm_password")
-        email = request.form.get("email")
-        mobile = request.form.get("mobile")
+        confirm = request.form.get("confirm")
+
+        if not username or not password:
+            return render_template("signup.html", error="All fields required")
 
         if password != confirm:
-            return render_template(
-                "signup.html",
-                error="Passwords do not match"
-            )
+            return render_template("signup.html", error="Passwords do not match")
 
-        try:
-            # username already exists check
-            check = (
-                supabase
-                .table("students")
-                .select("id")
-                .eq("username", username)
-                .execute()
-            )
+        if username in USERS:
+            return render_template("signup.html", error="Username already exists")
 
-            if check.data:
-                return render_template(
-                    "signup.html",
-                    error="Username already exists"
-                )
-
-            # insert new student
-            supabase.table("students").insert({
-                "name": name,
-                "username": username,
-                "password": password,
-                "email": email,
-                "mobile": mobile
-            }).execute()
-
-            return render_template(
-                "signup.html",
-                success=True
-            )
-
-        except Exception as e:
-            return f"SIGNUP ERROR: {e}"
+        USERS[username] = password
+        return render_template("signup.html", success=True)
 
     return render_template("signup.html")
 
 
-# ================= DASHBOARD =================
+# ======================
+# DASHBOARD
+# ======================
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session:
         return redirect("/")
+    return render_template("student_dashboard.html", user=session["user"])
 
-    return render_template("dashboard.html", user=session["user"])
 
-
-# ================= LOGOUT =================
+# ======================
+# LOGOUT
+# ======================
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
 
-# ================= RUN =================
+# ======================
+# RUN
+# ======================
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000)
