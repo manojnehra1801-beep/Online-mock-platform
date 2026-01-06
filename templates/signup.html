@@ -5,9 +5,10 @@
 <title>Abhyas App | Sign Up</title>
 
 <style>
+/* ===== PAGE BACKGROUND ===== */
 body{
     font-family: Arial, sans-serif;
-    background:#f5f6fa;
+    background: linear-gradient(135deg, #0a58ca, #3b82f6);
     display:flex;
     justify-content:center;
     align-items:center;
@@ -15,50 +16,68 @@ body{
     margin:0;
 }
 
+/* ===== DIALOG BOX ===== */
 .card{
     background:#ffffff;
     width:92%;
     max-width:400px;
-    padding:25px;
-    border-radius:14px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.12);
+    padding:30px 26px;
+    border-radius:22px;
+    box-shadow:0 25px 45px rgba(0,0,0,0.28);
     text-align:center;
+    animation: popIn 0.45s ease;
+}
+
+/* popup animation */
+@keyframes popIn{
+    from{
+        transform:scale(0.88);
+        opacity:0;
+    }
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
 }
 
 h2{
-    margin-bottom:4px;
-    color:#2d3436;
+    margin:0;
+    color:#1f2933;
     font-size:22px;
 }
 
-.subline{
+.subtitle{
     font-size:13px;
-    color:#0984e3;
+    color:#6b7280;
+    margin-top:4px;
     margin-bottom:18px;
 }
 
+/* ===== INPUTS ===== */
 input{
     width:100%;
-    padding:12px;
+    padding:13px;
     margin:7px 0;
-    border-radius:8px;
-    border:1px solid #dcdde1;
+    border-radius:12px;
+    border:1px solid #d1d5db;
     font-size:14px;
 }
 
 input:focus{
     outline:none;
-    border-color:#0984e3;
+    border-color:#2563eb;
+    box-shadow:0 0 0 2px rgba(37,99,235,0.2);
 }
 
+/* ===== BUTTON ===== */
 button{
     width:100%;
-    padding:12px;
-    margin-top:14px;
+    padding:13px;
+    margin-top:18px;
     background:#00b894;
     color:#fff;
     border:none;
-    border-radius:8px;
+    border-radius:14px;
     font-size:15px;
     cursor:pointer;
 }
@@ -67,27 +86,36 @@ button:hover{
     background:#009f7f;
 }
 
+/* ===== ERROR / SUCCESS ===== */
 .error{
-    color:#e74c3c;
+    color:#dc2626;
     font-size:13px;
-    margin-top:8px;
+    margin-top:10px;
 }
 
 .success{
-    color:#27ae60;
+    color:#16a34a;
     font-size:14px;
     margin-top:10px;
 }
 
+/* ===== LINKS ===== */
 .login-link{
-    margin-top:14px;
+    margin-top:16px;
     font-size:13px;
 }
 
 .login-link a{
-    color:#0984e3;
+    color:#2563eb;
     text-decoration:none;
     font-weight:bold;
+}
+
+/* ===== POWERED BY ===== */
+.powered{
+    margin-top:18px;
+    font-size:11px;
+    color:#9ca3af;
 }
 </style>
 </head>
@@ -96,7 +124,7 @@ button:hover{
 
 <div class="card">
     <h2>Create Your Account</h2>
-    <div class="subline">Join Abhyas App & start preparing smart</div>
+    <div class="subtitle">Join Abhyas App & start preparing smart</div>
 
     <form method="post">
         <input type="text" name="fullname" placeholder="Full Name" required>
@@ -117,7 +145,7 @@ button:hover{
     {% if success %}
       <div class="success">{{ success }}</div>
       <div class="login-link">
-        <a href="/">Login now</a>
+          <a href="/">Login now</a>
       </div>
     {% endif %}
 
@@ -126,6 +154,10 @@ button:hover{
         Already have an account? <a href="/">Sign In</a>
     </div>
     {% endif %}
+
+    <div class="powered">
+        Powered by Nehra Infotech Pvt. Ltd.
+    </div>
 </div>
 
 </body>
