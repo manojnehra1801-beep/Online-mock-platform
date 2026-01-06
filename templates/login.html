@@ -1,160 +1,141 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Abhyas App | Sign In</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abhyas App – Login</title>
 
-<style>
-/* ===== PAGE BACKGROUND ===== */
-body{
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #0a58ca, #3b82f6);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    margin:0;
-}
-
-/* ===== DIALOG BOX ===== */
-.card{
-    background:#ffffff;
-    width:92%;
-    max-width:380px;
-    padding:30px 26px;
-    border-radius:22px; /* more corner cut */
-    box-shadow:0 25px 45px rgba(0,0,0,0.28);
-    text-align:center;
-    animation: popIn 0.45s ease;
-}
-
-/* dialog popup animation */
-@keyframes popIn{
-    from{
-        transform:scale(0.88);
-        opacity:0;
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #0f5fe0, #1c7cff);
+      min-height: 100vh;
     }
-    to{
-        transform:scale(1);
-        opacity:1;
+
+    .page {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 15px;
+      min-height: 100vh;
     }
-}
 
-h2{
-    margin:0;
-    color:#1f2933;
-    font-size:22px;
-}
+    .card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 26px;
+      padding: 28px 22px 30px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      text-align: center;
+    }
 
-.subtitle{
-    font-size:13px;
-    color:#6b7280;
-    margin-top:4px;
-    margin-bottom:10px;
-}
+    .title {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      color: #222;
+    }
 
-/* ===== TAGLINE ===== */
-.tagline{
-    font-size:14px;
-    color:#2563eb;
-    margin-bottom:22px;
-    animation: softBlink 2.8s infinite;
-}
+    .tagline {
+      margin: 6px 0 20px;
+      font-size: 14px;
+      color: #2b6ef5;
+      animation: blink 1.8s infinite;
+    }
 
-/* blinking animation */
-@keyframes softBlink{
-    0%{opacity:1;}
-    50%{opacity:0.3;}
-    100%{opacity:1;}
-}
+    @keyframes blink {
+      0%   { opacity: 1; }
+      50%  { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
 
-/* ===== INPUTS ===== */
-input{
-    width:100%;
-    padding:13px;
-    margin:8px 0;
-    border-radius:12px;
-    border:1px solid #d1d5db;
-    font-size:14px;
-}
+    .login-text {
+      text-align: left;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #333;
+      font-size: 14px;
+    }
 
-input:focus{
-    outline:none;
-    border-color:#2563eb;
-    box-shadow:0 0 0 2px rgba(37,99,235,0.2);
-}
+    input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 14px;
+      border-radius: 14px;
+      border: 1px solid #ddd;
+      font-size: 15px;
+      outline: none;
+      box-sizing: border-box;
+    }
 
-/* ===== BUTTON ===== */
-button{
-    width:100%;
-    padding:13px;
-    margin-top:18px;
-    background:#2563eb;
-    color:#fff;
-    border:none;
-    border-radius:14px;
-    font-size:15px;
-    cursor:pointer;
-}
+    input:focus {
+      border-color: #2b6ef5;
+      box-shadow: 0 0 0 2px rgba(43,110,245,0.15);
+    }
 
-button:hover{
-    background:#1d4ed8;
-}
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 16px;
+      background: #2b6ef5;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
 
-/* ===== ERROR ===== */
-.error{
-    color:#dc2626;
-    font-size:13px;
-    margin-top:10px;
-}
+    button:hover {
+      background: #1f5edc;
+    }
 
-/* ===== LINKS ===== */
-.signup-link{
-    margin-top:16px;
-    font-size:13px;
-}
+    .create {
+      margin-top: 14px;
+      font-size: 14px;
+    }
 
-.signup-link a{
-    color:#2563eb;
-    text-decoration:none;
-    font-weight:bold;
-}
+    .create a {
+      color: #2b6ef5;
+      text-decoration: none;
+      font-weight: 600;
+    }
 
-/* ===== POWERED BY ===== */
-.powered{
-    margin-top:18px;
-    font-size:11px;
-    color:#9ca3af;
-}
-</style>
+    .powered {
+      margin-top: 18px;
+      font-size: 12px;
+      color: #aaa;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="card">
-    <h2>Welcome to Abhyas App</h2>
-    <div class="subtitle">Login to your account</div>
-    <div class="tagline">Practice smart, perform better</div>
+  <div class="page">
+    <div class="card">
 
-    <form method="post">
-        <input type="text" name="username" placeholder="Username" required>
+      <h1 class="title">Welcome to Abhyas App</h1>
+      <p class="tagline">Practice smart, perform better</p>
+
+      <!-- 👇 input ke bilkul upar -->
+      <p class="login-text">Login to your account</p>
+
+      <form method="post">
+        <input type="text" name="username" placeholder="Student Username" required>
         <input type="password" name="password" placeholder="Password" required>
 
         <button type="submit">Sign In</button>
-    </form>
+      </form>
 
-    {% if error %}
-      <div class="error">{{ error }}</div>
-    {% endif %}
-
-    <div class="signup-link">
+      <p class="create">
         New here? <a href="/signup">Create account</a>
-    </div>
+      </p>
 
-    <div class="powered">
-        Powered by Nehra Infotech Pvt. Ltd.
+      <p class="powered">Powered by Nehra Infotech Pvt. Ltd.</p>
+
     </div>
-</div>
+  </div>
 
 </body>
 </html>
