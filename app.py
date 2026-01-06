@@ -1,115 +1,37 @@
-from flask import Flask, render_template, request, redirect, session, url_for
-import sqlite3
-import os
+from flask import Flask, render_template, request, redirect, url_for, flash
 
 app = Flask(__name__)
-app.secret_key = "abhyas_secret_key"
+# The secret key is required for 'flash' messages (pop-up alerts)
+app.secret_key = 'abhyas_secret_key_123'
 
-# ================= DATABASE =================
-DB_NAME = "database.db"
+# This is a 'Mock' database. In a real app, you'd use a database like PostgreSQL.
+# Format: "Username": "Password"
+STUDENT_DB = {
+    "admin": "password123",
+    "student01": "studyhard",
+    "nehratech": "abhyas2026"
+}
 
-def get_db():
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row
-    return conn
+@app.route('/')
+def login_page():
+    # This renders your HTML file from the /templates folder
+    return render_template('index.html')
 
-def init_db():
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS students (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL,
-            mobile TEXT,
-            email TEXT
-        )
-    """)
-    conn.commit()
-    conn.close()
-
-init_db()
-
-# ================= LOGIN =================
-@app.route("/", methods=["GET", "POST"])
+@app.route('/login', methods=['POST'])
 def login():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+    # Getting the data from the HTML form 'name' attributes
+    username = request.form.get('username')
+    password = request.form.get('password')
 
-        conn = get_db()
-        cur = conn.cursor()
-        cur.execute(
-            "SELECT * FROM students WHERE username=? AND password=?",
-            (username, password)
-        )
-        user = cur.fetchone()
-        conn.close()
+    # Logic to check if user exists and password matches
+    if username in STUDENT_DB and STUDENT_DB[username] == password:
+        # If successful, redirect to a dashboard (you can create this next)
+        return f"<h2>Welcome to Abhyas App, {username}!</h2><p>Login Successful.</p>"
+    else:
+        # If it fails, send an error message and go back to login
+        flash("Invalid Username or Password. Please try again.")
+        return redirect(url_for('login_page'))
 
-        if user:
-            session["user"] = username
-            return redirect("/dashboard")
-        else:
-            return render_template("login.html", error="Invalid username or password")
-
-    return render_template("login.html")
-
-# ================= SIGNUP =================
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    if request.method == "POST":
-        name = request.form.get("name")
-        username = request.form.get("username")
-        password = request.form.get("password")
-        confirm = request.form.get("confirm")
-        mobile = request.form.get("mobile")
-        email = request.form.get("email")
-
-        if not all([name, username, password, confirm]):
-            return render_template("signup.html", error="All fields are required")
-
-        if password != confirm:
-            return render_template("signup.html", error="Passwords do not match")
-
-        try:
-            conn = get_db()
-            cur = conn.cursor()
-            cur.execute(
-                "INSERT INTO students (name, username, password, mobile, email) VALUES (?,?,?,?,?)",
-                (name, username, password, mobile, email)
-            )
-            conn.commit()
-            conn.close()
-            return render_template(
-                "signup.html",
-                success="Account created successfully! You can login now."
-            )
-        except sqlite3.IntegrityError:
-            return render_template("signup.html", error="Username already exists")
-
-    return render_template("signup.html")
-
-# ================= DASHBOARD =================
-@app.route("/dashboard")
-def dashboard():
-    if "user" not in session:
-        return redirect("/")
-    return render_template("dashboard.html")
-
-# ================= SSC EXAM =================
-@app.route("/ssc-exam")
-def ssc_exam():
-    if "user" not in session:
-        return redirect("/")
-    return render_template("ssc_exam.html")
-
-# ================= LOGOUT =================
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect("/")
-
-# ================= RUN =================
-if __name__ == "__main__":
+if __name__ == '__main__':
+    # Run the app locally for testing
     app.run(debug=True)
