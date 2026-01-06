@@ -5,9 +5,10 @@
 <title>Abhyas App | Sign In</title>
 
 <style>
+/* ===== PAGE BACKGROUND ===== */
 body{
     font-family: Arial, sans-serif;
-    background:#f5f6fa;
+    background: linear-gradient(135deg, #0a58ca, #3b82f6);
     display:flex;
     justify-content:center;
     align-items:center;
@@ -15,80 +16,99 @@ body{
     margin:0;
 }
 
+/* ===== DIALOG BOX ===== */
 .card{
     background:#ffffff;
-    width:90%;
-    max-width:360px;
-    padding:25px;
-    border-radius:14px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.12);
+    width:92%;
+    max-width:380px;
+    padding:28px;
+    border-radius:16px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.25);
     text-align:center;
+    animation: popIn 0.5s ease;
+}
+
+/* dialog popup animation */
+@keyframes popIn{
+    from{
+        transform:scale(0.9);
+        opacity:0;
+    }
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
 }
 
 h2{
-    margin-bottom:6px;
-    color:#2d3436;
+    margin-bottom:4px;
+    color:#1f2933;
     font-size:22px;
 }
 
-/* TAGLINE */
+/* ===== TAGLINE ===== */
 .tagline{
     font-size:14px;
-    color:#0984e3;           /* BLUE COLOR */
-    margin-bottom:18px;
+    color:#2563eb;
+    margin-bottom:20px;
     animation: softBlink 2.8s infinite;
 }
 
-/* Smooth blinking animation */
+/* blinking animation */
 @keyframes softBlink{
-    0%   { opacity:1; }
-    50%  { opacity:0.3; }
-    100% { opacity:1; }
+    0%{opacity:1;}
+    50%{opacity:0.3;}
+    100%{opacity:1;}
 }
 
+/* ===== INPUTS ===== */
 input{
     width:100%;
     padding:12px;
     margin:8px 0;
-    border-radius:8px;
-    border:1px solid #dcdde1;
+    border-radius:10px;
+    border:1px solid #d1d5db;
     font-size:14px;
 }
 
 input:focus{
     outline:none;
-    border-color:#0984e3;
+    border-color:#2563eb;
+    box-shadow:0 0 0 2px rgba(37,99,235,0.2);
 }
 
+/* ===== BUTTON ===== */
 button{
     width:100%;
     padding:12px;
-    margin-top:12px;
-    background:#0984e3;
+    margin-top:16px;
+    background:#2563eb;
     color:#fff;
     border:none;
-    border-radius:8px;
+    border-radius:10px;
     font-size:15px;
     cursor:pointer;
 }
 
 button:hover{
-    background:#0866c6;
+    background:#1d4ed8;
 }
 
+/* ===== ERROR ===== */
 .error{
-    color:#e74c3c;
+    color:#dc2626;
     font-size:13px;
-    margin-top:8px;
+    margin-top:10px;
 }
 
+/* ===== LINK ===== */
 .signup-link{
-    margin-top:14px;
+    margin-top:16px;
     font-size:13px;
 }
 
 .signup-link a{
-    color:#0984e3;
+    color:#2563eb;
     text-decoration:none;
     font-weight:bold;
 }
@@ -113,7 +133,7 @@ button:hover{
     {% endif %}
 
     <div class="signup-link">
-        New user? <a href="/signup">Create account</a>
+        New here? <a href="/signup">Create account</a>
     </div>
 </div>
 
