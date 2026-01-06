@@ -1,45 +1,43 @@
 from flask import Flask, render_template, request, redirect, session
 
 app = Flask(__name__)
-app.secret_key = "abhyas_demo_secret_key"
+app.secret_key = "abhyas_secret_key_123"
 
-# ======================
-# TEMP USER STORE (MEMORY)
-# ======================
-# NOTE: Server restart → data reset (demo phase)
+# ---------------- TEMP USER STORE ----------------
+# Server restart पर reset होगा (demo phase)
 USERS = {
-    "abc": "abc1"   # demo user
+    "abc": "abc1",
+    "demo": "demo1"
 }
 
-# ======================
-# LOGIN
-# ======================
+# ---------------- LOGIN ----------------
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
 
         if username in USERS and USERS[username] == password:
             session["user"] = username
             return redirect("/dashboard")
         else:
-            return render_template("login.html", error="Invalid username or password")
+            return render_template(
+                "login.html",
+                error="Invalid username or password"
+            )
 
     return render_template("login.html")
 
 
-# ======================
-# SIGNUP
-# ======================
+# ---------------- SIGNUP ----------------
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        confirm = request.form.get("confirm")
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
+        confirm  = request.form.get("confirm", "").strip()
 
-        # DEBUG SAFETY (temporary)
+        # Field validation
         if not username or not password or not confirm:
             return render_template(
                 "signup.html",
@@ -52,38 +50,41 @@ def signup():
                 error="Passwords do not match"
             )
 
-        # demo in-memory store
+        if username in USERS:
+            return render_template(
+                "signup.html",
+                error="Username already exists"
+            )
+
+        # Store user (memory)
         USERS[username] = password
 
         return render_template(
             "signup.html",
-            success="Account created successfully. Login now."
+            success="Successfully signed up! You can login now."
         )
 
     return render_template("signup.html")
 
 
-# ======================
-# DASHBOARD
-# ======================
+# ---------------- DASHBOARD ----------------
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session:
         return redirect("/")
-    return render_template("student_dashboard.html", user=session["user"])
+    return render_template(
+        "student_dashboard.html",
+        user=session["user"]
+    )
 
 
-# ======================
-# LOGOUT
-# ======================
+# ---------------- LOGOUT ----------------
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
 
-# ======================
-# RUN
-# ======================
+# ---------------- RUN ----------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
