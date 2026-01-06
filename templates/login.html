@@ -21,17 +21,17 @@ body{
     background:#ffffff;
     width:92%;
     max-width:380px;
-    padding:28px;
-    border-radius:16px;
-    box-shadow:0 20px 40px rgba(0,0,0,0.25);
+    padding:30px 26px;
+    border-radius:22px; /* more corner cut */
+    box-shadow:0 25px 45px rgba(0,0,0,0.28);
     text-align:center;
-    animation: popIn 0.5s ease;
+    animation: popIn 0.45s ease;
 }
 
 /* dialog popup animation */
 @keyframes popIn{
     from{
-        transform:scale(0.9);
+        transform:scale(0.88);
         opacity:0;
     }
     to{
@@ -41,16 +41,23 @@ body{
 }
 
 h2{
-    margin-bottom:4px;
+    margin:0;
     color:#1f2933;
     font-size:22px;
+}
+
+.subtitle{
+    font-size:13px;
+    color:#6b7280;
+    margin-top:4px;
+    margin-bottom:10px;
 }
 
 /* ===== TAGLINE ===== */
 .tagline{
     font-size:14px;
     color:#2563eb;
-    margin-bottom:20px;
+    margin-bottom:22px;
     animation: softBlink 2.8s infinite;
 }
 
@@ -64,9 +71,9 @@ h2{
 /* ===== INPUTS ===== */
 input{
     width:100%;
-    padding:12px;
+    padding:13px;
     margin:8px 0;
-    border-radius:10px;
+    border-radius:12px;
     border:1px solid #d1d5db;
     font-size:14px;
 }
@@ -80,12 +87,12 @@ input:focus{
 /* ===== BUTTON ===== */
 button{
     width:100%;
-    padding:12px;
-    margin-top:16px;
+    padding:13px;
+    margin-top:18px;
     background:#2563eb;
     color:#fff;
     border:none;
-    border-radius:10px;
+    border-radius:14px;
     font-size:15px;
     cursor:pointer;
 }
@@ -101,7 +108,7 @@ button:hover{
     margin-top:10px;
 }
 
-/* ===== LINK ===== */
+/* ===== LINKS ===== */
 .signup-link{
     margin-top:16px;
     font-size:13px;
@@ -112,6 +119,13 @@ button:hover{
     text-decoration:none;
     font-weight:bold;
 }
+
+/* ===== POWERED BY ===== */
+.powered{
+    margin-top:18px;
+    font-size:11px;
+    color:#9ca3af;
+}
 </style>
 </head>
 
@@ -119,6 +133,7 @@ button:hover{
 
 <div class="card">
     <h2>Welcome to Abhyas App</h2>
+    <div class="subtitle">Login to your account</div>
     <div class="tagline">Practice smart, perform better</div>
 
     <form method="post">
@@ -134,6 +149,10 @@ button:hover{
 
     <div class="signup-link">
         New here? <a href="/signup">Create account</a>
+    </div>
+
+    <div class="powered">
+        Powered by Nehra Infotech Pvt. Ltd.
     </div>
 </div>
 
