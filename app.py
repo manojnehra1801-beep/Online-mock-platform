@@ -39,17 +39,26 @@ def signup():
         password = request.form.get("password")
         confirm = request.form.get("confirm")
 
-        if not username or not password:
-            return render_template("signup.html", error="All fields required")
+        # DEBUG SAFETY (temporary)
+        if not username or not password or not confirm:
+            return render_template(
+                "signup.html",
+                error="All fields are required"
+            )
 
         if password != confirm:
-            return render_template("signup.html", error="Passwords do not match")
+            return render_template(
+                "signup.html",
+                error="Passwords do not match"
+            )
 
-        if username in USERS:
-            return render_template("signup.html", error="Username already exists")
-
+        # demo in-memory store
         USERS[username] = password
-        return render_template("signup.html", success=True)
+
+        return render_template(
+            "signup.html",
+            success="Account created successfully. Login now."
+        )
 
     return render_template("signup.html")
 
