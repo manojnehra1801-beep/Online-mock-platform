@@ -3,8 +3,7 @@ from flask import Flask, render_template, request, redirect, session
 app = Flask(__name__)
 app.secret_key = "abhyas_secret_key_123"
 
-# ---------------- DEMO IN-MEMORY USER STORE ----------------
-# (stable for testing, no DB lock issues)
+# ---------------- DEMO USER STORE ----------------
 users = {
     "abc": {
         "name": "Demo Student",
@@ -47,7 +46,6 @@ def signup():
         if username in users:
             return render_template("signup.html", error="Username already exists")
 
-        # Save user
         users[username] = {
             "name": name,
             "password": password
@@ -78,6 +76,14 @@ def ssc_dashboard():
     if "username" not in session:
         return redirect("/")
     return render_template("ssc_dashboard.html")
+
+
+# ---------------- SSC CGL PAPERS LIST ----------------
+@app.route("/ssc/cgl")
+def ssc_cgl_list():
+    if "username" not in session:
+        return redirect("/")
+    return render_template("ssc_cgl_list.html")
 
 
 # ---------------- LOGOUT ----------------
