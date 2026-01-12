@@ -1,35 +1,35 @@
 from flask import Flask, render_template, request, redirect, session
-import sqlite3
 
 app = Flask(__name__)
-app.secret_key = "testkey"
+app.secret_key = "abhyas_secret_key_123"
 
-def get_db():
-    return sqlite3.connect("database.db")
+# ---------------- DEMO IN-MEMORY USER STORE ----------------
+# (stable for testing, no DB lock issues)
+users = {
+    "abc": {
+        "name": "Demo Student",
+        "password": "abc1"
+    }
+}
 
+# ---------------- LOGIN ----------------
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
 
-        conn = get_db()
-        cur = conn.cursor()
-        cur.execute(
-            "SELECT * FROM students WHERE username=? AND password=?",
-            (username, password)
-        )
-        user = cur.fetchone()
-        conn.close()
-
-        if user:
-            session["user"] = username
+        if username in users and users[username]["password"] == password:
+            session["username"] = username
+            session["name"] = users[username]["name"]
             return redirect("/dashboard")
         else:
-            return render_template("login.html", error="Wrong username or password")
+            return render_template("login.html", error="Invalid username or password")
 
     return render_template("login.html")
 
+
+# ---------------- SIGNUP ----------------
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
@@ -37,47 +37,56 @@ def signup():
         username = request.form.get("username")
         password = request.form.get("password")
         confirm = request.form.get("confirm")
-        mobile = request.form.get("mobile")
-        email = request.form.get("email")
 
         if not name or not username or not password or not confirm:
-            return render_template("signup.html", error="All fields are mandatory")
+            return render_template("signup.html", error="All fields are required")
 
         if password != confirm:
             return render_template("signup.html", error="Passwords do not match")
 
-        try:
-            conn = get_db()
-            cur = conn.cursor()
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS students (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT,
-                    username TEXT UNIQUE,
-                    password TEXT,
-                    mobile TEXT,
-                    email TEXT
-                )
-            """)
-            cur.execute(
-                "INSERT INTO students (name, username, password, mobile, email) VALUES (?,?,?,?,?)",
-                (name, username, password, mobile, email)
-            )
-            conn.commit()
-            conn.close()
-
-            return render_template("signup.html", success="Signup successful!")
-
-        except sqlite3.IntegrityError:
+        if username in users:
             return render_template("signup.html", error="Username already exists")
+
+        # Save user
+        users[username] = {
+            "name": name,
+            "password": password
+        }
+
+        return render_template(
+            "signup.html",
+            success="Account created successfully! You can login now."
+        )
 
     return render_template("signup.html")
 
+
+# ---------------- STUDENT DASHBOARD ----------------
 @app.route("/dashboard")
 def dashboard():
-    if "user" not in session:
+    if "username" not in session:
         return redirect("/")
-    return "Dashboard opened successfully"
+    return render_template(
+        "student_dashboard.html",
+        name=session.get("name")
+    )
 
+
+# ---------------- SSC DASHBOARD ----------------
+@app.route("/ssc")
+def ssc_dashboard():
+    if "username" not in session:
+        return redirect("/")
+    return render_template("ssc_dashboard.html")
+
+
+# ---------------- LOGOUT ----------------
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
+
+# ---------------- RUN ----------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000, debug=True)
