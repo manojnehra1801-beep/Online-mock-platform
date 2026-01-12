@@ -1,13 +1,12 @@
-from flask import Flask, render_template, request, redirect, session, url_for
+from flask import Flask, render_template, request, redirect, session
 import sqlite3
-import os
 
 app = Flask(__name__)
-app.secret_key = "abhyas_secret_key"
+app.secret_key = "abhyas_secret_key_2026"
 
-# ================= DATABASE =================
 DB_NAME = "database.db"
 
+# ---------------- DB ----------------
 def get_db():
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
@@ -19,9 +18,9 @@ def init_db():
     cur.execute("""
         CREATE TABLE IF NOT EXISTS students (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL,
+            name TEXT,
+            username TEXT UNIQUE,
+            password TEXT,
             mobile TEXT,
             email TEXT
         )
@@ -31,12 +30,12 @@ def init_db():
 
 init_db()
 
-# ================= LOGIN =================
+# ---------------- LOGIN ----------------
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
 
         conn = get_db()
         cur = conn.cursor()
@@ -51,26 +50,36 @@ def login():
             session["user"] = username
             return redirect("/dashboard")
         else:
-            return render_template("login.html", error="Invalid username or password")
+            return render_template(
+                "login.html",
+                error="Invalid username or password"
+            )
 
     return render_template("login.html")
 
-# ================= SIGNUP =================
+# ---------------- SIGNUP ----------------
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        name = request.form.get("name")
-        username = request.form.get("username")
-        password = request.form.get("password")
-        confirm = request.form.get("confirm")
-        mobile = request.form.get("mobile")
-        email = request.form.get("email")
+        name = request.form.get("name", "").strip()
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
+        confirm = request.form.get("confirm", "").strip()
+        mobile = request.form.get("mobile", "").strip()
+        email = request.form.get("email", "").strip()
 
-        if not all([name, username, password, confirm]):
-            return render_template("signup.html", error="All fields are required")
+        # REQUIRED CHECK (FIXED)
+        if not name or not username or not password or not confirm:
+            return render_template(
+                "signup.html",
+                error="All required fields must be filled"
+            )
 
         if password != confirm:
-            return render_template("signup.html", error="Passwords do not match")
+            return render_template(
+                "signup.html",
+                error="Passwords do not match"
+            )
 
         try:
             conn = get_db()
@@ -81,35 +90,33 @@ def signup():
             )
             conn.commit()
             conn.close()
+
             return render_template(
                 "signup.html",
-                success="Account created successfully! You can login now."
+                success="Signup successful! You can login now."
             )
+
         except sqlite3.IntegrityError:
-            return render_template("signup.html", error="Username already exists")
+            return render_template(
+                "signup.html",
+                error="Username already exists"
+            )
 
     return render_template("signup.html")
 
-# ================= DASHBOARD =================
+# ---------------- DASHBOARD ----------------
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session:
         return redirect("/")
     return render_template("dashboard.html")
 
-# ================= SSC EXAM =================
-@app.route("/ssc-exam")
-def ssc_exam():
-    if "user" not in session:
-        return redirect("/")
-    return render_template("ssc_exam.html")
-
-# ================= LOGOUT =================
+# ---------------- LOGOUT ----------------
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
-# ================= RUN =================
+# ---------------- RUN ----------------
 if __name__ == "__main__":
     app.run(debug=True)
