@@ -1,164 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Abhyas App | Sign Up</title>
+<title>Abhyas App | Signup</title>
 
 <style>
-/* ===== PAGE BACKGROUND ===== */
 body{
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #0a58ca, #3b82f6);
+    margin:0;
+    font-family:Segoe UI, sans-serif;
+    background:linear-gradient(180deg,#0f5fe0,#1c7cff);
+    min-height:100vh;
+}
+.page{
     display:flex;
     justify-content:center;
     align-items:center;
-    height:100vh;
-    margin:0;
+    min-height:100vh;
+    padding:20px;
 }
-
-/* ===== DIALOG BOX ===== */
 .card{
-    background:#ffffff;
-    width:92%;
-    max-width:400px;
-    padding:30px 26px;
-    border-radius:22px;
-    box-shadow:0 25px 45px rgba(0,0,0,0.28);
+    background:#fff;
+    width:100%;
+    max-width:420px;
+    padding:28px 22px 30px;
+    border-radius:26px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.25);
     text-align:center;
-    animation: popIn 0.45s ease;
 }
-
-/* popup animation */
-@keyframes popIn{
-    from{
-        transform:scale(0.88);
-        opacity:0;
-    }
-    to{
-        transform:scale(1);
-        opacity:1;
-    }
-}
-
-h2{
-    margin:0;
-    color:#1f2933;
+.title{
     font-size:22px;
+    font-weight:700;
+    margin:0;
 }
-
 .subtitle{
-    font-size:13px;
-    color:#6b7280;
-    margin-top:4px;
-    margin-bottom:18px;
+    margin:6px 0 20px;
+    color:#2b6ef5;
+    font-size:14px;
 }
-
-/* ===== INPUTS ===== */
+.signup-text{
+    text-align:left;
+    font-weight:600;
+    margin-bottom:10px;
+}
 input{
     width:100%;
-    padding:13px;
-    margin:7px 0;
-    border-radius:12px;
-    border:1px solid #d1d5db;
-    font-size:14px;
+    padding:14px;
+    margin-bottom:14px;
+    border-radius:14px;
+    border:1px solid #ddd;
+    font-size:15px;
 }
-
-input:focus{
-    outline:none;
-    border-color:#2563eb;
-    box-shadow:0 0 0 2px rgba(37,99,235,0.2);
-}
-
-/* ===== BUTTON ===== */
 button{
     width:100%;
-    padding:13px;
-    margin-top:18px;
-    background:#00b894;
-    color:#fff;
+    padding:14px;
     border:none;
-    border-radius:14px;
-    font-size:15px;
-    cursor:pointer;
+    border-radius:16px;
+    background:#2b6ef5;
+    color:#fff;
+    font-size:16px;
+    font-weight:600;
 }
-
-button:hover{
-    background:#009f7f;
-}
-
-/* ===== ERROR / SUCCESS ===== */
 .error{
-    color:#dc2626;
-    font-size:13px;
-    margin-top:10px;
-}
-
-.success{
-    color:#16a34a;
+    color:red;
     font-size:14px;
-    margin-top:10px;
+    margin-bottom:10px;
 }
-
-/* ===== LINKS ===== */
-.login-link{
-    margin-top:16px;
-    font-size:13px;
+.success{
+    color:green;
+    font-size:14px;
+    margin-bottom:10px;
 }
-
-.login-link a{
-    color:#2563eb;
-    text-decoration:none;
-    font-weight:bold;
-}
-
-/* ===== POWERED BY ===== */
 .powered{
     margin-top:18px;
-    font-size:11px;
-    color:#9ca3af;
+    font-size:12px;
+    color:#aaa;
 }
 </style>
 </head>
 
 <body>
-
+<div class="page">
 <div class="card">
-    <h2>Create Your Account</h2>
-    <div class="subtitle">Join Abhyas App & start preparing smart</div>
 
-    <form method="post">
-        <input type="text" name="fullname" placeholder="Full Name" required>
-        <input type="text" name="username" placeholder="Username (unique)" required>
-        <input type="email" name="email" placeholder="Email Address" required>
-        <input type="tel" name="mobile" placeholder="Mobile Number" required>
+<h1 class="title">Create Account</h1>
+<p class="subtitle">Start your preparation today</p>
 
-        <input type="password" name="password" placeholder="Password" required>
-        <input type="password" name="confirm" placeholder="Confirm Password" required>
+<p class="signup-text">Fill your details</p>
 
-        <button type="submit">Create Account</button>
-    </form>
+{% if error %}
+<div class="error">{{ error }}</div>
+{% endif %}
 
-    {% if error %}
-      <div class="error">{{ error }}</div>
-    {% endif %}
+{% if success %}
+<div class="success">{{ success }}</div>
+<a href="/">Login now</a>
+{% endif %}
 
-    {% if success %}
-      <div class="success">{{ success }}</div>
-      <div class="login-link">
-          <a href="/">Login now</a>
-      </div>
-    {% endif %}
+<form method="post">
+    <input type="text" name="name" placeholder="Student Name" required>
+    <input type="text" name="username" placeholder="Username (unique)" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <input type="password" name="confirm" placeholder="Confirm Password" required>
+    <input type="text" name="mobile" placeholder="Mobile Number">
+    <input type="email" name="email" placeholder="Email">
+    <button type="submit">Create Account</button>
+</form>
 
-    {% if not success %}
-    <div class="login-link">
-        Already have an account? <a href="/">Sign In</a>
-    </div>
-    {% endif %}
+<p class="powered">Powered by Nehra </p>
 
-    <div class="powered">
-        Powered by Nehra Infotech Pvt. Ltd.
-    </div>
 </div>
-
+</div>
 </body>
 </html>
