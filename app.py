@@ -2,40 +2,16 @@ from flask import Flask, render_template, request, redirect, session
 import sqlite3
 
 app = Flask(__name__)
-app.secret_key = "abhyas_secret_key_2026"
+app.secret_key = "testkey"
 
-DB_NAME = "database.db"
-
-# ---------------- DB ----------------
 def get_db():
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row
-    return conn
+    return sqlite3.connect("database.db")
 
-def init_db():
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS students (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            username TEXT UNIQUE,
-            password TEXT,
-            mobile TEXT,
-            email TEXT
-        )
-    """)
-    conn.commit()
-    conn.close()
-
-init_db()
-
-# ---------------- LOGIN ----------------
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "").strip()
+        username = request.form.get("username")
+        password = request.form.get("password")
 
         conn = get_db()
         cur = conn.cursor()
@@ -50,40 +26,39 @@ def login():
             session["user"] = username
             return redirect("/dashboard")
         else:
-            return render_template(
-                "login.html",
-                error="Invalid username or password"
-            )
+            return render_template("login.html", error="Wrong username or password")
 
     return render_template("login.html")
 
-# ---------------- SIGNUP ----------------
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        name = request.form.get("name", "").strip()
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "").strip()
-        confirm = request.form.get("confirm", "").strip()
-        mobile = request.form.get("mobile", "").strip()
-        email = request.form.get("email", "").strip()
+        name = request.form.get("name")
+        username = request.form.get("username")
+        password = request.form.get("password")
+        confirm = request.form.get("confirm")
+        mobile = request.form.get("mobile")
+        email = request.form.get("email")
 
-        # REQUIRED CHECK (FIXED)
         if not name or not username or not password or not confirm:
-            return render_template(
-                "signup.html",
-                error="All required fields must be filled"
-            )
+            return render_template("signup.html", error="All fields are mandatory")
 
         if password != confirm:
-            return render_template(
-                "signup.html",
-                error="Passwords do not match"
-            )
+            return render_template("signup.html", error="Passwords do not match")
 
         try:
             conn = get_db()
             cur = conn.cursor()
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS students (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT,
+                    username TEXT UNIQUE,
+                    password TEXT,
+                    mobile TEXT,
+                    email TEXT
+                )
+            """)
             cur.execute(
                 "INSERT INTO students (name, username, password, mobile, email) VALUES (?,?,?,?,?)",
                 (name, username, password, mobile, email)
@@ -91,32 +66,18 @@ def signup():
             conn.commit()
             conn.close()
 
-            return render_template(
-                "signup.html",
-                success="Signup successful! You can login now."
-            )
+            return render_template("signup.html", success="Signup successful!")
 
         except sqlite3.IntegrityError:
-            return render_template(
-                "signup.html",
-                error="Username already exists"
-            )
+            return render_template("signup.html", error="Username already exists")
 
     return render_template("signup.html")
 
-# ---------------- DASHBOARD ----------------
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session:
         return redirect("/")
-    return render_template("dashboard.html")
+    return "Dashboard opened successfully"
 
-# ---------------- LOGOUT ----------------
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect("/")
-
-# ---------------- RUN ----------------
 if __name__ == "__main__":
     app.run(debug=True)
