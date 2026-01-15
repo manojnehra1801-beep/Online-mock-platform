@@ -97,6 +97,23 @@ def ssc_cgl_mock_1():
     return render_template("ssc_cgl_mock_1_instructions.html")
 
 
+from flask import Flask, render_template
+
+app = Flask(__name__)
+app.secret_key = "abhyas_secret_key"
+
+# ---------------- SSC CGL MOCK 1 INSTRUCTIONS ----------------
+@app.route("/ssc/")
+def ssc_mock_1_instructions():
+    return render_template("ssc_cgl_mock_1_instructions.html")
+
+# ---------------- START TEST (THIS FIXES NOT FOUND) ----------------
+@app.route("/ssc/start")
+def ssc_mock_1_test():
+    return render_template("ssc_cgl_mock_1_test.html")
+
+
+
 # ================= PAYMENT PAGE =================
 @app.route("/payment")
 def payment():
