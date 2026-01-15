@@ -3,8 +3,7 @@ from flask import Flask, render_template, request, redirect, session
 app = Flask(__name__)
 app.secret_key = "abhyas_secret_key_safe"
 
-# ---------------- DEMO USER (TEMP) ----------------
-# This avoids DB errors completely
+# ---------------- TEMP USER STORE ----------------
 USERS = {
     "abc": {
         "name": "Demo Student",
@@ -38,7 +37,7 @@ def signup():
         confirm = request.form.get("confirm")
 
         if not name or not username or not password or not confirm:
-            return render_template("signup.html", error="All fields are mandatory")
+            return render_template("signup.html", error="All fields are required")
 
         if password != confirm:
             return render_template("signup.html", error="Passwords do not match")
@@ -75,12 +74,33 @@ def ssc_dashboard():
         return redirect("/")
     return render_template("ssc_dashboard.html")
 
-# ---------------- SSC CGL TEST LIST ----------------
+# ---------------- CGL TEST LIST ----------------
 @app.route("/ssc/cgl")
 def ssc_cgl_tests():
     if "username" not in session:
         return redirect("/")
     return render_template("ssc_cgl_tests.html")
+
+# ---------------- MOCK 1 INSTRUCTIONS ----------------
+@app.route("/ssc/cgl/mock/1")
+def mock_1_instructions():
+    if "username" not in session:
+        return redirect("/")
+    return render_template("ssc_cgl_mock_1_instructions.html")
+
+# ---------------- MOCK 1 START (PLACEHOLDER) ----------------
+@app.route("/ssc/cgl/mock/1/start")
+def mock_1_start():
+    if "username" not in session:
+        return redirect("/")
+    return "Mock Test 1 Exam Page (Coming Next)"
+
+# ---------------- PAYMENT PAGE ----------------
+@app.route("/payment")
+def payment_page():
+    if "username" not in session:
+        return redirect("/")
+    return render_template("payment.html")
 
 # ---------------- LOGOUT ----------------
 @app.route("/logout")
