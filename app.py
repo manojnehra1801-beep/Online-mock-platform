@@ -4,7 +4,6 @@ app = Flask(__name__)
 app.secret_key = "abhyas_secret_key_123"
 
 # ================= DEMO USERS (TEMP STORAGE) =================
-# NOTE: अभी DB नहीं है, इसलिए server restart पर reset होगा
 USERS = {
     "abc": {
         "name": "Demo Student",
@@ -97,24 +96,15 @@ def ssc_cgl_mock_1():
     return render_template("ssc_cgl_mock_1_instructions.html")
 
 
-from flask import Flask, render_template
-
-app = Flask(__name__)
-app.secret_key = "abhyas_secret_key"
-
-# ---------------- SSC CGL MOCK 1 INSTRUCTIONS ----------------
-@app.route("/ssc/")
-def ssc_mock_1_instructions():
-    return render_template("ssc_cgl_mock_1_instructions.html")
-
-# ---------------- START TEST (THIS FIXES NOT FOUND) ----------------
-@app.route("/ssc/start")
-def ssc_mock_1_test():
+# ================= START TEST (FIXED ROUTE) =================
+@app.route("/ssc/cgl/mock/1/start", methods=["POST"])
+def start_mock_1():
+    if "username" not in session:
+        return redirect("/")
     return render_template("ssc_cgl_mock_1_test.html")
 
 
-
-# ================= PAYMENT PAGE =================
+# ================= PAYMENT =================
 @app.route("/payment")
 def payment():
     if "username" not in session:
