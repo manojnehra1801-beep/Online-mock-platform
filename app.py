@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, redirect, session
 
 app = Flask(__name__)
-app.secret_key = "abhyas_secret_key"
+app.secret_key = "abhyas_secret_key_safe"
 
-# ---------------- TEMP USER STORE ----------------
-users = {
+# ---------------- DEMO USER (TEMP) ----------------
+# This avoids DB errors completely
+USERS = {
     "abc": {
         "name": "Demo Student",
         "password": "abc1"
@@ -18,9 +19,9 @@ def login():
         username = request.form.get("username")
         password = request.form.get("password")
 
-        if username in users and users[username]["password"] == password:
+        if username in USERS and USERS[username]["password"] == password:
             session["username"] = username
-            session["name"] = users[username]["name"]
+            session["name"] = USERS[username]["name"]
             return redirect("/dashboard")
         else:
             return render_template("login.html", error="Invalid username or password")
@@ -37,15 +38,15 @@ def signup():
         confirm = request.form.get("confirm")
 
         if not name or not username or not password or not confirm:
-            return render_template("signup.html", error="All fields are required")
+            return render_template("signup.html", error="All fields are mandatory")
 
         if password != confirm:
             return render_template("signup.html", error="Passwords do not match")
 
-        if username in users:
+        if username in USERS:
             return render_template("signup.html", error="Username already exists")
 
-        users[username] = {
+        USERS[username] = {
             "name": name,
             "password": password
         }
@@ -57,12 +58,15 @@ def signup():
 
     return render_template("signup.html")
 
-# ---------------- DASHBOARD ----------------
+# ---------------- STUDENT DASHBOARD ----------------
 @app.route("/dashboard")
 def dashboard():
     if "username" not in session:
         return redirect("/")
-    return render_template("student_dashboard.html", name=session.get("name"))
+    return render_template(
+        "student_dashboard.html",
+        name=session.get("name")
+    )
 
 # ---------------- SSC DASHBOARD ----------------
 @app.route("/ssc")
@@ -71,12 +75,12 @@ def ssc_dashboard():
         return redirect("/")
     return render_template("ssc_dashboard.html")
 
-# ---------------- CGL LIST ----------------
+# ---------------- SSC CGL TEST LIST ----------------
 @app.route("/ssc/cgl")
-def ssc_cgl():
+def ssc_cgl_tests():
     if "username" not in session:
         return redirect("/")
-    return render_template("ssc_cgl_list.html")
+    return render_template("ssc_cgl_tests.html")
 
 # ---------------- LOGOUT ----------------
 @app.route("/logout")
