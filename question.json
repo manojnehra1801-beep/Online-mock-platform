@@ -1,0 +1,42 @@
+[
+  {
+    "q": "Capital of India?",
+    "options": ["Mumbai", "New Delhi", "Kolkata", "Chennai"]
+  },
+  {
+    "q": "Largest planet in solar system?",
+    "options": ["Earth", "Mars", "Jupiter", "Venus"]
+  },
+  {
+    "q": "Taj Mahal is in?",
+    "options": ["Delhi", "Agra", "Jaipur", "Lucknow"]
+  },
+  {
+    "q": "2 + 2 × 2 = ?",
+    "options": ["6", "8", "4", "10"]
+  },
+  {
+    "q": "National animal of India?",
+    "options": ["Lion", "Tiger", "Elephant", "Horse"]
+  },
+  {
+    "q": "Water chemical formula?",
+    "options": ["H2O", "CO2", "O2", "NaCl"]
+  },
+  {
+    "q": "Fastest land animal?",
+    "options": ["Horse", "Tiger", "Cheetah", "Dog"]
+  },
+  {
+    "q": "Who wrote Ramayana?",
+    "options": ["Valmiki", "Tulsidas", "Kalidas", "Ved Vyasa"]
+  },
+  {
+    "q": "Sun rises in which direction?",
+    "options": ["West", "North", "East", "South"]
+  },
+  {
+    "q": "India got independence in?",
+    "options": ["1942", "1945", "1947", "1950"]
+  }
+]
