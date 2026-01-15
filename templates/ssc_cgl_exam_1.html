@@ -1,85 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SSC CGL Mock Test 1</title>
+<title>SSC CGL Exam</title>
 
 <style>
 body{
     margin:0;
-    font-family:Segoe UI, Arial, sans-serif;
+    font-family:Segoe UI, sans-serif;
     background:#f2f4f8;
 }
+
+/* header */
 .header{
-    background:#2d3436;
-    color:white;
-    padding:10px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    font-size:14px;
+    background:#2b6ef5;
+    color:#fff;
+    padding:14px;
+    text-align:center;
+    font-size:16px;
+    font-weight:600;
 }
-.timer{
-    color:#ff7675;
-    font-weight:bold;
-}
+
+/* layout */
 .container{
     padding:12px;
 }
-.question{
-    display:none;
-    background:white;
-    padding:15px;
-    border-radius:12px;
-    box-shadow:0 6px 18px rgba(0,0,0,0.1);
+
+.question-box{
+    background:#fff;
+    border-radius:14px;
+    padding:16px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
-.question.active{
-    display:block;
-}
-.options label{
-    display:block;
-    margin:8px 0;
-}
+
+/* palette */
 .palette{
     display:flex;
     flex-wrap:wrap;
-    gap:6px;
-    margin:12px 0;
+    margin-bottom:12px;
 }
-.palette button{
-    width:36px;
-    height:36px;
-    border:none;
+
+.pal-btn{
+    width:34px;
+    height:34px;
     border-radius:50%;
-    background:#dfe6e9;
-    font-weight:bold;
-}
-.controls{
-    margin-top:12px;
     display:flex;
-    justify-content:space-between;
+    align-items:center;
+    justify-content:center;
+    margin:4px;
+    font-size:13px;
+    font-weight:600;
+    color:#000;
 }
-.controls button{
-    padding:10px 16px;
+
+/* palette colors */
+.attempted{
+    background:#22c55e;      /* green */
+}
+
+.review{
+    background:#facc15;      /* yellow */
+}
+
+.unattempted{
+    background:#e5e7eb;      /* grey */
+}
+
+/* question */
+.qno{
+    font-weight:600;
+    margin-bottom:10px;
+}
+
+/* options */
+.option{
+    background:#f9fafb;
+    border:1px solid #d1d5db;
+    border-radius:12px;
+    padding:12px;
+    margin-bottom:10px;
+    font-size:14px;
+}
+
+.option input{
+    margin-right:8px;
+}
+
+/* buttons */
+.btns{
+    display:flex;
+    gap:10px;
+    margin-top:12px;
+}
+
+button{
+    flex:1;
+    padding:12px;
     border:none;
-    border-radius:20px;
-    font-weight:bold;
-    background:#6c5ce7;
-    color:white;
+    border-radius:12px;
+    font-size:14px;
+    font-weight:600;
 }
-.submit{
-    position:fixed;
-    bottom:15px;
-    right:15px;
+
+.next{
+    background:#2b6ef5;
+    color:#fff;
 }
-.submit button{
-    background:#e84393;
-    color:white;
-    padding:14px 18px;
-    border:none;
-    border-radius:30px;
-    font-size:16px;
+
+.review-btn{
+    background:#facc15;
 }
 </style>
 </head>
@@ -87,113 +117,62 @@ body{
 <body>
 
 <div class="header">
-    <div>SSC CGL Mock Test 1</div>
-    <div class="timer" id="time">20:00</div>
+    SSC CGL – Full Mock Test
 </div>
 
 <div class="container">
 
-    <!-- QUESTION 1 -->
-    <div class="question active">
-        <b>Q1. What is the capital of India?</b>
-        <div class="options">
-            <label><input type="radio" name="q1"> Mumbai</label>
-            <label><input type="radio" name="q1"> New Delhi</label>
-            <label><input type="radio" name="q1"> Kolkata</label>
-            <label><input type="radio" name="q1"> Chennai</label>
-        </div>
-    </div>
+<div class="question-box">
 
-    <!-- QUESTION 2 -->
-    <div class="question">
-        <b>Q2. 25 × 4 = ?</b>
-        <div class="options">
-            <label><input type="radio" name="q2"> 50</label>
-            <label><input type="radio" name="q2"> 75</label>
-            <label><input type="radio" name="q2"> 100</label>
-            <label><input type="radio" name="q2"> 125</label>
-        </div>
+<!-- PALETTE -->
+<div class="palette">
+{% for p in palette %}
+    <div class="pal-btn
+        {% if p.status == 'review' %}
+            review
+        {% elif p.status == 'attempted' %}
+            attempted
+        {% else %}
+            unattempted
+        {% endif %}
+    ">
+        {{ p.qno }}
     </div>
-
-    <!-- QUESTION 3 -->
-    <div class="question">
-        <b>Q3. Synonym of “Rapid”?</b>
-        <div class="options">
-            <label><input type="radio" name="q3"> Slow</label>
-            <label><input type="radio" name="q3"> Fast</label>
-            <label><input type="radio" name="q3"> Lazy</label>
-            <label><input type="radio" name="q3"> Weak</label>
-        </div>
-    </div>
-
-    <!-- QUESTION 4 -->
-    <div class="question">
-        <b>Q4. Who wrote the Indian Constitution?</b>
-        <div class="options">
-            <label><input type="radio" name="q4"> Mahatma Gandhi</label>
-            <label><input type="radio" name="q4"> Jawaharlal Nehru</label>
-            <label><input type="radio" name="q4"> B.R. Ambedkar</label>
-            <label><input type="radio" name="q4"> Rajendra Prasad</label>
-        </div>
-    </div>
-
-    <!-- QUESTION 5 -->
-    <div class="question">
-        <b>Q5. Series: 2, 4, 8, 16, ?</b>
-        <div class="options">
-            <label><input type="radio" name="q5"> 18</label>
-            <label><input type="radio" name="q5"> 24</label>
-            <label><input type="radio" name="q5"> 32</label>
-            <label><input type="radio" name="q5"> 64</label>
-        </div>
-    </div>
-
-    <!-- PALETTE -->
-    <div class="palette">
-        <button onclick="show(0)">1</button>
-        <button onclick="show(1)">2</button>
-        <button onclick="show(2)">3</button>
-        <button onclick="show(3)">4</button>
-        <button onclick="show(4)">5</button>
-    </div>
-
-    <div class="controls">
-        <button onclick="prev()">Previous</button>
-        <button onclick="next()">Next</button>
-    </div>
-
+{% endfor %}
 </div>
 
-<div class="submit">
-    <button>Submit Test</button>
+<!-- QUESTION -->
+<div class="qno">
+    Question {{ qno }} / {{ total }}
 </div>
 
-<script>
-let current = 0;
-const questions = document.querySelectorAll(".question");
+<form method="post">
 
-function show(i){
-    questions[current].classList.remove("active");
-    current = i;
-    questions[current].classList.add("active");
-}
-function next(){
-    if(current < questions.length-1) show(current+1);
-}
-function prev(){
-    if(current > 0) show(current-1);
-}
+<p><b>{{ question }}</b></p>
 
-// TIMER
-let sec = 1200;
-setInterval(()=>{
-    sec--;
-    let m = Math.floor(sec/60);
-    let s = sec%60;
-    document.getElementById("time").innerText =
-        m+":"+(s<10?"0"+s:s);
-},1000);
-</script>
+{% for opt in options %}
+<div class="option">
+    <label>
+        <input type="radio" name="ans" value="{{ loop.index0 }}">
+        {{ opt }}
+    </label>
+</div>
+{% endfor %}
+
+<div class="btns">
+    <button class="review-btn" name="mark_review">
+        Mark for Review
+    </button>
+
+    <button class="next">
+        Save & Next
+    </button>
+</div>
+
+</form>
+
+</div>
+</div>
 
 </body>
 </html>
