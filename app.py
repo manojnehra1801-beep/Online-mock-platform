@@ -1,95 +1,134 @@
-from flask import Flask, render_template, request, redirect, session
-import json, random
+from flask import Flask, render_template, request, redirect, session, url_for
 
 app = Flask(__name__)
-app.secret_key = "ssc_mock_secret"
+app.secret_key = "abhyas_secret_key_123"
 
-TOTAL_QUESTIONS = 10
+# ================= TEMP USERS =================
+USERS = {
+    "abc": {
+        "name": "Demo Student",
+        "password": "abc1"
+    }
+}
 
-# ---------- LOAD QUESTIONS ----------
-with open("questions.json", "r", encoding="utf-8") as f:
-    QUESTION_BANK = json.load(f)
-
-# ---------- LOGIN ----------
+# ================= LOGIN =================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        session.clear()
+        username = request.form.get("username")
+        password = request.form.get("password")
 
-        # random 10 questions
-        session["questions"] = random.sample(QUESTION_BANK, TOTAL_QUESTIONS)
-        session["q"] = 0
-        session["answers"] = {}
-        session["review"] = set()
+        if username in USERS and USERS[username]["password"] == password:
+            session.clear()
+            session["username"] = username
+            session["name"] = USERS[username]["name"]
+            return redirect(url_for("dashboard"))
 
-        return redirect("/exam")
+        return render_template("login.html", error="Wrong username or password")
 
     return render_template("login.html")
 
 
-# ---------- EXAM ----------
-@app.route("/exam", methods=["GET", "POST"])
-def exam():
-    if "questions" not in session:
+# ================= SIGNUP =================
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        name = request.form.get("name")
+        username = request.form.get("username")
+        password = request.form.get("password")
+        confirm = request.form.get("confirm")
+
+        if not all([name, username, password, confirm]):
+            return render_template("signup.html", error="All fields are mandatory")
+
+        if password != confirm:
+            return render_template("signup.html", error="Passwords do not match")
+
+        if username in USERS:
+            return render_template("signup.html", error="Username already exists")
+
+        USERS[username] = {"name": name, "password": password}
+        return render_template("signup.html", success="Signup successful! Please login.")
+
+    return render_template("signup.html")
+
+
+# ================= DASHBOARD =================
+@app.route("/dashboard")
+def dashboard():
+    if "username" not in session:
+        return redirect("/")
+    return render_template("student_dashboard.html", name=session["name"])
+
+
+# ================= SSC DASHBOARD =================
+@app.route("/ssc")
+def ssc_dashboard():
+    if "username" not in session:
+        return redirect("/")
+    return render_template("ssc_dashboard.html")
+
+
+# ================= SSC CGL =================
+@app.route("/ssc/cgl")
+def ssc_cgl():
+    if "username" not in session:
+        return redirect("/")
+    return render_template("ssc_cgl_tests.html")
+
+
+# ================= FULL MOCK LIST =================
+@app.route("/ssc/cgl/full-mocks")
+def ssc_cgl_full_mocks():
+    if "username" not in session:
+        return redirect("/")
+    return render_template("ssc_cgl_full_mocks.html")
+
+
+# ================= MOCK 1 INSTRUCTIONS (GET ONLY) =================
+@app.route("/ssc/cgl/mock/1", methods=["GET"])
+def mock_1_instructions():
+    if "username" not in session:
         return redirect("/")
 
-    q = session["q"]
-    questions = session["questions"]
+    # prepare test session
+    session["mock_id"] = 1
+    session["started"] = False
 
-    # POST → save answer / review / next
-    if request.method == "POST":
-
-        if "ans" in request.form:
-            session["answers"][str(q)] = request.form["ans"]
-
-        if "mark_review" in request.form:
-            session["review"].add(str(q))
-
-        if q == TOTAL_QUESTIONS - 1:
-            return redirect("/result")
-        else:
-            session["q"] += 1
-            return redirect("/exam")
-
-    # ---------- PALETTE ----------
-    palette = []
-    for i in range(TOTAL_QUESTIONS):
-        if str(i) in session["review"]:
-            status = "review"
-        elif str(i) in session["answers"]:
-            status = "attempted"
-        else:
-            status = "unattempted"
-
-        palette.append({"qno": i + 1, "status": status})
-
-    current = questions[q]
-
-    return render_template(
-        "ssc_cgl_exam_1.html",
-        question=current["q"],
-        options=current["options"],
-        qno=q + 1,
-        total=TOTAL_QUESTIONS,
-        palette=palette
-    )
+    return render_template("ssc_cgl_mock_1_instructions.html")
 
 
-# ---------- RESULT ----------
-@app.route("/result")
-def result():
-    attempted = len(session["answers"])
-    reviewed = len(session["review"])
-    unattempted = TOTAL_QUESTIONS - attempted
+# ================= START MOCK 1 (POST ONLY) =================
+@app.route("/ssc/cgl/mock/1/start", methods=["POST"])
+def start_mock_1():
+    if "username" not in session:
+        return redirect("/")
 
-    return f"""
-    <h2>Result</h2>
-    <p>Attempted: {attempted}</p>
-    <p>Marked for Review: {reviewed}</p>
-    <p>Unattempted: {unattempted}</p>
-    <a href="/">Restart</a>
-    """
+    if session.get("mock_id") != 1:
+        return redirect("/ssc")
+
+    session["started"] = True
+    session["q_index"] = 0
+    session["answers"] = {}
+
+    return render_template("ssc_cgl_mock_1_test.html")
 
 
+# ================= PAYMENT =================
+@app.route("/payment")
+def payment():
+    if "username" not in session:
+        return redirect("/")
+    return render_template("payment.html")
+
+
+# ================= LOGOUT =================
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
+
+# ================= RUN =================
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000, debug=True)
