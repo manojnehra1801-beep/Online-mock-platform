@@ -123,7 +123,7 @@ def start_mock_1():
     session["q_index"] = 0
     session["answers"] = {}
 
-    return render_template("ssc_cgl_mock_1.html")
+    return render_template("ssc_cgl_exam_1.html")
 
 
 # ================= PAYMENT =================
