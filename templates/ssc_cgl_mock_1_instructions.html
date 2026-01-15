@@ -52,13 +52,14 @@ li{
 }
 
 button{
-    padding:12px 18px;
+    padding:14px 22px;
     border:none;
     border-radius:12px;
     background:#2b6ef5;
     color:#fff;
-    font-size:15px;
+    font-size:16px;
     font-weight:600;
+    width:100%;
 }
 </style>
 </head>
@@ -85,10 +86,11 @@ button{
     <li>Do not refresh or close the browser during exam</li>
 </ul>
 
+<!-- ✅ CORRECT WAY: POST FORM -->
 <div class="footer">
-    <a href="/ssc/cgl/mock/1/start">
-        <button>I Agree & Start Test</button>
-    </a>
+    <form action="/ssc/cgl/mock/1/start" method="post">
+        <button type="submit">I Agree & Start Test</button>
+    </form>
 </div>
 
 </div>
