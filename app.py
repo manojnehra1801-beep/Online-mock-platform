@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect, session
 
 app = Flask(__name__)
-app.secret_key = "abhyas_secret_key_safe"
+app.secret_key = "abhyas_secret_key_123"
 
-# ---------------- TEMP USER STORE ----------------
+# ================= DEMO USERS (TEMP STORAGE) =================
+# NOTE: अभी DB नहीं है, इसलिए server restart पर reset होगा
 USERS = {
     "abc": {
         "name": "Demo Student",
@@ -11,7 +12,7 @@ USERS = {
     }
 }
 
-# ---------------- LOGIN ----------------
+# ================= LOGIN =================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -23,11 +24,12 @@ def login():
             session["name"] = USERS[username]["name"]
             return redirect("/dashboard")
         else:
-            return render_template("login.html", error="Invalid username or password")
+            return render_template("login.html", error="Wrong username or password")
 
     return render_template("login.html")
 
-# ---------------- SIGNUP ----------------
+
+# ================= SIGNUP =================
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
@@ -37,7 +39,7 @@ def signup():
         confirm = request.form.get("confirm")
 
         if not name or not username or not password or not confirm:
-            return render_template("signup.html", error="All fields are required")
+            return render_template("signup.html", error="All fields are mandatory")
 
         if password != confirm:
             return render_template("signup.html", error="Passwords do not match")
@@ -50,64 +52,66 @@ def signup():
             "password": password
         }
 
-        return render_template(
-            "signup.html",
-            success="Signup successful! You can login now."
-        )
+        return render_template("signup.html", success="Signup successful! Please login.")
 
     return render_template("signup.html")
 
-# ---------------- STUDENT DASHBOARD ----------------
+
+# ================= DASHBOARD =================
 @app.route("/dashboard")
 def dashboard():
     if "username" not in session:
         return redirect("/")
-    return render_template(
-        "student_dashboard.html",
-        name=session.get("name")
-    )
+    return render_template("student_dashboard.html")
 
-# ---------------- SSC DASHBOARD ----------------
+
+# ================= SSC DASHBOARD =================
 @app.route("/ssc")
 def ssc_dashboard():
     if "username" not in session:
         return redirect("/")
     return render_template("ssc_dashboard.html")
 
-# ---------------- CGL TEST LIST ----------------
+
+# ================= SSC CGL =================
 @app.route("/ssc/cgl")
-def ssc_cgl_tests():
+def ssc_cgl():
     if "username" not in session:
         return redirect("/")
     return render_template("ssc_cgl_tests.html")
 
-# ---------------- MOCK 1 INSTRUCTIONS ----------------
+
+# ================= SSC CGL FULL MOCK LIST =================
+@app.route("/ssc/cgl/full-mocks")
+def ssc_cgl_full_mocks():
+    if "username" not in session:
+        return redirect("/")
+    return render_template("ssc_cgl_full_mocks.html")
+
+
+# ================= MOCK 1 INSTRUCTIONS =================
 @app.route("/ssc/cgl/mock/1")
-def mock_1_instructions():
+def ssc_cgl_mock_1():
     if "username" not in session:
         return redirect("/")
     return render_template("ssc_cgl_mock_1_instructions.html")
 
-# ---------------- MOCK 1 START (PLACEHOLDER) ----------------
-@app.route("/ssc/cgl/mock/1/start")
-def mock_1_start():
-    if "username" not in session:
-        return redirect("/")
-    return "Mock Test 1 Exam Page (Coming Next)"
 
-# ---------------- PAYMENT PAGE ----------------
+# ================= PAYMENT PAGE =================
 @app.route("/payment")
-def payment_page():
+def payment():
     if "username" not in session:
         return redirect("/")
     return render_template("payment.html")
 
-# ---------------- LOGOUT ----------------
+
+# ================= LOGOUT =================
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
-# ---------------- RUN ----------------
+
+# ================= RUN =================
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000)
