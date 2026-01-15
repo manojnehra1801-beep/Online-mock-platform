@@ -1,27 +1,85 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>SSC CGL Mock Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSC CGL Mock Test 1</title>
 
 <style>
-body{font-family:Arial;margin:0;background:#f4f6fb}
+body{
+    margin:0;
+    font-family:Segoe UI, Arial, sans-serif;
+    background:#f2f4f8;
+}
 .header{
-    display:flex;justify-content:space-between;
-    padding:10px;background:#1f2937;color:#fff;
+    background:#2d3436;
+    color:white;
+    padding:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:14px;
 }
-.timer{color:#facc15;font-weight:bold}
-.qbox{display:none;padding:15px}
-.options label{display:block;margin:8px 0}
+.timer{
+    color:#ff7675;
+    font-weight:bold;
+}
+.container{
+    padding:12px;
+}
+.question{
+    display:none;
+    background:white;
+    padding:15px;
+    border-radius:12px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.1);
+}
+.question.active{
+    display:block;
+}
+.options label{
+    display:block;
+    margin:8px 0;
+}
+.palette{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin:12px 0;
+}
+.palette button{
+    width:36px;
+    height:36px;
+    border:none;
+    border-radius:50%;
+    background:#dfe6e9;
+    font-weight:bold;
+}
 .controls{
-    position:fixed;bottom:10px;left:0;right:0;
-    display:flex;justify-content:space-around;
+    margin-top:12px;
+    display:flex;
+    justify-content:space-between;
 }
-button{padding:10px 14px;font-size:14px}
+.controls button{
+    padding:10px 16px;
+    border:none;
+    border-radius:20px;
+    font-weight:bold;
+    background:#6c5ce7;
+    color:white;
+}
 .submit{
-    position:fixed;right:15px;bottom:70px;
-    background:#dc2626;color:#fff;border:none;
+    position:fixed;
+    bottom:15px;
+    right:15px;
+}
+.submit button{
+    background:#e84393;
+    color:white;
+    padding:14px 18px;
+    border:none;
+    border-radius:30px;
+    font-size:16px;
 }
 </style>
 </head>
@@ -29,102 +87,112 @@ button{padding:10px 14px;font-size:14px}
 <body>
 
 <div class="header">
-    <div>SSC CGL Mock-1</div>
-    <div class="timer" id="timer"></div>
+    <div>SSC CGL Mock Test 1</div>
+    <div class="timer" id="time">20:00</div>
 </div>
 
-<div id="questions"></div>
+<div class="container">
 
-<div class="controls">
-    <button onclick="prevQ()">Previous</button>
-    <button onclick="nextQ()">Next</button>
+    <!-- QUESTION 1 -->
+    <div class="question active">
+        <b>Q1. What is the capital of India?</b>
+        <div class="options">
+            <label><input type="radio" name="q1"> Mumbai</label>
+            <label><input type="radio" name="q1"> New Delhi</label>
+            <label><input type="radio" name="q1"> Kolkata</label>
+            <label><input type="radio" name="q1"> Chennai</label>
+        </div>
+    </div>
+
+    <!-- QUESTION 2 -->
+    <div class="question">
+        <b>Q2. 25 × 4 = ?</b>
+        <div class="options">
+            <label><input type="radio" name="q2"> 50</label>
+            <label><input type="radio" name="q2"> 75</label>
+            <label><input type="radio" name="q2"> 100</label>
+            <label><input type="radio" name="q2"> 125</label>
+        </div>
+    </div>
+
+    <!-- QUESTION 3 -->
+    <div class="question">
+        <b>Q3. Synonym of “Rapid”?</b>
+        <div class="options">
+            <label><input type="radio" name="q3"> Slow</label>
+            <label><input type="radio" name="q3"> Fast</label>
+            <label><input type="radio" name="q3"> Lazy</label>
+            <label><input type="radio" name="q3"> Weak</label>
+        </div>
+    </div>
+
+    <!-- QUESTION 4 -->
+    <div class="question">
+        <b>Q4. Who wrote the Indian Constitution?</b>
+        <div class="options">
+            <label><input type="radio" name="q4"> Mahatma Gandhi</label>
+            <label><input type="radio" name="q4"> Jawaharlal Nehru</label>
+            <label><input type="radio" name="q4"> B.R. Ambedkar</label>
+            <label><input type="radio" name="q4"> Rajendra Prasad</label>
+        </div>
+    </div>
+
+    <!-- QUESTION 5 -->
+    <div class="question">
+        <b>Q5. Series: 2, 4, 8, 16, ?</b>
+        <div class="options">
+            <label><input type="radio" name="q5"> 18</label>
+            <label><input type="radio" name="q5"> 24</label>
+            <label><input type="radio" name="q5"> 32</label>
+            <label><input type="radio" name="q5"> 64</label>
+        </div>
+    </div>
+
+    <!-- PALETTE -->
+    <div class="palette">
+        <button onclick="show(0)">1</button>
+        <button onclick="show(1)">2</button>
+        <button onclick="show(2)">3</button>
+        <button onclick="show(3)">4</button>
+        <button onclick="show(4)">5</button>
+    </div>
+
+    <div class="controls">
+        <button onclick="prev()">Previous</button>
+        <button onclick="next()">Next</button>
+    </div>
+
 </div>
 
-<button class="submit" onclick="submitExam()">Submit</button>
+<div class="submit">
+    <button>Submit Test</button>
+</div>
 
 <script>
-/* ================= QUESTIONS ================= */
-const QUESTIONS = [
-    {q:"1. भारत की राजधानी क्या है?", o:["Mumbai","Delhi","Chennai","Kolkata"]},
-    {q:"2. 2 + 2 = ?", o:["3","4","5","6"]},
-    {q:"3. SSC का full form क्या है?", o:["Staff Selection Commission","State Service","Sub Staff","None"]}
-];
+let current = 0;
+const questions = document.querySelectorAll(".question");
 
-/* ================= STATE ================= */
-let currentIndex = parseInt(localStorage.getItem("currentIndex")) || 0;
-let timeLeft = parseInt(localStorage.getItem("timeLeft")) || 1800;
-let answers = JSON.parse(localStorage.getItem("answers") || "{}");
-
-/* ================= RENDER ================= */
-const qDiv = document.getElementById("questions");
-
-QUESTIONS.forEach((q,i)=>{
-    const d=document.createElement("div");
-    d.className="qbox";
-    d.id="q"+i;
-    d.innerHTML=`<b>${q.q}</b><div class="options">${
-        q.o.map((opt,j)=>`
-        <label>
-        <input type="radio" name="q${i}" value="${j}"
-        ${answers[i]==j?"checked":""}
-        onclick="saveAnswer(${i},${j})"> ${opt}
-        </label>`).join("")
-    }</div>`;
-    qDiv.appendChild(d);
-});
-
-function showQ(i){
-    document.querySelectorAll(".qbox").forEach(q=>q.style.display="none");
-    document.getElementById("q"+i).style.display="block";
-    localStorage.setItem("currentIndex",i);
+function show(i){
+    questions[current].classList.remove("active");
+    current = i;
+    questions[current].classList.add("active");
+}
+function next(){
+    if(current < questions.length-1) show(current+1);
+}
+function prev(){
+    if(current > 0) show(current-1);
 }
 
-showQ(currentIndex);
-
-/* ================= NAV ================= */
-function nextQ(){
-    if(currentIndex<QUESTIONS.length-1){
-        currentIndex++;
-        showQ(currentIndex);
-    }
-}
-function prevQ(){
-    if(currentIndex>0){
-        currentIndex--;
-        showQ(currentIndex);
-    }
-}
-
-/* ================= ANSWERS ================= */
-function saveAnswer(q,a){
-    answers[q]=a;
-    localStorage.setItem("answers",JSON.stringify(answers));
-}
-
-/* ================= TIMER ================= */
-function format(sec){
-    const m=Math.floor(sec/60);
-    const s=sec%60;
-    return `${m}:${s<10?"0":""}${s}`;
-}
-document.getElementById("timer").innerText=format(timeLeft);
-
+// TIMER
+let sec = 1200;
 setInterval(()=>{
-    timeLeft--;
-    localStorage.setItem("timeLeft",timeLeft);
-    document.getElementById("timer").innerText=format(timeLeft);
-    if(timeLeft<=0) submitExam();
+    sec--;
+    let m = Math.floor(sec/60);
+    let s = sec%60;
+    document.getElementById("time").innerText =
+        m+":"+(s<10?"0"+s:s);
 },1000);
-
-/* ================= SUBMIT ================= */
-function submitExam(){
-    localStorage.removeItem("currentIndex");
-    localStorage.removeItem("timeLeft");
-    localStorage.removeItem("answers");
-    localStorage.removeItem("mock1_started");
-    alert("Exam submitted");
-    window.location.href="/ssc/cgl/full-mocks";
-}
 </script>
 
 </body>
