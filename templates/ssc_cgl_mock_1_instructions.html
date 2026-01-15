@@ -2,108 +2,97 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Mock Test Instructions</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSC CGL Mock Test 1 – Instructions</title>
 
 <style>
 body{
     margin:0;
-    font-family:Arial, sans-serif;
-    background:#f4f6fb;
+    font-family:Segoe UI, sans-serif;
+    background:#f2f4f8;
 }
+
+.header{
+    background:#2b6ef5;
+    color:#fff;
+    padding:16px;
+    text-align:center;
+    font-size:18px;
+    font-weight:600;
+}
+
+.container{
+    padding:16px;
+}
+
 .box{
-    max-width:720px;
-    margin:40px auto;
-    background:#ffffff;
-    padding:20px;
-    border-radius:8px;
+    background:#fff;
+    border-radius:14px;
+    padding:16px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
-h2{
+
+h3{
     margin-top:0;
 }
+
 ul{
     padding-left:18px;
+    font-size:14px;
+    color:#333;
 }
+
 li{
     margin-bottom:8px;
 }
-.start-btn{
-    margin-top:20px;
-    width:100%;
-    padding:14px;
-    font-size:16px;
-    background:#2563eb;
-    color:#fff;
+
+.footer{
+    margin-top:16px;
+    text-align:center;
+}
+
+button{
+    padding:12px 18px;
     border:none;
-    border-radius:6px;
-    cursor:pointer;
-}
-.start-btn:hover{
-    background:#1e40af;
-}
-.note{
-    margin-top:12px;
-    font-size:13px;
-    color:#555;
+    border-radius:12px;
+    background:#2b6ef5;
+    color:#fff;
+    font-size:15px;
+    font-weight:600;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
-    <h2>SSC CGL – Mock Test 1</h2>
-
-    <ul>
-        <li>Total Questions: 20</li>
-        <li>Total Time: 60 minutes</li>
-        <li>Each question carries 1 mark</li>
-        <li>No negative marking</li>
-        <li>Do not refresh the page during exam</li>
-        <li>Exam will resume automatically if refreshed</li>
-    </ul>
-
-    <label>
-        <input type="checkbox" id="agree">
-        I have read and understood all instructions
-    </label>
-
-    <button class="start-btn" onclick="startExam()">I Agree & Start Test</button>
-
-    <div class="note">
-        Instructions page will not appear again once exam starts.
-    </div>
+<div class="header">
+    SSC CGL – Full Mock Test 1
 </div>
 
-<script>
-/*
-IMPORTANT LOGIC
----------------
-1. Instructions page WILL NOT auto-redirect
-2. Redirect happens ONLY on button click
-3. Redirect URL EXACTLY matches app.py route
-*/
+<div class="container">
+<div class="box">
 
-// if exam already started, go directly to exam
-if(localStorage.getItem("mock1_started") === "yes"){
-    window.location.href = "/ssc/cgl/mock/1/start";
-}
+<h3>Instructions</h3>
 
-function startExam(){
-    const agree = document.getElementById("agree");
+<ul>
+    <li>Total Questions: <b>100</b></li>
+    <li>Total Time: <b>60 Minutes</b></li>
+    <li>Total Marks: <b>200</b></li>
+    <li>Each correct answer carries <b>2 marks</b></li>
+    <li>Negative marking: <b>0.50 marks</b></li>
+    <li>All questions are compulsory</li>
+    <li>Once test starts, timer will not stop</li>
+    <li>Do not refresh or close the browser during exam</li>
+</ul>
 
-    if(!agree.checked){
-        alert("Please accept the instructions to continue.");
-        return;
-    }
+<div class="footer">
+    <a href="/ssc/cgl/mock/1/start">
+        <button>I Agree & Start Test</button>
+    </a>
+</div>
 
-    // mark exam as started
-    localStorage.setItem("mock1_started","yes");
-
-    // redirect to backend-controlled route
-    window.location.href = "/ssc/cgl/mock/1/start";
-}
-</script>
+</div>
+</div>
 
 </body>
 </html>
