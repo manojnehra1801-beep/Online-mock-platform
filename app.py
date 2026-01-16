@@ -36,7 +36,7 @@ def login():
             session.clear()
             session["username"] = u
             session["name"] = USERS[u]["name"]
-            return redirect("dashboard")
+            return redirect("/student_dashboard")
 
         return render_template("login.html", error="Invalid login")
 
@@ -48,7 +48,7 @@ def login():
 def dashboard():
     if "username" not in session:
         return redirect("/")
-    return render_template("dashboard.html", name=session["name"])
+    return render_template("student_dashboard.html", name=session["name"])
 
 
 # ================= SSC DASHBOARD =================
