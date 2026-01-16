@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SSC CGL Exam</title>
+<title>SSC CGL – Full Mock Test</title>
 
 <style>
 body{
@@ -27,7 +27,7 @@ body{
     padding:12px;
 }
 
-.question-box{
+.box{
     background:#fff;
     border-radius:14px;
     padding:16px;
@@ -56,15 +56,15 @@ body{
 
 /* palette colors */
 .attempted{
-    background:#22c55e;      /* green */
+    background:#22c55e;   /* green */
 }
 
 .review{
-    background:#facc15;      /* yellow */
+    background:#facc15;   /* yellow */
 }
 
 .unattempted{
-    background:#e5e7eb;      /* grey */
+    background:#e5e7eb;   /* grey */
 }
 
 /* question */
@@ -91,7 +91,7 @@ body{
 .btns{
     display:flex;
     gap:10px;
-    margin-top:12px;
+    margin-top:14px;
 }
 
 button{
@@ -121,10 +121,9 @@ button{
 </div>
 
 <div class="container">
+<div class="box">
 
-<div class="question-box">
-
-<!-- PALETTE -->
+<!-- ================= PALETTE ================= -->
 <div class="palette">
 {% for p in palette %}
     <div class="pal-btn
@@ -141,24 +140,34 @@ button{
 {% endfor %}
 </div>
 
-<!-- QUESTION -->
+<!-- ================= QUESTION ================= -->
 <div class="qno">
     Question {{ qno }} / {{ total }}
 </div>
 
 <form method="post">
 
-<p><b>{{ question }}</b></p>
+{% if question %}
+    <p><b>{{ question }}</b></p>
+{% else %}
+    <p style="color:red;">Question not loaded</p>
+{% endif %}
 
-{% for opt in options %}
-<div class="option">
-    <label>
-        <input type="radio" name="ans" value="{{ loop.index0 }}">
-        {{ opt }}
-    </label>
-</div>
-{% endfor %}
+<!-- ================= OPTIONS ================= -->
+{% if options %}
+    {% for opt in options %}
+    <div class="option">
+        <label>
+            <input type="radio" name="ans" value="{{ loop.index0 }}">
+            {{ opt }}
+        </label>
+    </div>
+    {% endfor %}
+{% else %}
+    <p style="color:red;">Options not loaded</p>
+{% endif %}
 
+<!-- ================= BUTTONS ================= -->
 <div class="btns">
     <button class="review-btn" name="mark_review">
         Mark for Review
