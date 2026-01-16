@@ -14,14 +14,14 @@ TOTAL_QUESTIONS = 10
 
 # ================= LOAD QUESTIONS =================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-QUESTIONS_PATH = os.path.join(BASE_DIR, "questions.json")
+QUESTIONS_PATH = os.path.join(BASE_DIR, "question.json")
 
 try:
     with open(QUESTIONS_PATH, "r", encoding="utf-8") as f:
         QUESTION_BANK = json.load(f)
 except Exception as e:
     QUESTION_BANK = []
-    print("ERROR loading questions.json:", e)
+    print("ERROR loading question.json:", e)
 
 print("QUESTIONS LOADED:", len(QUESTION_BANK))
 
