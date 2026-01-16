@@ -1,55 +1,49 @@
-from flask import Flask, render_template, request, redirect, session, url_for
-import json
-import random
-import os
+from flask import Flask, render_template, request, redirect, session
+import json, random, os
 
 app = Flask(__name__)
 app.secret_key = "abhyas_secret_key_123"
 
-# ================= TEMP USERS =================
+# ================= USERS =================
 USERS = {
-    "abc": {
-        "name": "Demo Student",
-        "password": "abc1"
-    }
+    "abc": {"name": "Demo Student", "password": "abc1"}
 }
 
 # ================= CONFIG =================
 TOTAL_QUESTIONS = 10
 
-# ================= LOAD QUESTIONS.JSON =================
+# ================= LOAD QUESTIONS =================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-QUESTIONS_PATH = os.path.join(BASE_DIR, "question.json")
+QUESTIONS_PATH = os.path.join(BASE_DIR, "questions.json")
 
 try:
     with open(QUESTIONS_PATH, "r", encoding="utf-8") as f:
         QUESTION_BANK = json.load(f)
 except Exception as e:
     QUESTION_BANK = []
-    print("ERROR loading question.json:", e)
+    print("ERROR loading questions.json:", e)
 
-print("TOTAL QUESTIONS LOADED:", len(QUESTION_BANK))
-
+print("QUESTIONS LOADED:", len(QUESTION_BANK))
 
 # ================= LOGIN =================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+        u = request.form.get("username")
+        p = request.form.get("password")
 
-        if username in USERS and USERS[username]["password"] == password:
+        if u in USERS and USERS[u]["password"] == p:
             session.clear()
-            session["username"] = username
-            session["name"] = USERS[username]["name"]
-            return redirect(url_for("dashboard"))
+            session["username"] = u
+            session["name"] = USERS[u]["name"]
+            return redirect("/dashboard")
 
-        return render_template("login.html", error="Invalid username or password")
+        return render_template("login.html", error="Invalid login")
 
     return render_template("login.html")
 
 
-# ================= DASHBOARD =================
+# ================= MAIN DASHBOARD =================
 @app.route("/dashboard")
 def dashboard():
     if "username" not in session:
@@ -57,14 +51,30 @@ def dashboard():
     return render_template("dashboard.html", name=session["name"])
 
 
+# ================= SSC DASHBOARD =================
+@app.route("/ssc")
+def ssc_dashboard():
+    if "username" not in session:
+        return redirect("/")
+    return render_template("ssc_dashboard.html")
+
+
+# ================= SSC CGL =================
+@app.route("/ssc/cgl")
+def ssc_cgl():
+    if "username" not in session:
+        return redirect("/")
+    return render_template("ssc_cgl.html")
+
+
 # ================= START MOCK =================
-@app.route("/start-mock", methods=["POST"])
+@app.route("/ssc/cgl/start", methods=["POST"])
 def start_mock():
     if "username" not in session:
         return redirect("/")
 
     if not QUESTION_BANK:
-        return "No questions available", 500
+        return "No questions found", 500
 
     session["questions"] = random.sample(
         QUESTION_BANK,
@@ -72,7 +82,7 @@ def start_mock():
     )
     session["q"] = 0
     session["answers"] = {}
-    session["review"] = []   # LIST (not set)
+    session["review"] = []
 
     return redirect("/exam")
 
@@ -86,13 +96,7 @@ def exam():
     questions = session["questions"]
     q = session.get("q", 0)
 
-    if q >= len(questions):
-        q = 0
-        session["q"] = 0
-
-    # ---------- POST ----------
     if request.method == "POST":
-
         if "ans" in request.form:
             session["answers"][str(q)] = request.form["ans"]
 
@@ -103,10 +107,9 @@ def exam():
         if q == len(questions) - 1:
             return redirect("/result")
         else:
-            session["q"] = q + 1
+            session["q"] += 1
             return redirect("/exam")
 
-    # ---------- PALETTE ----------
     palette = []
     for i in range(len(questions)):
         if str(i) in session["review"]:
@@ -115,18 +118,14 @@ def exam():
             status = "attempted"
         else:
             status = "unattempted"
-
-        palette.append({
-            "qno": i + 1,
-            "status": status
-        })
+        palette.append({"qno": i + 1, "status": status})
 
     current = questions[q]
 
     return render_template(
         "ssc_cgl_exam_1.html",
-        question=current.get("q"),
-        options=current.get("options"),
+        question=current["q"],
+        options=current["options"],
         qno=q + 1,
         total=len(questions),
         palette=palette
@@ -136,21 +135,17 @@ def exam():
 # ================= RESULT =================
 @app.route("/result")
 def result():
-    if "username" not in session:
-        return redirect("/")
-
     total = len(session.get("questions", []))
     attempted = len(session.get("answers", {}))
-    reviewed = len(session.get("review", []))
+    review = len(session.get("review", []))
     unattempted = total - attempted
 
     return f"""
     <h2>Result</h2>
-    <p>Total Questions: {total}</p>
+    <p>Total: {total}</p>
     <p>Attempted: {attempted}</p>
-    <p>Marked for Review: {reviewed}</p>
+    <p>Marked for Review: {review}</p>
     <p>Unattempted: {unattempted}</p>
-    <br>
     <a href="/dashboard">Back to Dashboard</a>
     """
 
@@ -162,6 +157,5 @@ def logout():
     return redirect("/")
 
 
-# ================= RUN =================
 if __name__ == "__main__":
     app.run(debug=True)
