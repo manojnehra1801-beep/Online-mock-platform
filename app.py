@@ -36,7 +36,7 @@ def login():
             session.clear()
             session["username"] = u
             session["name"] = USERS[u]["name"]
-            return redirect("/dashboard")
+            return redirect("dashboard")
 
         return render_template("login.html", error="Invalid login")
 
