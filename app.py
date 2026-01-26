@@ -4,7 +4,7 @@ import json, random, os
 app = Flask(__name__)
 app.secret_key = "abhyas_secret_key_123"
 
-# ================= USERS =================
+# ================= TEMP USERS =================
 USERS = {
     "abc": {"name": "Demo Student", "password": "abc1"}
 }
@@ -12,20 +12,21 @@ USERS = {
 # ================= CONFIG =================
 TOTAL_QUESTIONS = 10
 
-# ================= LOAD QUESTIONS =================
+# ================= LOAD QUESTIONS.JSON (SAFE) =================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-QUESTIONS_PATH = os.path.join(BASE_DIR, "question.json")
+QUESTIONS_PATH = os.path.join(BASE_DIR, "questions.json")
 
 try:
     with open(QUESTIONS_PATH, "r", encoding="utf-8") as f:
         QUESTION_BANK = json.load(f)
 except Exception as e:
     QUESTION_BANK = []
-    print("ERROR loading question.json:", e)
+    print("ERROR loading questions.json:", e)
 
 print("QUESTIONS LOADED:", len(QUESTION_BANK))
 
-# ================= LOGIN =================
+
+# ================= LOGIN (SSC STYLE PAGE) =================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -36,9 +37,9 @@ def login():
             session.clear()
             session["username"] = u
             session["name"] = USERS[u]["name"]
-            return redirect("/student_dashboard")
+            return redirect("/dashboard")
 
-        return render_template("login.html", error="Invalid login")
+        return render_template("login.html", error="Invalid credentials")
 
     return render_template("login.html")
 
@@ -48,7 +49,7 @@ def login():
 def dashboard():
     if "username" not in session:
         return redirect("/")
-    return render_template("student_dashboard.html", name=session["name"])
+    return render_template("dashboard.html", name=session["name"])
 
 
 # ================= SSC DASHBOARD =================
@@ -59,7 +60,7 @@ def ssc_dashboard():
     return render_template("ssc_dashboard.html")
 
 
-# ================= SSC CGL =================
+# ================= SSC CGL PAGE =================
 @app.route("/ssc/cgl")
 def ssc_cgl():
     if "username" not in session:
@@ -74,7 +75,7 @@ def start_mock():
         return redirect("/")
 
     if not QUESTION_BANK:
-        return "No questions found", 500
+        return "No questions found in questions.json", 500
 
     session["questions"] = random.sample(
         QUESTION_BANK,
@@ -82,7 +83,7 @@ def start_mock():
     )
     session["q"] = 0
     session["answers"] = {}
-    session["review"] = []
+    session["review"] = []   # IMPORTANT: list only (no set)
 
     return redirect("/exam")
 
@@ -96,6 +97,11 @@ def exam():
     questions = session["questions"]
     q = session.get("q", 0)
 
+    if q >= len(questions):
+        q = 0
+        session["q"] = 0
+
+    # ---------- POST ----------
     if request.method == "POST":
         if "ans" in request.form:
             session["answers"][str(q)] = request.form["ans"]
@@ -107,9 +113,10 @@ def exam():
         if q == len(questions) - 1:
             return redirect("/result")
         else:
-            session["q"] += 1
+            session["q"] = q + 1
             return redirect("/exam")
 
+    # ---------- PALETTE ----------
     palette = []
     for i in range(len(questions)):
         if str(i) in session["review"]:
@@ -124,8 +131,8 @@ def exam():
 
     return render_template(
         "ssc_cgl_exam_1.html",
-        question=current["q"],
-        options=current["options"],
+        question=current.get("q"),
+        options=current.get("options"),
         qno=q + 1,
         total=len(questions),
         palette=palette
@@ -135,17 +142,21 @@ def exam():
 # ================= RESULT =================
 @app.route("/result")
 def result():
+    if "username" not in session:
+        return redirect("/")
+
     total = len(session.get("questions", []))
     attempted = len(session.get("answers", {}))
-    review = len(session.get("review", []))
+    reviewed = len(session.get("review", []))
     unattempted = total - attempted
 
     return f"""
     <h2>Result</h2>
-    <p>Total: {total}</p>
+    <p>Total Questions: {total}</p>
     <p>Attempted: {attempted}</p>
-    <p>Marked for Review: {review}</p>
+    <p>Marked for Review: {reviewed}</p>
     <p>Unattempted: {unattempted}</p>
+    <br>
     <a href="/dashboard">Back to Dashboard</a>
     """
 
@@ -157,5 +168,6 @@ def logout():
     return redirect("/")
 
 
+# ================= RUN =================
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000, debug=True)
