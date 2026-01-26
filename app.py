@@ -4,7 +4,7 @@ import json, random, os
 app = Flask(__name__)
 app.secret_key = "abhyas_secret_key_123"
 
-# ================= TEMP USERS =================
+# ================= USERS =================
 USERS = {
     "abc": {"name": "Demo Student", "password": "abc1"}
 }
@@ -12,7 +12,7 @@ USERS = {
 # ================= CONFIG =================
 TOTAL_QUESTIONS = 10
 
-# ================= LOAD QUESTIONS.JSON (SAFE) =================
+# ================= LOAD QUESTIONS =================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 QUESTIONS_PATH = os.path.join(BASE_DIR, "questions.json")
 
@@ -26,17 +26,17 @@ except Exception as e:
 print("QUESTIONS LOADED:", len(QUESTION_BANK))
 
 
-# ================= LOGIN (SSC STYLE PAGE) =================
+# ================= LOGIN =================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        u = request.form.get("username")
-        p = request.form.get("password")
+        username = request.form.get("username")
+        password = request.form.get("password")
 
-        if u in USERS and USERS[u]["password"] == p:
+        if username in USERS and USERS[username]["password"] == password:
             session.clear()
-            session["username"] = u
-            session["name"] = USERS[u]["name"]
+            session["username"] = username
+            session["name"] = USERS[username]["name"]
             return redirect("/dashboard")
 
         return render_template("login.html", error="Invalid credentials")
@@ -44,7 +44,7 @@ def login():
     return render_template("login.html")
 
 
-# ================= MAIN DASHBOARD =================
+# ================= DASHBOARD =================
 @app.route("/dashboard")
 def dashboard():
     if "username" not in session:
@@ -52,15 +52,15 @@ def dashboard():
     return render_template("dashboard.html", name=session["name"])
 
 
-# ================= SSC DASHBOARD =================
+# ================= SSC PAGE =================
 @app.route("/ssc")
-def ssc_dashboard():
+def ssc():
     if "username" not in session:
         return redirect("/")
     return render_template("ssc_dashboard.html")
 
 
-# ================= SSC CGL PAGE =================
+# ================= SSC CGL =================
 @app.route("/ssc/cgl")
 def ssc_cgl():
     if "username" not in session:
@@ -75,7 +75,7 @@ def start_mock():
         return redirect("/")
 
     if not QUESTION_BANK:
-        return "No questions found in questions.json", 500
+        return "No questions found", 500
 
     session["questions"] = random.sample(
         QUESTION_BANK,
@@ -83,7 +83,7 @@ def start_mock():
     )
     session["q"] = 0
     session["answers"] = {}
-    session["review"] = []   # IMPORTANT: list only (no set)
+    session["review"] = []
 
     return redirect("/exam")
 
@@ -97,11 +97,6 @@ def exam():
     questions = session["questions"]
     q = session.get("q", 0)
 
-    if q >= len(questions):
-        q = 0
-        session["q"] = 0
-
-    # ---------- POST ----------
     if request.method == "POST":
         if "ans" in request.form:
             session["answers"][str(q)] = request.form["ans"]
@@ -116,7 +111,6 @@ def exam():
             session["q"] = q + 1
             return redirect("/exam")
 
-    # ---------- PALETTE ----------
     palette = []
     for i in range(len(questions)):
         if str(i) in session["review"]:
@@ -156,7 +150,6 @@ def result():
     <p>Attempted: {attempted}</p>
     <p>Marked for Review: {reviewed}</p>
     <p>Unattempted: {unattempted}</p>
-    <br>
     <a href="/dashboard">Back to Dashboard</a>
     """
 
@@ -170,4 +163,4 @@ def logout():
 
 # ================= RUN =================
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000, debug=True)
+    app.run(debug=True)
