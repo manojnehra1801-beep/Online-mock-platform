@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, session
-import json, random, os
+import json, random, os,import time 
+session["start_time"] = time.time()
 
 app = Flask(__name__)
 app.secret_key = "abhyas_secret_key_123"
