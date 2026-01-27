@@ -36,18 +36,18 @@ def login():
             session.clear()
             session["username"] = username
             session["name"] = USERS[username]["name"]
-            return redirect("/dashboard")
+            return redirect("/student_dashboard")  # Updated redirect
 
         return render_template("login.html", error="Invalid credentials")
 
     return render_template("login.html")
 
-# ================= DASHBOARD =================
-@app.route("/dashboard")
-def dashboard():
+# ================= STUDENT DASHBOARD =================  # Updated route name
+@app.route("/student_dashboard")  # Updated route
+def student_dashboard():  # Updated function name for clarity (optional, but matches route)
     if "username" not in session:
         return redirect("/")
-    return render_template("dashboard.html", name=session["name"])
+    return render_template("student_dashboard.html", name=session["name"])  # Updated template
 
 # ================= SSC PAGE =================
 @app.route("/ssc")
@@ -143,7 +143,7 @@ def result():
     <p>Attempted: {attempted}</p>
     <p>Marked for Review: {reviewed}</p>
     <p>Unattempted: {unattempted}</p>
-    <a href="/dashboard">Back to Dashboard</a>
+    <a href="/student_dashboard">Back to Student Dashboard</a>  # Updated link
     """
 
 # ================= LOGOUT =================
