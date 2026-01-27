@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SSC CGL – Full Mock Test</title>
+<title>SSC CGL Mock Test</title>
 
 <style>
 body{
@@ -12,9 +12,9 @@ body{
     background:#f2f4f8;
 }
 
-/* header */
+/* Header */
 .header{
-    background:#2b6ef5;
+    background:#1e3a8a;
     color:#fff;
     padding:14px;
     text-align:center;
@@ -22,9 +22,22 @@ body{
     font-weight:600;
 }
 
-/* layout */
+/* Timer */
+.timer{
+    position:fixed;
+    top:10px;
+    right:10px;
+    background:#111827;
+    color:#fff;
+    padding:10px 14px;
+    border-radius:10px;
+    font-weight:600;
+    z-index:1000;
+}
+
+/* Layout */
 .container{
-    padding:12px;
+    padding:14px;
 }
 
 .box{
@@ -34,7 +47,7 @@ body{
     box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
 
-/* palette */
+/* Palette */
 .palette{
     display:flex;
     flex-wrap:wrap;
@@ -54,26 +67,17 @@ body{
     color:#000;
 }
 
-/* palette colors */
-.attempted{
-    background:#22c55e;   /* green */
-}
+.attempted{ background:#22c55e; }
+.review{ background:#facc15; }
+.unattempted{ background:#e5e7eb; }
 
-.review{
-    background:#facc15;   /* yellow */
-}
-
-.unattempted{
-    background:#e5e7eb;   /* grey */
-}
-
-/* question */
+/* Question */
 .qno{
     font-weight:600;
     margin-bottom:10px;
 }
 
-/* options */
+/* Options */
 .option{
     background:#f9fafb;
     border:1px solid #d1d5db;
@@ -83,11 +87,7 @@ body{
     font-size:14px;
 }
 
-.option input{
-    margin-right:8px;
-}
-
-/* buttons */
+/* Buttons */
 .btns{
     display:flex;
     gap:10px;
@@ -103,21 +103,51 @@ button{
     font-weight:600;
 }
 
-.next{
-    background:#2b6ef5;
-    color:#fff;
+.next{ background:#2563eb; color:#fff; }
+.review-btn{ background:#facc15; }
+</style>
+
+<!-- ================= TIMER SCRIPT ================= -->
+<script>
+/*
+  Exam duration:
+  10 questions × 60 sec = 10 minutes
+  (change if needed)
+*/
+let totalSeconds = 10 * 60;
+
+function startTimer(){
+    let timer = setInterval(function(){
+        let min = Math.floor(totalSeconds / 60);
+        let sec = totalSeconds % 60;
+
+        document.getElementById("timer").innerText =
+            min + ":" + (sec < 10 ? "0" + sec : sec);
+
+        totalSeconds--;
+
+        if (totalSeconds < 0){
+            clearInterval(timer);
+            alert("Time Over! Exam will be submitted.");
+            document.getElementById("examForm").submit();
+        }
+    }, 1000);
 }
 
-.review-btn{
-    background:#facc15;
-}
-</style>
+window.onload = startTimer;
+</script>
+
 </head>
 
 <body>
 
 <div class="header">
-    SSC CGL – Full Mock Test
+    SSC CGL – Mock Test
+</div>
+
+<!-- TIMER BOX -->
+<div class="timer">
+    ⏱ Time Left: <span id="timer">10:00</span>
 </div>
 
 <div class="container">
@@ -145,7 +175,7 @@ button{
     Question {{ qno }} / {{ total }}
 </div>
 
-<form method="post">
+<form method="post" id="examForm">
 
 {% if question %}
     <p><b>{{ question }}</b></p>
@@ -169,11 +199,10 @@ button{
 
 <!-- ================= BUTTONS ================= -->
 <div class="btns">
-    <button class="review-btn" name="mark_review">
+    <button class="review-btn" name="mark_review" type="submit">
         Mark for Review
     </button>
-
-    <button class="next">
+    <button class="next" type="submit">
         Save & Next
     </button>
 </div>
