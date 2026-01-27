@@ -36,36 +36,43 @@ def login():
             session.clear()
             session["username"] = username
             session["name"] = USERS[username]["name"]
-            return redirect("/student_dashboard")  # Updated redirect
+            return redirect("/student_dashboard")
 
         return render_template("login.html", error="Invalid credentials")
 
     return render_template("login.html")
 
-# ================= STUDENT DASHBOARD =================  # Updated route name
-@app.route("/student_dashboard")  # Updated route
-def student_dashboard():  # Updated function name for clarity (optional, but matches route)
+# ================= STUDENT DASHBOARD =================
+@app.route("/student_dashboard")
+def student_dashboard():
     if "username" not in session:
         return redirect("/")
-    return render_template("student_dashboard.html", name=session["name"])  # Updated template
+    return render_template("student_dashboard.html", name=session["name"])
 
-# ================= SSC PAGE =================
+# ================= SSC DASHBOARD =================
 @app.route("/ssc")
 def ssc():
     if "username" not in session:
         return redirect("/")
     return render_template("ssc_dashboard.html")
 
-# ================= SSC CGL =================
-@app.route("/ssc/cgl/tests")
-def ssc_cgl_tests():
+# ================= SSC CGL – FULL MOCK LIST (MISSING) =================
+@app.route("/ssc/cgl")
+def ssc_cgl_full_mocks():
     if "username" not in session:
         return redirect("/")
-    return render_template("ssc_cgl.html")
+    return render_template("ssc_cgl_full_mocks.html")
 
-# ================= START MOCK =================
-@app.route("/ssc/cgl/start", methods=["POST"])
-def start_mock():
+# ================= MOCK 1 INSTRUCTIONS (MISSING) =================
+@app.route("/ssc/cgl/mock/1")
+def ssc_cgl_mock_1_instructions():
+    if "username" not in session:
+        return redirect("/")
+    return render_template("ssc_cgl_mock_1_instructions.html")
+
+# ================= START MOCK 1 (POST FROM INSTRUCTIONS) =================
+@app.route("/ssc/cgl/mock/1/start", methods=["POST"])
+def start_mock_1():
     if "username" not in session:
         return redirect("/")
 
@@ -143,7 +150,7 @@ def result():
     <p>Attempted: {attempted}</p>
     <p>Marked for Review: {reviewed}</p>
     <p>Unattempted: {unattempted}</p>
-    <a href="/student_dashboard">Back to Student Dashboard</a>  # Updated link
+    <a href="/student_dashboard">Back to Student Dashboard</a>
     """
 
 # ================= LOGOUT =================
