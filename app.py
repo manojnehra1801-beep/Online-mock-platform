@@ -141,24 +141,55 @@ def exam():
     )
 
 # ================= RESULT =================
-@app.route("/result")
+@a@app.route("/result")
 def result():
     if "username" not in session:
         return redirect("/")
 
-    total = len(session.get("questions", []))
-    attempted = len(session.get("answers", {}))
-    reviewed = len(session.get("review", []))
+    questions = session.get("questions", [])
+    answers = session.get("answers", {})
+    total = len(questions)
+
+    correct = 0
+    wrong = 0
+
+    # (for now assume option 0 is correct – later you’ll add correct key)
+    for qno, ans in answers.items():
+        if int(ans) == 0:
+            correct += 1
+        else:
+            wrong += 1
+
+    attempted = len(answers)
     unattempted = total - attempted
 
-    return render_template(
-    "result.html",
-    total=total,
-     attempted=attempted,
-     reviewed=reviewed,
-     unattempted=unattempted
+    score = (correct * PER_QUESTION_MARKS) - (wrong * NEGATIVE_MARKS)
+    accuracy = round((correct / attempted) * 100, 2) if attempted else 0
 
-)
+    # Time
+    start_time = session.get("start_time", time.time())
+    time_taken_sec = int(time.time() - start_time)
+    minutes = time_taken_sec // 60
+    seconds = time_taken_sec % 60
+
+    # Mock percentile & rank (safe fake logic)
+    percentile = min(99, 50 + correct * 5)
+    rank = max(1, 500 - correct * 10)
+
+    return render_template(
+        "result.html",
+        total=total,
+        attempted=attempted,
+        unattempted=unattempted,
+        correct=correct,
+        wrong=wrong,
+        score=score,
+        accuracy=accuracy,
+        minutes=minutes,
+        seconds=seconds,
+        percentile=percentile,
+        rank=rank
+    )
 
 # ================= LOGOUT =================
 @app.route("/logout")
