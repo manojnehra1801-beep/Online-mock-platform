@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, session
-import json, random, os,import time 
-session["start_time"] = time.time()
+import json, random, os, time
 
 app = Flask(__name__)
 app.secret_key = "abhyas_secret_key_123"
@@ -12,6 +11,8 @@ USERS = {
 
 # ================= CONFIG =================
 TOTAL_QUESTIONS = 10
+PER_QUESTION_MARKS = 2
+NEGATIVE_MARKS = 0.5
 
 # ================= LOAD QUESTIONS =================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -63,44 +64,37 @@ def ssc_cgl_full_mocks():
         return redirect("/")
     return render_template("ssc_cgl_full_mocks.html")
 
-# ================= SSC CGL MOCK 1 INSTRUCTIONS =================
+# ================= MOCK 1 INSTRUCTIONS =================
 @app.route("/ssc/cgl/mock/1")
 def ssc_cgl_mock_1_instructions():
     if "username" not in session:
         return redirect("/")
     return render_template("ssc_cgl_mock_1_instructions.html")
 
-# ================= START MOCK 1 (POST) =================
+# ================= START MOCK 1 =================
 @app.route("/ssc/cgl/mock/1/start", methods=["POST"])
 def start_mock_1():
     if "username" not in session:
         return redirect("/")
 
-    print("🚀 START MOCK 1 TRIGGERED")
-    print("QUESTION BANK SIZE:", len(QUESTION_BANK))
-
     if not QUESTION_BANK:
-        return "❌ No questions found in questions.json", 500
+        return "No questions found in questions.json", 500
 
-    # Randomly pick questions
     session["questions"] = random.sample(
         QUESTION_BANK,
         min(TOTAL_QUESTIONS, len(QUESTION_BANK))
     )
-    PER_QUESTION_MARKS = 2
-NEGATIVE_MARKS = 0.5
     session["q"] = 0
     session["answers"] = {}
     session["review"] = []
+    session["start_time"] = time.time()
 
-    print("✅ Questions loaded in session.")
     return redirect("/exam")
 
-# ================= EXAM PAGE =================
+# ================= EXAM =================
 @app.route("/exam", methods=["GET", "POST"])
 def exam():
     if "username" not in session or "questions" not in session:
-        print("⚠️ Session missing questions, redirecting to dashboard.")
         return redirect("/student_dashboard")
 
     questions = session["questions"]
@@ -120,7 +114,6 @@ def exam():
             session["q"] = q + 1
             return redirect("/exam")
 
-    # Build palette
     palette = []
     for i in range(len(questions)):
         if str(i) in session["review"]:
@@ -132,7 +125,6 @@ def exam():
         palette.append({"qno": i + 1, "status": status})
 
     current = questions[q]
-    print(f"🧠 Showing Question {q+1}: {current.get('q')}")
 
     return render_template(
         "ssc_cgl_exam_1.html",
@@ -144,7 +136,7 @@ def exam():
     )
 
 # ================= RESULT =================
-@a@app.route("/result")
+@app.route("/result")
 def result():
     if "username" not in session:
         return redirect("/")
@@ -156,7 +148,7 @@ def result():
     correct = 0
     wrong = 0
 
-    # (for now assume option 0 is correct – later you’ll add correct key)
+    # TEMP LOGIC: option index 0 treated as correct
     for qno, ans in answers.items():
         if int(ans) == 0:
             correct += 1
@@ -169,13 +161,11 @@ def result():
     score = (correct * PER_QUESTION_MARKS) - (wrong * NEGATIVE_MARKS)
     accuracy = round((correct / attempted) * 100, 2) if attempted else 0
 
-    # Time
     start_time = session.get("start_time", time.time())
-    time_taken_sec = int(time.time() - start_time)
-    minutes = time_taken_sec // 60
-    seconds = time_taken_sec % 60
+    time_taken = int(time.time() - start_time)
+    minutes = time_taken // 60
+    seconds = time_taken % 60
 
-    # Mock percentile & rank (safe fake logic)
     percentile = min(99, 50 + correct * 5)
     rank = max(1, 500 - correct * 10)
 
