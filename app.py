@@ -19,11 +19,10 @@ QUESTIONS_PATH = os.path.join(BASE_DIR, "questions.json")
 try:
     with open(QUESTIONS_PATH, "r", encoding="utf-8") as f:
         QUESTION_BANK = json.load(f)
+    print(f"✅ QUESTIONS LOADED: {len(QUESTION_BANK)}")
 except Exception as e:
     QUESTION_BANK = []
-    print("ERROR loading questions.json:", e)
-
-print("QUESTIONS LOADED:", len(QUESTION_BANK))
+    print("❌ ERROR loading questions.json:", e)
 
 # ================= LOGIN =================
 @app.route("/", methods=["GET", "POST"])
@@ -56,29 +55,33 @@ def ssc():
         return redirect("/")
     return render_template("ssc_dashboard.html")
 
-# ================= SSC CGL – FULL MOCK LIST (MISSING) =================
+# ================= SSC CGL FULL MOCK LIST =================
 @app.route("/ssc/cgl")
 def ssc_cgl_full_mocks():
     if "username" not in session:
         return redirect("/")
     return render_template("ssc_cgl_full_mocks.html")
 
-# ================= MOCK 1 INSTRUCTIONS (MISSING) =================
+# ================= SSC CGL MOCK 1 INSTRUCTIONS =================
 @app.route("/ssc/cgl/mock/1")
 def ssc_cgl_mock_1_instructions():
     if "username" not in session:
         return redirect("/")
     return render_template("ssc_cgl_mock_1_instructions.html")
 
-# ================= START MOCK 1 (POST FROM INSTRUCTIONS) =================
+# ================= START MOCK 1 (POST) =================
 @app.route("/ssc/cgl/mock/1/start", methods=["POST"])
 def start_mock_1():
     if "username" not in session:
         return redirect("/")
 
-    if not QUESTION_BANK:
-        return "No questions found", 500
+    print("🚀 START MOCK 1 TRIGGERED")
+    print("QUESTION BANK SIZE:", len(QUESTION_BANK))
 
+    if not QUESTION_BANK:
+        return "❌ No questions found in questions.json", 500
+
+    # Randomly pick questions
     session["questions"] = random.sample(
         QUESTION_BANK,
         min(TOTAL_QUESTIONS, len(QUESTION_BANK))
@@ -87,13 +90,15 @@ def start_mock_1():
     session["answers"] = {}
     session["review"] = []
 
+    print("✅ Questions loaded in session.")
     return redirect("/exam")
 
-# ================= EXAM =================
+# ================= EXAM PAGE =================
 @app.route("/exam", methods=["GET", "POST"])
 def exam():
     if "username" not in session or "questions" not in session:
-        return redirect("/")
+        print("⚠️ Session missing questions, redirecting to dashboard.")
+        return redirect("/student_dashboard")
 
     questions = session["questions"]
     q = session.get("q", 0)
@@ -112,6 +117,7 @@ def exam():
             session["q"] = q + 1
             return redirect("/exam")
 
+    # Build palette
     palette = []
     for i in range(len(questions)):
         if str(i) in session["review"]:
@@ -123,6 +129,7 @@ def exam():
         palette.append({"qno": i + 1, "status": status})
 
     current = questions[q]
+    print(f"🧠 Showing Question {q+1}: {current.get('q')}")
 
     return render_template(
         "ssc_cgl_exam_1.html",
@@ -150,7 +157,7 @@ def result():
     <p>Attempted: {attempted}</p>
     <p>Marked for Review: {reviewed}</p>
     <p>Unattempted: {unattempted}</p>
-    <a href="/student_dashboard">Back to Student Dashboard</a>
+    <a href="/student_dashboard">Back to Dashboard</a>
     """
 
 # ================= LOGOUT =================
