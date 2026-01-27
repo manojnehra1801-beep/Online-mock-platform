@@ -57,8 +57,8 @@ def ssc():
     return render_template("ssc_dashboard.html")
 
 # ================= SSC CGL =================
-@app.route("/ssc/cgl")
-def ssc_cgl():
+@app.route("/ssc/cgl/tests")
+def ssc_cgl_tests():
     if "username" not in session:
         return redirect("/")
     return render_template("ssc_cgl.html")
