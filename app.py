@@ -151,14 +151,14 @@ def result():
     reviewed = len(session.get("review", []))
     unattempted = total - attempted
 
-    return f"""
-    <h2>Result</h2>
-    <p>Total Questions: {total}</p>
-    <p>Attempted: {attempted}</p>
-    <p>Marked for Review: {reviewed}</p>
-    <p>Unattempted: {unattempted}</p>
-    <a href="/student_dashboard">Back to Dashboard</a>
-    """
+    return render_template(
+    "result.html",
+    total=total,
+     attempted=attempted,
+     reviewed=reviewed,
+     unattempted=unattempted
+
+)
 
 # ================= LOGOUT =================
 @app.route("/logout")
