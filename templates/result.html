@@ -3,166 +3,143 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Result | Abhyas App</title>
+<title>Test Result</title>
 
 <style>
 body{
     margin:0;
-    font-family: Arial, sans-serif;
-    background:#f4f6fb;
+    font-family:Segoe UI, sans-serif;
+    background:#f2f4f8;
 }
 
-/* HEADER */
 .header{
-    background:linear-gradient(135deg,#6c5ce7,#8e7bff);
-    padding:22px;
+    background:#1e3a8a;
     color:#fff;
+    padding:14px;
     text-align:center;
-}
-.header h2{
-    margin:0;
-    font-size:22px;
-}
-.header p{
-    margin:4px 0 0;
-    font-size:14px;
-    opacity:0.9;
+    font-size:16px;
+    font-weight:600;
 }
 
-/* CARD */
+.container{
+    padding:16px;
+}
+
 .card{
     background:#fff;
-    margin:18px;
-    padding:20px;
-    border-radius:18px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+    border-radius:14px;
+    padding:18px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom:16px;
 }
 
-/* SCORE */
 .score{
+    font-size:34px;
+    font-weight:700;
+    color:#16a34a;
     text-align:center;
-    font-size:38px;
-    font-weight:bold;
-    color:#6c5ce7;
-}
-.score small{
-    font-size:16px;
-    color:#636e72;
 }
 
-/* GRID */
-.grid{
+.sub{
+    text-align:center;
+    font-size:14px;
+    color:#555;
+    margin-bottom:16px;
+}
+
+.stats{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:12px;
-    margin-top:20px;
 }
-.box{
-    background:#f1f3f9;
+
+.stat{
+    background:#f8fafc;
+    border-radius:12px;
     padding:14px;
-    border-radius:14px;
     text-align:center;
-    font-size:14px;
 }
-.box span{
-    display:block;
-    margin-top:6px;
+
+.stat h3{
+    margin:0;
     font-size:18px;
-    font-weight:bold;
 }
 
-/* ACCURACY */
-.accuracy{
-    margin-top:22px;
-}
-.accuracy-label{
-    text-align:center;
-    font-size:14px;
-    margin-bottom:6px;
-}
-.progress{
-    width:100%;
-    height:14px;
-    background:#e0e0e0;
-    border-radius:20px;
-    overflow:hidden;
-}
-.progress-bar{
-    height:100%;
-    background:linear-gradient(90deg,#00b894,#55efc4);
+.stat p{
+    margin:4px 0 0;
+    font-size:13px;
+    color:#555;
 }
 
-/* BUTTON */
+.actions{
+    display:flex;
+    gap:12px;
+    margin-top:18px;
+}
+
 .btn{
-    width:100%;
-    margin-top:24px;
-    padding:15px;
-    font-size:16px;
+    flex:1;
+    padding:12px;
     border:none;
-    border-radius:30px;
-    background:#e84393;
-    color:#fff;
+    border-radius:12px;
+    font-size:14px;
+    font-weight:600;
     cursor:pointer;
 }
-.btn:active{
-    transform:scale(0.98);
+
+.retry{
+    background:#2563eb;
+    color:#fff;
 }
 
-/* FOOTER */
-.footer{
-    text-align:center;
-    font-size:12px;
-    color:#999;
-    margin:18px 0;
+.dashboard{
+    background:#e5e7eb;
 }
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <div class="header">
-    <h2>Performance Summary</h2>
-    <p>Abhyas App – Online Mock Test</p>
+    SSC CGL – Test Result
 </div>
 
-<!-- RESULT CARD -->
+<div class="container">
+
 <div class="card">
+    <div class="score">{{ attempted }} / {{ total }}</div>
+    <div class="sub">Questions Attempted</div>
 
-    <!-- SCORE -->
-    <div class="score">
-        {{ correct }} / {{ total }}
-        <br>
-        <small>Marks Scored</small>
-    </div>
-
-    <!-- STATS -->
-    <div class="grid">
-        <div class="box">✅ Correct<span>{{ correct }}</span></div>
-        <div class="box">❌ Incorrect<span>{{ incorrect }}</span></div>
-        <div class="box">✍️ Attempted<span>{{ attempted }}</span></div>
-        <div class="box">⏭ Unattempted<span>{{ unattempted }}</span></div>
-    </div>
-
-    <!-- ACCURACY -->
-    <div class="accuracy">
-        <div class="accuracy-label">
-            🎯 Accuracy: <b>{{ accuracy }}%</b>
+    <div class="stats">
+        <div class="stat">
+            <h3>{{ attempted }}</h3>
+            <p>Attempted</p>
         </div>
-        <div class="progress">
-            <div class="progress-bar" style="width: {{ accuracy }}%;"></div>
+        <div class="stat">
+            <h3>{{ unattempted }}</h3>
+            <p>Unattempted</p>
+        </div>
+        <div class="stat">
+            <h3>{{ reviewed }}</h3>
+            <p>Marked for Review</p>
+        </div>
+        <div class="stat">
+            <h3>{{ total }}</h3>
+            <p>Total Questions</p>
         </div>
     </div>
 
-    <!-- EXIT -->
-    <button class="btn" onclick="window.location.href='/'">
-        Exit Test
-    </button>
+    <div class="actions">
+        <form action="/ssc/cgl/mock/1/start" method="post">
+            <button class="btn retry">Reattempt Test</button>
+        </form>
 
+        <a href="/student_dashboard" style="flex:1">
+            <button class="btn dashboard">Dashboard</button>
+        </a>
+    </div>
 </div>
 
-<div class="footer">
-    Result generated automatically • Powered by Abhyas App
 </div>
 
 </body>
