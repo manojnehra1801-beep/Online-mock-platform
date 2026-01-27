@@ -1,97 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test Result</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SSC CGL Result</title>
 
 <style>
 body{
     margin:0;
-    font-family:Segoe UI, sans-serif;
+    font-family:Segoe UI,sans-serif;
     background:#f2f4f8;
 }
-
 .header{
     background:#1e3a8a;
-    color:#fff;
+    color:white;
     padding:14px;
     text-align:center;
-    font-size:16px;
     font-weight:600;
 }
-
-.container{
-    padding:16px;
-}
-
 .card{
-    background:#fff;
-    border-radius:14px;
+    background:white;
+    margin:16px;
     padding:18px;
+    border-radius:14px;
     box-shadow:0 4px 12px rgba(0,0,0,0.08);
-    margin-bottom:16px;
 }
-
-.score{
-    font-size:34px;
+.big{
+    font-size:32px;
     font-weight:700;
     color:#16a34a;
     text-align:center;
 }
-
 .sub{
     text-align:center;
     font-size:14px;
     color:#555;
-    margin-bottom:16px;
 }
-
-.stats{
+.grid{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:12px;
+    margin-top:16px;
 }
-
-.stat{
+.box{
     background:#f8fafc;
-    border-radius:12px;
     padding:14px;
+    border-radius:12px;
     text-align:center;
 }
-
-.stat h3{
+.box h3{
     margin:0;
-    font-size:18px;
 }
-
-.stat p{
-    margin:4px 0 0;
-    font-size:13px;
-    color:#555;
-}
-
 .actions{
     display:flex;
-    gap:12px;
+    gap:10px;
     margin-top:18px;
 }
-
 .btn{
     flex:1;
     padding:12px;
     border:none;
     border-radius:12px;
-    font-size:14px;
     font-weight:600;
-    cursor:pointer;
 }
-
 .retry{
     background:#2563eb;
-    color:#fff;
+    color:white;
 }
-
 .dashboard{
     background:#e5e7eb;
 }
@@ -100,46 +74,34 @@ body{
 
 <body>
 
-<div class="header">
-    SSC CGL – Test Result
-</div>
-
-<div class="container">
+<div class="header">SSC CGL – Result</div>
 
 <div class="card">
-    <div class="score">{{ attempted }} / {{ total }}</div>
-    <div class="sub">Questions Attempted</div>
+    <div class="big">{{ score }}</div>
+    <div class="sub">Total Score</div>
 
-    <div class="stats">
-        <div class="stat">
-            <h3>{{ attempted }}</h3>
-            <p>Attempted</p>
-        </div>
-        <div class="stat">
-            <h3>{{ unattempted }}</h3>
-            <p>Unattempted</p>
-        </div>
-        <div class="stat">
-            <h3>{{ reviewed }}</h3>
-            <p>Marked for Review</p>
-        </div>
-        <div class="stat">
-            <h3>{{ total }}</h3>
-            <p>Total Questions</p>
+    <div class="grid">
+        <div class="box"><h3>{{ correct }}</h3><p>Correct</p></div>
+        <div class="box"><h3>{{ wrong }}</h3><p>Wrong</p></div>
+        <div class="box"><h3>{{ attempted }}</h3><p>Attempted</p></div>
+        <div class="box"><h3>{{ unattempted }}</h3><p>Unattempted</p></div>
+        <div class="box"><h3>{{ accuracy }}%</h3><p>Accuracy</p></div>
+        <div class="box"><h3>{{ percentile }}</h3><p>Percentile</p></div>
+        <div class="box"><h3>{{ rank }}</h3><p>Rank</p></div>
+        <div class="box">
+            <h3>{{ minutes }}m {{ seconds }}s</h3>
+            <p>Time Taken</p>
         </div>
     </div>
 
     <div class="actions">
         <form action="/ssc/cgl/mock/1/start" method="post">
-            <button class="btn retry">Reattempt Test</button>
+            <button class="btn retry">Reattempt</button>
         </form>
-
         <a href="/student_dashboard" style="flex:1">
             <button class="btn dashboard">Dashboard</button>
         </a>
     </div>
-</div>
-
 </div>
 
 </body>
