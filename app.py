@@ -86,6 +86,8 @@ def start_mock_1():
         QUESTION_BANK,
         min(TOTAL_QUESTIONS, len(QUESTION_BANK))
     )
+    PER_QUESTION_MARKS = 2
+NEGATIVE_MARKS = 0.5
     session["q"] = 0
     session["answers"] = {}
     session["review"] = []
