@@ -5,116 +5,50 @@
 <title>SSC CGL Mock Test</title>
 
 <style>
-body{
-    margin:0;
-    font-family:Segoe UI,sans-serif;
-    background:#f2f4f8;
-}
-.header{
-    background:#1e3a8a;
-    color:#fff;
-    padding:14px;
-    text-align:center;
-    font-weight:600;
-}
-.sections{
-    display:flex;
-    background:#e5e7eb;
-}
-.sec{
-    flex:1;
-    padding:10px;
-    text-align:center;
-    font-size:13px;
-    font-weight:600;
-    border-right:1px solid #cbd5f5;
-}
-.active{
-    background:#2563eb;
-    color:white;
-}
-.timer{
-    position:fixed;
-    top:10px;
-    right:10px;
-    background:#111827;
-    color:white;
-    padding:8px 12px;
-    border-radius:10px;
-    font-size:13px;
-    z-index:1000;
-}
-.container{
-    padding:14px;
-}
-.box{
-    background:white;
-    padding:16px;
-    border-radius:14px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
-}
-.qno{
-    font-weight:600;
-    margin-bottom:10px;
-}
-.option{
-    border:1px solid #d1d5db;
-    padding:12px;
-    border-radius:12px;
-    margin-bottom:10px;
-    background:#f9fafb;
-}
-.btns{
-    display:flex;
-    gap:10px;
-    margin-top:14px;
-}
-button{
-    flex:1;
-    padding:12px;
-    border:none;
-    border-radius:12px;
-    font-weight:600;
-}
-.review{ background:#facc15; }
-.next{ background:#2563eb; color:white; }
+body{margin:0;font-family:Segoe UI,sans-serif;background:#f2f4f8;}
+.header{background:#1e3a8a;color:#fff;padding:14px;text-align:center;font-weight:600;}
+.sections{display:flex;background:#e5e7eb;}
+.sec{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:600;border-right:1px solid #cbd5f5;cursor:pointer;}
+.active{background:#2563eb;color:white;}
+.timer{position:fixed;top:10px;right:10px;background:#111827;color:white;padding:8px 12px;border-radius:10px;font-size:13px;}
+.container{padding:14px;}
+.box{background:white;padding:16px;border-radius:14px;box-shadow:0 4px 10px rgba(0,0,0,0.08);}
+.qno{font-weight:600;margin-bottom:10px;}
+.option{border:1px solid #d1d5db;padding:12px;border-radius:12px;margin-bottom:10px;background:#f9fafb;}
+.btns{display:flex;gap:10px;margin-top:14px;}
+button{flex:1;padding:12px;border:none;border-radius:12px;font-weight:600;}
+.review{background:#facc15;}
+.prev{background:#9ca3af;}
+.next{background:#2563eb;color:white;}
 </style>
 
+<!-- GLOBAL TIMER (no reset) -->
 <script>
-/*
-  GLOBAL EXAM TIMER
-  Example: 100 questions × 30 sec = 3000 sec = 50 min
-*/
-const EXAM_TIME = 3000; // change if needed
-
+const EXAM_TIME = 3000; // 50 min
 let remainingTime = localStorage.getItem("exam_time");
 
-if (!remainingTime) {
+if (!remainingTime){
     remainingTime = EXAM_TIME;
     localStorage.setItem("exam_time", remainingTime);
 }
 
 function startTimer(){
-    let timer = setInterval(function(){
-        let min = Math.floor(remainingTime / 60);
-        let sec = remainingTime % 60;
-
+    setInterval(function(){
+        let min = Math.floor(remainingTime/60);
+        let sec = remainingTime%60;
         document.getElementById("timer").innerText =
-            min + ":" + (sec < 10 ? "0" + sec : sec);
+            min + ":" + (sec<10?"0"+sec:sec);
 
         remainingTime--;
         localStorage.setItem("exam_time", remainingTime);
 
-        if (remainingTime <= 0) {
-            clearInterval(timer);
+        if(remainingTime<=0){
             localStorage.removeItem("exam_time");
-            alert("Time Over! Exam submitted.");
             document.getElementById("examForm").submit();
         }
-    }, 1000);
+    },1000);
 }
-
-window.onload = startTimer;
+window.onload=startTimer;
 </script>
 
 </head>
@@ -123,23 +57,22 @@ window.onload = startTimer;
 
 <div class="header">SSC CGL – Mock Test</div>
 
+<!-- SECTION BAR -->
 <div class="sections">
-    <div class="sec {% if qno <= 25 %}active{% endif %}">Section 1<br>Reasoning</div>
-    <div class="sec {% if qno > 25 and qno <= 50 %}active{% endif %}">Section 2<br>GK</div>
-    <div class="sec {% if qno > 50 and qno <= 75 %}active{% endif %}">Section 3<br>Maths</div>
-    <div class="sec {% if qno > 75 %}active{% endif %}">Section 4<br>English</div>
+<form method="post" id="secForm">
+    <button class="sec {% if qno<=25 %}active{% endif %}" name="action" value="jump_0">Section 1<br>Reasoning</button>
+    <button class="sec {% if qno>25 and qno<=50 %}active{% endif %}" name="action" value="jump_25">Section 2<br>GK</button>
+    <button class="sec {% if qno>50 and qno<=75 %}active{% endif %}" name="action" value="jump_50">Section 3<br>Maths</button>
+    <button class="sec {% if qno>75 %}active{% endif %}" name="action" value="jump_75">Section 4<br>English</button>
+</form>
 </div>
 
-<div class="timer">
-    ⏱ <span id="timer">--:--</span>
-</div>
+<div class="timer">⏱ <span id="timer">--:--</span></div>
 
 <div class="container">
 <div class="box">
 
-<div class="qno">
-    Question {{ qno }} / {{ total }}
-</div>
+<div class="qno">Question {{ qno }} / {{ total }}</div>
 
 <form method="post" id="examForm">
 
@@ -147,16 +80,18 @@ window.onload = startTimer;
 
 {% for opt in options %}
 <div class="option">
-    <label>
-        <input type="radio" name="ans" value="{{ loop.index0 }}">
-        {{ opt }}
-    </label>
+<label>
+<input type="radio" name="ans" value="{{ loop.index0 }}"
+{% if session.answers.get((qno-1)|string) == loop.index0|string %}checked{% endif %}>
+{{ opt }}
+</label>
 </div>
 {% endfor %}
 
 <div class="btns">
-    <button class="review" name="mark_review">Mark for Review</button>
-    <button class="next">Save & Next</button>
+<button class="prev" name="action" value="prev">Previous</button>
+<button class="review" name="mark_review">Mark for Review</button>
+<button class="next">Save & Next</button>
 </div>
 
 </form>
