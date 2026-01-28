@@ -10,7 +10,7 @@ USERS = {
 }
 
 # ================= CONFIG =================
-TOTAL_QUESTIONS = 10
+TOTAL_QUESTIONS = 100
 PER_QUESTION_MARKS = 2
 NEGATIVE_MARKS = 0.5
 
@@ -20,23 +20,37 @@ QUESTIONS_PATH = os.path.join(BASE_DIR, "questions.json")
 
 try:
     with open(QUESTIONS_PATH, "r", encoding="utf-8") as f:
-        QUESTION_BANK = json.load(f)
-    print(f"✅ QUESTIONS LOADED: {len(QUESTION_BANK)}")
+        DATA = json.load(f)
+
+    # Expecting structure:
+    # { "cgl_full_mock_1": { "reasoning":[], "gk":[], "maths":[], "english":[] } }
+
+    MOCK = DATA["cgl_full_mock_1"]
+
+    QUESTION_BANK = (
+        MOCK["reasoning"] +
+        MOCK["gk"] +
+        MOCK["maths"] +
+        MOCK["english"]
+    )
+
+    print("✅ QUESTIONS LOADED:", len(QUESTION_BANK))
+
 except Exception as e:
     QUESTION_BANK = []
-    print("❌ ERROR loading questions.json:", e)
+    print("❌ ERROR loading questions:", e)
 
 # ================= LOGIN =================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+        u = request.form.get("username")
+        p = request.form.get("password")
 
-        if username in USERS and USERS[username]["password"] == password:
+        if u in USERS and USERS[u]["password"] == p:
             session.clear()
-            session["username"] = username
-            session["name"] = USERS[username]["name"]
+            session["username"] = u
+            session["name"] = USERS[u]["name"]
             return redirect("/student_dashboard")
 
         return render_template("login.html", error="Invalid credentials")
@@ -57,37 +71,38 @@ def ssc():
         return redirect("/")
     return render_template("ssc_dashboard.html")
 
-# ================= SSC CGL FULL MOCK LIST =================
+# ================= SSC CGL MOCK LIST =================
 @app.route("/ssc/cgl")
-def ssc_cgl_full_mocks():
+def ssc_cgl():
     if "username" not in session:
         return redirect("/")
     return render_template("ssc_cgl_full_mocks.html")
 
-# ================= MOCK 1 INSTRUCTIONS =================
+# ================= INSTRUCTIONS =================
 @app.route("/ssc/cgl/mock/1")
-def ssc_cgl_mock_1_instructions():
+def mock_1_instructions():
     if "username" not in session:
         return redirect("/")
     return render_template("ssc_cgl_mock_1_instructions.html")
 
-# ================= START MOCK 1 =================
+# ================= START MOCK =================
 @app.route("/ssc/cgl/mock/1/start", methods=["POST"])
-def start_mock_1():
+def start_mock():
     if "username" not in session:
         return redirect("/")
 
     if not QUESTION_BANK:
-        return "No questions found in questions.json", 500
+        return "No questions found", 500
 
-    session["questions"] = random.sample(
-        QUESTION_BANK,
-        min(TOTAL_QUESTIONS, len(QUESTION_BANK))
-    )
+    session["questions"] = QUESTION_BANK
     session["q"] = 0
     session["answers"] = {}
-    session["review"] = []
-    session["start_time"] = time.time()
+    session["review"] = {}
+
+    # TEMP: random correct answers (until real key added)
+    session["correct_answers"] = {
+        str(i): random.randint(0, 3) for i in range(len(QUESTION_BANK))
+    }
 
     return redirect("/exam")
 
@@ -100,39 +115,47 @@ def exam():
     questions = session["questions"]
     q = session.get("q", 0)
 
+    # ---------- POST ----------
     if request.method == "POST":
+
+        # Save answer
         if "ans" in request.form:
             session["answers"][str(q)] = request.form["ans"]
 
+        # Mark for review
         if "mark_review" in request.form:
-            if str(q) not in session["review"]:
-                session["review"].append(str(q))
+            session["review"][str(q)] = True
 
-        if q == len(questions) - 1:
-            return redirect("/result")
-        else:
-            session["q"] = q + 1
+        action = request.form.get("action")
+
+        # Previous
+        if action == "prev":
+            session["q"] = max(0, q - 1)
             return redirect("/exam")
 
-    palette = []
-    for i in range(len(questions)):
-        if str(i) in session["review"]:
-            status = "review"
-        elif str(i) in session["answers"]:
-            status = "attempted"
-        else:
-            status = "unattempted"
-        palette.append({"qno": i + 1, "status": status})
+        # Section jump
+        if action and action.startswith("jump_"):
+            target = int(action.split("_")[1])
+            session["q"] = min(target, len(questions) - 1)
+            return redirect("/exam")
 
+        # Next
+        if q == len(questions) - 1:
+            return redirect("/result")
+
+        session["q"] = q + 1
+        return redirect("/exam")
+
+    # ---------- GET ----------
     current = questions[q]
 
     return render_template(
         "ssc_cgl_exam_1.html",
-        question=current.get("q"),
-        options=current.get("options"),
+        question=current["question"],
+        options=current["options"],
         qno=q + 1,
         total=len(questions),
-        palette=palette
+        session=session
     )
 
 # ================= RESULT =================
@@ -141,33 +164,24 @@ def result():
     if "username" not in session:
         return redirect("/")
 
-    questions = session.get("questions", [])
     answers = session.get("answers", {})
-    total = len(questions)
+    correct_answers = session.get("correct_answers", {})
 
     correct = 0
     wrong = 0
 
-    # TEMP LOGIC: option index 0 treated as correct
     for qno, ans in answers.items():
-        if int(ans) == 0:
+        if qno in correct_answers and int(ans) == correct_answers[qno]:
             correct += 1
         else:
             wrong += 1
 
     attempted = len(answers)
+    total = len(session.get("questions", []))
     unattempted = total - attempted
 
     score = (correct * PER_QUESTION_MARKS) - (wrong * NEGATIVE_MARKS)
     accuracy = round((correct / attempted) * 100, 2) if attempted else 0
-
-    start_time = session.get("start_time", time.time())
-    time_taken = int(time.time() - start_time)
-    minutes = time_taken // 60
-    seconds = time_taken % 60
-
-    percentile = min(99, 50 + correct * 5)
-    rank = max(1, 500 - correct * 10)
 
     return render_template(
         "result.html",
@@ -178,10 +192,10 @@ def result():
         wrong=wrong,
         score=score,
         accuracy=accuracy,
-        minutes=minutes,
-        seconds=seconds,
-        percentile=percentile,
-        rank=rank
+        percentile=min(99, 50 + correct),
+        rank=max(1, 500 - correct * 5),
+        minutes=0,
+        seconds=0
     )
 
 # ================= LOGOUT =================
