@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SSC CGL Mock Test</title>
 
 <style>
 body{
     margin:0;
-    font-family:Segoe UI, sans-serif;
+    font-family:Segoe UI,sans-serif;
     background:#f2f4f8;
 }
 
@@ -18,8 +17,25 @@ body{
     color:#fff;
     padding:14px;
     text-align:center;
-    font-size:16px;
     font-weight:600;
+}
+
+/* Section Bar */
+.sections{
+    display:flex;
+    background:#e5e7eb;
+}
+.sec{
+    flex:1;
+    padding:10px;
+    text-align:center;
+    font-size:13px;
+    font-weight:600;
+    border-right:1px solid #cbd5f5;
+}
+.active{
+    background:#2563eb;
+    color:white;
 }
 
 /* Timer */
@@ -28,48 +44,23 @@ body{
     top:10px;
     right:10px;
     background:#111827;
-    color:#fff;
-    padding:10px 14px;
+    color:white;
+    padding:8px 12px;
     border-radius:10px;
-    font-weight:600;
+    font-size:13px;
     z-index:1000;
 }
 
-/* Layout */
+/* Container */
 .container{
     padding:14px;
 }
-
 .box{
-    background:#fff;
-    border-radius:14px;
+    background:white;
     padding:16px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    border-radius:14px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
-
-/* Palette */
-.palette{
-    display:flex;
-    flex-wrap:wrap;
-    margin-bottom:12px;
-}
-
-.pal-btn{
-    width:34px;
-    height:34px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin:4px;
-    font-size:13px;
-    font-weight:600;
-    color:#000;
-}
-
-.attempted{ background:#22c55e; }
-.review{ background:#facc15; }
-.unattempted{ background:#e5e7eb; }
 
 /* Question */
 .qno{
@@ -79,12 +70,11 @@ body{
 
 /* Options */
 .option{
-    background:#f9fafb;
     border:1px solid #d1d5db;
-    border-radius:12px;
     padding:12px;
+    border-radius:12px;
     margin-bottom:10px;
-    font-size:14px;
+    background:#f9fafb;
 }
 
 /* Buttons */
@@ -93,45 +83,35 @@ body{
     gap:10px;
     margin-top:14px;
 }
-
 button{
     flex:1;
     padding:12px;
     border:none;
     border-radius:12px;
-    font-size:14px;
     font-weight:600;
 }
-
-.next{ background:#2563eb; color:#fff; }
-.review-btn{ background:#facc15; }
+.review{
+    background:#facc15;
+}
+.next{
+    background:#2563eb;
+    color:white;
+}
 </style>
 
-<!-- ================= TIMER SCRIPT ================= -->
 <script>
-/*
-  Exam duration:
-  10 questions × 60 sec = 10 minutes
-  (change if needed)
-*/
-let totalSeconds = 10 * 60;
+let seconds = 30;   // 30 sec per question
 
 function startTimer(){
     let timer = setInterval(function(){
-        let min = Math.floor(totalSeconds / 60);
-        let sec = totalSeconds % 60;
+        document.getElementById("timer").innerText = seconds + "s";
+        seconds--;
 
-        document.getElementById("timer").innerText =
-            min + ":" + (sec < 10 ? "0" + sec : sec);
-
-        totalSeconds--;
-
-        if (totalSeconds < 0){
+        if(seconds < 0){
             clearInterval(timer);
-            alert("Time Over! Exam will be submitted.");
             document.getElementById("examForm").submit();
         }
-    }, 1000);
+    },1000);
 }
 
 window.onload = startTimer;
@@ -141,70 +121,44 @@ window.onload = startTimer;
 
 <body>
 
-<div class="header">
-    SSC CGL – Mock Test
+<div class="header">SSC CGL – Mock Test</div>
+
+<!-- Section Bar -->
+<div class="sections">
+    <div class="sec {% if qno <= 25 %}active{% endif %}">Section 1<br>Reasoning</div>
+    <div class="sec {% if qno > 25 and qno <= 50 %}active{% endif %}">Section 2<br>GK</div>
+    <div class="sec {% if qno > 50 and qno <= 75 %}active{% endif %}">Section 3<br>Maths</div>
+    <div class="sec {% if qno > 75 %}active{% endif %}">Section 4<br>English</div>
 </div>
 
-<!-- TIMER BOX -->
+<!-- Timer -->
 <div class="timer">
-    ⏱ Time Left: <span id="timer">10:00</span>
+    ⏱ <span id="timer">30s</span>
 </div>
 
 <div class="container">
 <div class="box">
 
-<!-- ================= PALETTE ================= -->
-<div class="palette">
-{% for p in palette %}
-    <div class="pal-btn
-        {% if p.status == 'review' %}
-            review
-        {% elif p.status == 'attempted' %}
-            attempted
-        {% else %}
-            unattempted
-        {% endif %}
-    ">
-        {{ p.qno }}
-    </div>
-{% endfor %}
-</div>
-
-<!-- ================= QUESTION ================= -->
 <div class="qno">
     Question {{ qno }} / {{ total }}
 </div>
 
 <form method="post" id="examForm">
 
-{% if question %}
-    <p><b>{{ question }}</b></p>
-{% else %}
-    <p style="color:red;">Question not loaded</p>
-{% endif %}
+<p><b>{{ question }}</b></p>
 
-<!-- ================= OPTIONS ================= -->
-{% if options %}
-    {% for opt in options %}
-    <div class="option">
-        <label>
-            <input type="radio" name="ans" value="{{ loop.index0 }}">
-            {{ opt }}
-        </label>
-    </div>
-    {% endfor %}
-{% else %}
-    <p style="color:red;">Options not loaded</p>
-{% endif %}
+{% for opt in options %}
+<div class="option">
+    <label>
+        <input type="radio" name="ans" value="{{ loop.index0 }}">
+        {{ opt }}
+    </label>
+</div>
+{% endfor %}
 
-<!-- ================= BUTTONS ================= -->
 <div class="btns">
-    <button class="review-btn" name="mark_review" type="submit">
-        Mark for Review
-    </button>
-    <button class="next" type="submit">
-        Save & Next
-    </button>
+    <button class="review" name="mark_review">Mark for Review</button>
+    <button class="next">Save & Next</button>
 </div>
 
 </form>
