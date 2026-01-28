@@ -10,8 +10,6 @@ body{
     font-family:Segoe UI,sans-serif;
     background:#f2f4f8;
 }
-
-/* Header */
 .header{
     background:#1e3a8a;
     color:#fff;
@@ -19,8 +17,6 @@ body{
     text-align:center;
     font-weight:600;
 }
-
-/* Section Bar */
 .sections{
     display:flex;
     background:#e5e7eb;
@@ -37,8 +33,6 @@ body{
     background:#2563eb;
     color:white;
 }
-
-/* Timer */
 .timer{
     position:fixed;
     top:10px;
@@ -50,8 +44,6 @@ body{
     font-size:13px;
     z-index:1000;
 }
-
-/* Container */
 .container{
     padding:14px;
 }
@@ -61,14 +53,10 @@ body{
     border-radius:14px;
     box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
-
-/* Question */
 .qno{
     font-weight:600;
     margin-bottom:10px;
 }
-
-/* Options */
 .option{
     border:1px solid #d1d5db;
     padding:12px;
@@ -76,8 +64,6 @@ body{
     margin-bottom:10px;
     background:#f9fafb;
 }
-
-/* Buttons */
 .btns{
     display:flex;
     gap:10px;
@@ -90,28 +76,42 @@ button{
     border-radius:12px;
     font-weight:600;
 }
-.review{
-    background:#facc15;
-}
-.next{
-    background:#2563eb;
-    color:white;
-}
+.review{ background:#facc15; }
+.next{ background:#2563eb; color:white; }
 </style>
 
 <script>
-let seconds = 30;   // 30 sec per question
+/*
+  GLOBAL EXAM TIMER
+  Example: 100 questions × 30 sec = 3000 sec = 50 min
+*/
+const EXAM_TIME = 3000; // change if needed
+
+let remainingTime = localStorage.getItem("exam_time");
+
+if (!remainingTime) {
+    remainingTime = EXAM_TIME;
+    localStorage.setItem("exam_time", remainingTime);
+}
 
 function startTimer(){
     let timer = setInterval(function(){
-        document.getElementById("timer").innerText = seconds + "s";
-        seconds--;
+        let min = Math.floor(remainingTime / 60);
+        let sec = remainingTime % 60;
 
-        if(seconds < 0){
+        document.getElementById("timer").innerText =
+            min + ":" + (sec < 10 ? "0" + sec : sec);
+
+        remainingTime--;
+        localStorage.setItem("exam_time", remainingTime);
+
+        if (remainingTime <= 0) {
             clearInterval(timer);
+            localStorage.removeItem("exam_time");
+            alert("Time Over! Exam submitted.");
             document.getElementById("examForm").submit();
         }
-    },1000);
+    }, 1000);
 }
 
 window.onload = startTimer;
@@ -123,7 +123,6 @@ window.onload = startTimer;
 
 <div class="header">SSC CGL – Mock Test</div>
 
-<!-- Section Bar -->
 <div class="sections">
     <div class="sec {% if qno <= 25 %}active{% endif %}">Section 1<br>Reasoning</div>
     <div class="sec {% if qno > 25 and qno <= 50 %}active{% endif %}">Section 2<br>GK</div>
@@ -131,9 +130,8 @@ window.onload = startTimer;
     <div class="sec {% if qno > 75 %}active{% endif %}">Section 4<br>English</div>
 </div>
 
-<!-- Timer -->
 <div class="timer">
-    ⏱ <span id="timer">30s</span>
+    ⏱ <span id="timer">--:--</span>
 </div>
 
 <div class="container">
