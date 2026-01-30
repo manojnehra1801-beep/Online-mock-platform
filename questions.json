@@ -11,8 +11,8 @@
   ]
 },
       { "question": "2. यदि शब्द BINDER के सभी अक्षरो को अग्रेजी वर्णमाला कर्म में व्यवस्थित किया जाए तो कितने अक्षरों की स्थिति अप परिवर्तित रहेगी", "options": ["कोई नहीं", "एक ", "दो", "तीन"] },
-      { "question": "REASONING Q3", "options": ["A", "B", "C", "D"] },
-      { "question": "REASONING Q4", "options": ["A", "B", "C", "D"] },
+      { "question": "3. अंग्रेजी वर्णमाला के क्रम के आधार पर निम्नलिखित चार अक्षर समूह में से तीन एक निश्चित तरीके से समान है और इस प्रकार एक समूह बनते हैं वह कौन सा है जो उसे समूह से संबंधित नहीं है", "options": ["KJE", "JHD", "FDZ", "AYU"] },
+      { "question": "4. निम्नलिखित श्रृंखला में केवल एक अक्षर समूह गलत है गलत अक्षर समूह का चयन कीजिए YCG IMQ SVZ CGK MQU", "options": ["SVZ", "MQU", "CGK", "IMQ"] },
       { "question": "REASONING Q5", "options": ["A", "B", "C", "D"] },
       { "question": "REASONING Q6", "options": ["A", "B", "C", "D"] },
       { "question": "REASONING Q7", "options": ["A", "B", "C", "D"] },
