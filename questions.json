@@ -10,7 +10,7 @@
     "कोई नहीं"
   ]
 },
-      { "question": "REASONING Q2", "options": ["A", "B", "C", "D"] },
+      { "question": "2. यदि शब्द BINDER के सभी अक्षरो को अग्रेजी वर्णमाला कर्म में व्यवस्थित किया जाए तो कितने अक्षरों की स्थिति अप परिवर्तित रहेगी", "options": ["कोई नहीं", "एक ", "दो", "तीन"] },
       { "question": "REASONING Q3", "options": ["A", "B", "C", "D"] },
       { "question": "REASONING Q4", "options": ["A", "B", "C", "D"] },
       { "question": "REASONING Q5", "options": ["A", "B", "C", "D"] },
