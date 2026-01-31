@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SSC GD Mock Tests</title>
+<style>
+body{font-family:sans-serif;background:#f2f4f8;margin:0}
+.header{background:#1e3a8a;color:#fff;padding:14px;text-align:center;font-weight:600}
+.card{background:#fff;margin:12px;padding:14px;border-radius:12px;
+      display:flex;justify-content:space-between;align-items:center}
+.btn{padding:8px 14px;border-radius:20px;border:none;font-weight:600}
+.attempt{background:#22c55e;color:#fff}
+.lock{background:#ef4444;color:#fff}
+</style>
+</head>
+<body>
+
+<div class="header">SSC GD – Mock Tests</div>
+
+<div class="card">
+  <div>
+    <b>GD Full Mock Test 1</b><br>
+    80 Questions • 60 Minutes
+  </div>
+  <a href="/ssc/gd/mock/1">
+    <button class="btn attempt">Attempt</button>
+  </a>
+</div>
+
+<div class="card">
+  <div>
+    <b>GD Full Mock Test 2</b><br>
+    80 Questions • 60 Minutes
+  </div>
+  <button class="btn lock">Unlock</button>
+</div>
+
+</body>
+</html>
